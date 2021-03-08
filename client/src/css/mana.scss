@@ -1,0 +1,197 @@
+@import "./core";
+
+.cardColorContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  position: absolute;
+  visibility: visible;
+  z-index: 5;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: calc(100% - (2 *#{$card-border}));
+  height: 45px;
+  color: black;
+  margin: $card-border calc(#{$card-border} + 2px);
+}
+
+.manaHover {
+  opacity: 0.75;
+  transition: 0.45s;
+}
+
+.cardColorDot {
+  height: 20px;
+  width: 20px;
+  margin: 2px 0;
+  margin-right: 1px;
+  border-radius: 100%;
+  display: inline-block;
+  background: transparent;
+  border: 1px solid black;
+  display: block;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: contain;
+  filter: contrast(100%);
+}
+
+.blue {
+  content: url("../utils/images/mana/BlueMana.png");
+}
+.black {
+  content: url("../utils/images/mana/BlackMana.png");
+}
+.green {
+  content: url("../utils/images/mana/GreenMana.png");
+}
+.red {
+  content: url("../utils/images/mana/RedMana.png");
+}
+.white {
+  content: url("../utils/images/mana/WhiteMana.png");
+}
+.C {
+  content: url("../utils/images/mana/ColorlessMana.png");
+}
+.X {
+  content: url("../utils/images/mana/XMana.png");
+}
+.S {
+  content: url("../utils/images/mana/SnowMana.png");
+}
+.mana0 {
+  content: url("../utils/images/mana/0Mana.png");
+}
+.mana1 {
+  content: url("../utils/images/mana/1Mana.png");
+}
+.mana2 {
+  content: url("../utils/images/mana/2Mana.png");
+}
+.mana3 {
+  content: url("../utils/images/mana/3Mana.png");
+}
+.mana4 {
+  content: url("../utils/images/mana/4Mana.png");
+}
+.mana5 {
+  content: url("../utils/images/mana/5Mana.png");
+}
+.mana6 {
+  content: url("../utils/images/mana/6Mana.png");
+}
+.mana7 {
+  content: url("../utils/images/mana/7Mana.png");
+}
+.mana8 {
+  content: url("../utils/images/mana/8Mana.png");
+}
+.mana9 {
+  content: url("../utils/images/mana/9Mana.png");
+}
+.mana10 {
+  content: url("../utils/images/mana/10Mana.png");
+}
+.mana11 {
+  content: url("../utils/images/mana/11Mana.png");
+}
+.mana12 {
+  content: url("../utils/images/mana/12Mana.png");
+}
+.mana13 {
+  content: url("../utils/images/mana/13Mana.png");
+}
+.mana14 {
+  content: url("../utils/images/mana/14Mana.png");
+}
+.mana15 {
+  content: url("../utils/images/mana/15Mana.png");
+}
+.mana16 {
+  content: url("../utils/images/mana/16Mana.png");
+}
+.mana17 {
+  content: url("../utils/images/mana/17Mana.png");
+}
+.mana18 {
+  content: url("../utils/images/mana/18Mana.png");
+}
+.mana19 {
+  content: url("../utils/images/mana/19Mana.png");
+}
+.mana20 {
+  content: url("../utils/images/mana/20Mana.png");
+}
+.Uor2 {
+  content: url("../utils/images/mana/Uor2Mana.png");
+}
+.Bor2 {
+  content: url("../utils/images/mana/Bor2Mana.png");
+}
+.Gor2 {
+  content: url("../utils/images/mana/Gor2Mana.png");
+}
+.Wor2 {
+  content: url("../utils/images/mana/Wor2Mana.png");
+}
+.Ror2 {
+  content: url("../utils/images/mana/Ror2Mana.png");
+}
+.RorW {
+  content: url("../utils/images/mana/RorWMana.png");
+}
+.GorU {
+  content: url("../utils/images/mana/GorUMana.png");
+}
+.BorG {
+  content: url("../utils/images/mana/BorGMana.png");
+}
+.BorR {
+  content: url("../utils/images/mana/BorRMana.png");
+}
+.GorW {
+  content: url("../utils/images/mana/GorWMana.png");
+}
+.RorG {
+  content: url("../utils/images/mana/RorGMana.png");
+}
+.UorB {
+  content: url("../utils/images/mana/UorBMana.png");
+}
+.UorR {
+  content: url("../utils/images/mana/UorRMana.png");
+}
+.WorB {
+  content: url("../utils/images/mana/WorBMana.png");
+}
+.WorU {
+  content: url("../utils/images/mana/WorUMana.png");
+}
+.UP {
+  content: url("../utils/images/mana/UPMana.png");
+}
+.GP {
+  content: url("../utils/images/mana/GPMana.png");
+}
+.RP {
+  content: url("../utils/images/mana/RPMana.png");
+}
+.BP {
+  content: url("../utils/images/mana/BPMana.png");
+}
+.WP {
+  content: url("../utils/images/mana/WPMana.png");
+}
+
+.HW {
+  content: url("../utils/images/mana/HalfWhiteMana.png");
+  width: 8.5px;
+  border-top-left-radius: 0%;
+  border-bottom-left-radius: 0%;
+  border-top-right-radius: 100px;
+  border-bottom-right-radius: 100px;
+}
