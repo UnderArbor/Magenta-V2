@@ -4,10 +4,11 @@ import App from "./App";
 import { BrowserRouter as Router } from "react-router-dom";
 import axios from "axios";
 
-// axios.defaults.baseURL = "http://localhost:3000";
-axios.defaults.headers.post["Content-Type"] = "application/json";
+if (process.env.NODE_ENV !== 'production') {
+axios.defaults.baseURL = "http://localhost:3000";
+}
 
-console.log("process: ", process.env.NODE_ENV)
+axios.defaults.headers.post["Content-Type"] = "application/json";
 
 import "./css/reset.scss";
 
