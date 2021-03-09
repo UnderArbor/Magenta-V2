@@ -17,8 +17,8 @@ connectDB();
 
 // Init Middleware
 app.use(express.json({ extended: false }));
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // Define Routes
 app.use("/api/auth", require("./client/server/api/auth"));
