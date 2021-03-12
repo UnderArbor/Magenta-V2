@@ -21,8 +21,11 @@ $card-height: 168px;
 $card-border-radius: 3mm;
 $card-border: 5px;
 
-$popup-width: 420px;
-$popup-height: 588px;
+// $popup-width: 420px;
+// $popup-height: 588px;
+
+$popup-width: 27.4vw;
+$popup-height: calc(#{$popup-width} * 7 / 5);
 
 $tools-width: 300px;
 
@@ -56,7 +59,7 @@ $header-font: "Cinzel";
 }
 
 .logoFlair {
-  color: #c700d9;
+  color: lighten($primary-color, 18%);
 }
 
 .topLogo {
@@ -563,6 +566,15 @@ $header-font: "Cinzel";
   margin-left: 34px;
 }
 
+.setArrow {
+  width: 24px;
+  height: auto;
+  position: absolute;
+  right: 8px;
+  top: 58px;
+  cursor: pointer;
+}
+
 .formatOptionContainer {
   position: absolute;
   display: flex;
@@ -830,11 +842,14 @@ $header-font: "Cinzel";
 
 //CARDS
 
-.cardName {
+.cardNameContainer {
+  height: 50px;
   margin-top: 8px;
+}
+
+.cardName {
   font-size: 18px;
   line-height: 20px;
-  height: 50px;
   font-family: $body-font;
   color: $light-background-color;
 }
@@ -861,6 +876,14 @@ $header-font: "Cinzel";
   width: 100%;
   height: $card-height;
   border-radius: $card-border-radius;
+}
+
+.cardSwitcher {
+  position: absolute;
+  background-color: purple;
+  top: 0;
+  right: 0;
+  z-index: 3;
 }
 
 .shadow1 {
@@ -967,7 +990,7 @@ $header-font: "Cinzel";
 }
 
 .settingsIcon {
-  opacity: 0.75;
+  opacity: 0.25;
   height: 88px;
   width: 88px;
   margin: auto;

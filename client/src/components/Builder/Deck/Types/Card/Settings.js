@@ -59,7 +59,7 @@ const Settings = ({
           />
         ) : (
           <img
-            className="setDropButton"
+            className="setArrow"
             onClick={() => {
               setOpenSetDropDown(!openSetDropDown);
             }}

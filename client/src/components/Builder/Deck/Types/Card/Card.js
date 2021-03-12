@@ -1,11 +1,11 @@
 import React, { useEffect, Fragment } from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
-import DotDotDot from "react-dotdotdot";
+import Dotdotdot from "react-dotdotdot";
 
 import SettingsContainer from "./SettingsContainer";
 
-import settingsIcon from "../../../../../utils/images/Settings-Cog.svg";
+import settingsIcon from "../../../../../utils/images/Settings_Cog.png";
 
 const Card = ({
   dragRef,
@@ -89,6 +89,9 @@ const Card = ({
           movePopup(e, cardImageRef);
         }}
       >
+        {card.secondCard.name !== "" && (
+          <div className="cardSwitcher">Click Me</div>
+        )}
         <AnimatePresence>
           {displaySettings.displayMana && (
             <motion.div
@@ -217,21 +220,21 @@ const Card = ({
           )}
         </AnimatePresence>
       </div>
-      <DotDotDot clamp={4}>
-        <AnimatePresence>
-          {displaySettings.displayName && (
-            <motion.p
-              className="cardName"
-              variants={nameToggleVariant}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-            >
-              {card.name}
-            </motion.p>
-          )}
-        </AnimatePresence>
-      </DotDotDot>
+      <AnimatePresence>
+        {displaySettings.displayName && (
+          <motion.div
+            className="cardNameContainer"
+            variants={nameToggleVariant}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <Dotdotdot clamp={4}>
+              <p className="cardName">{card.name}</p>
+            </Dotdotdot>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {openSettings ? (
         <SettingsContainer
           typeIndex={typeIndex}

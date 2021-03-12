@@ -9,7 +9,7 @@ const getCardInfo = async (name, quantity) => {
     if (!quantity) {
       quantity = 1;
     }
-    const cardName = name.replace(/\s*$/, "");
+    let cardName = name.replace(/\s*$/, "");
     let imageURL = "";
     let cardImageURL = "";
     let cmc = "";
@@ -18,6 +18,16 @@ const getCardInfo = async (name, quantity) => {
     let colors = "";
     let set = "";
     let tokens = [];
+    let secondCard = {
+      name: "",
+      imageURL: "",
+      cardImageURL: "",
+      cmc: "",
+      manaCost: "",
+      types: ["", ""],
+      colors: "",
+    };
+
     await fetch(`${SCRYFALL_API}/cards/named?exact=${name}`)
       .then((response) => {
         return response.json();
@@ -25,7 +35,10 @@ const getCardInfo = async (name, quantity) => {
       .then(async (json) => {
         //Get card info
         set = json.set_name;
+
+        let secondJSON = null;
         if (!json.image_uris) {
+          secondJSON = json.card_faces[1];
           json = json.card_faces[0];
         }
         imageURL = json.image_uris.art_crop;
@@ -34,6 +47,20 @@ const getCardInfo = async (name, quantity) => {
         manaCost = json.mana_cost;
         types = json.type_line.split("—");
         colors = json.colors;
+
+        //Get Second Card
+        if (secondJSON !== null) {
+          const names = cardName.split(" // ");
+          console.log("names: ", names);
+          cardName = names[0];
+          secondCard.name = names[1];
+          secondCard.imageURL = secondJSON.image_uris.art_crop;
+          secondCard.cardImageURL = secondJSON.image_uris.normal;
+          secondCard.cmc = secondJSON.cmc;
+          secondCard.manaCost = secondJSON.mana_cost;
+          secondCard.types = secondJSON.type_line.split("-");
+          secondCard.colors = secondJSON.colors;
+        }
 
         //Get Tokens
         if (json.all_parts) {
@@ -89,6 +116,7 @@ const getCardInfo = async (name, quantity) => {
       subtypes: types[1].trim().split(" "),
       colors,
       tokens,
+      secondCard,
     };
 
     return card;

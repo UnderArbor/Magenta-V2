@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Route, useRouteMatch } from "react-router-dom";
@@ -12,6 +12,8 @@ import { toggleDeckList } from "../../actions/deck";
 
 const BuilderPage = ({ openDeckList, toggleDeckList }) => {
   let { path, url } = useRouteMatch();
+
+  useEffect(() => () => toggleDeckList(false), []);
 
   return (
     <div className="builderPage">

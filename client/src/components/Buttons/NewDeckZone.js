@@ -46,7 +46,7 @@ const NewDeckZone = ({
           )}
         </button>
       </div>
-      {/* <div className="fieldGroup">
+      <div className="fieldGroup">
         <p className="fieldTitle notAllowed">Commander:</p>
         <input
           className="newDeckField notAllowed"
@@ -61,7 +61,7 @@ const NewDeckZone = ({
           }}
           disabled
         />
-      </div> */}
+      </div>
       <button onClick={async () => createDeck()} className="createDeckButton">
         Create Deck
       </button>
