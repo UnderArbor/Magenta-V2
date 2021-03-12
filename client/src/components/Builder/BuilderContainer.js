@@ -187,6 +187,7 @@ const BuilderContainer = ({
       setImportDisplay({ name: "", index: -1, ratio: -1, length: -1 });
       const newBoards = produce(boards, (draft) => {
         draft[1].boardTypes = sideboardArray;
+        draft[0].boardTypes = newCardsArray;
       });
       setBoards(newBoards);
       setTypes(newCardsArray);
