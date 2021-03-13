@@ -116,7 +116,6 @@ const BuilderContainer = ({
   useEffect(() => () => setDeckId(null), []);
 
   useEffect(() => {
-    console.log("cards: ", uploadCards);
     async function importCards(uploadCards) {
       var sideboard = false;
       await setTypes([]);

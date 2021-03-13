@@ -6,6 +6,8 @@ import axios from "axios";
 
 if (process.env.NODE_ENV !== "production") {
   axios.defaults.baseURL = "http://localhost:3000";
+} else {
+  axios.defaults.baseURL = window.location.origin;
 }
 axios.defaults.headers.post["Content-Type"] = "application/json";
 

@@ -16,7 +16,6 @@ export const uploadPacket = (cardFile) => (dispatch) => {
 
     const handleFileRead = async (e) => {
       const content = fileReader.result.split("\n");
-      console.log("Packet content: ", content);
 
       dispatch({ type: UPLOAD_PACKET, payload: content });
     };
