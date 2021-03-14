@@ -3,7 +3,6 @@
 $primary-color: #601466;
 $secondary-color: #dbd599;
 $accent-color: #fff340;
-$magenta-accent-color: #660054;
 
 $null-color: #707070;
 
@@ -59,7 +58,7 @@ $header-font: "Cinzel";
 }
 
 .logoFlair {
-  color: lighten($primary-color, 18%);
+  color: lighten($primary-color, 10%);
 }
 
 .topLogo {
@@ -125,15 +124,36 @@ $header-font: "Cinzel";
 
 .heroText {
   font-family: $header-font;
-  font-size: 84px;
-  width: 60%;
+  font-size: 48px;
+  @include respond-to("small") {
+    font-size: 60px;
+  }
+  @include respond-to("medium") {
+    font-size: 72px;
+  }
+  @include respond-to("large") {
+    font-size: 84px;
+  }
+  width: 80%;
   margin: 0 auto;
-  margin-top: 20vh;
+  margin-top: 15vh;
+  @include respond-to("medium") {
+    margin-top: 20vh;
+  }
   color: $light-text;
 }
 
 .taglineText {
-  font-size: 36px;
+  font-size: 24px;
+  @include respond-to("small") {
+    font-size: 28px;
+  }
+  @include respond-to("medium") {
+    font-size: 32px;
+  }
+  @include respond-to("large") {
+    font-size: 36px;
+  }
   color: $light-text;
   margin-top: 2vh;
   font-family: $body-font;
@@ -141,11 +161,14 @@ $header-font: "Cinzel";
 
 .headerButtonsContainer {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  @include respond-to("small") {
+    flex-direction: row;
+  }
+  justify-content: space-evenly;
   margin: 0 auto;
-  margin-top: 168px;
-  width: 35%;
+  margin-top: 18vh;
+  width: 70%;
 }
 
 .headerButton {
@@ -154,6 +177,7 @@ $header-font: "Cinzel";
   border-radius: 13px;
   width: 272px;
   font-size: 24px;
+  margin: 12px 8px;
 }
 
 .builderEnter {
@@ -163,7 +187,7 @@ $header-font: "Cinzel";
 }
 
 .mainBuilderEnter {
-  box-shadow: 0px 0px 9px 4px $magenta-accent-color;
+  box-shadow: 0px 0px 9px 4px $primary-color;
 }
 
 .salesPitchDiv {
@@ -374,12 +398,12 @@ $header-font: "Cinzel";
   margin: 80px auto -40px auto;
   text-align: center;
   text-decoration: underline;
-  text-decoration-color: $magenta-accent-color;
+  text-decoration-color: $primary-color;
 }
 
 .infoContainer {
   width: 100%;
-  height: 1200px;
+  min-height: 1200px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -451,7 +475,7 @@ $header-font: "Cinzel";
   margin: 60px;
   text-align: center;
   text-decoration: underline;
-  text-decoration-color: $magenta-accent-color;
+  text-decoration-color: $primary-color;
 }
 
 .deckInventory {
@@ -668,7 +692,7 @@ $header-font: "Cinzel";
 
 .boardTab {
   background-color: hsla(58, 50, 70, 1);
-  color: $magenta-accent-color;
+  color: $primary-color;
   font-size: 22px;
   font-weight: bold;
   font-family: $header-font;
@@ -1141,7 +1165,7 @@ $header-font: "Cinzel";
   pointer-events: auto;
   opacity: 0.97;
   padding: 20% 30%;
-  box-shadow: 0px 4px 8px 2px darken($magenta-accent-color, 5%);
+  box-shadow: 0px 4px 8px 2px darken($primary-color, 5%);
 }
 
 .settingsTitle {
@@ -1235,7 +1259,7 @@ $header-font: "Cinzel";
   font-family: $body-font;
   font-size: 20px;
   color: $light-text;
-  background-color: $magenta-accent-color;
+  background-color: $primary-color;
   margin: 72px auto;
   width: 80%;
 }
@@ -1382,7 +1406,7 @@ $header-font: "Cinzel";
 
 .inputFileLabel {
   padding-bottom: 0px;
-  border-bottom: solid 4px darken($magenta-accent-color, 5%);
+  border-bottom: solid 4px darken($primary-color, 5%);
   border-bottom-width: 3.1px;
   width: fit-content;
   font-family: $header-font;
@@ -1478,7 +1502,7 @@ $header-font: "Cinzel";
 }
 
 .currentResultItem {
-  background-color: $magenta-accent-color;
+  background-color: $primary-color;
   color: $accent-color;
 }
 
@@ -1521,7 +1545,7 @@ $header-font: "Cinzel";
   font-family: $header-font;
   font-weight: 700;
   padding: 4px 20px;
-  border: 1px solid lighten($magenta-accent-color, 20%);
+  border: 1px solid lighten($primary-color, 20%);
   transition: color 0.35s, background-color 0.35s, border 0.35s;
 }
 
