@@ -161,7 +161,7 @@ $header-font: "Cinzel";
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  margin-top: 14vh;
+  margin-top: 10vh;
   @include respond-to("small") {
     flex-direction: row;
     margin-top: 18vh;
