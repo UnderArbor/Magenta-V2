@@ -22,7 +22,7 @@ const MainBody = () => {
         <img className="featureMockup" src={FeatureMockupDark} />
       </div>
       <div className="infoContainer reverseInfoContainer">
-        <img className="featureMockup" src={FeatureMockupLight} />
+        <img className="featureMockup beforeMockup" src={FeatureMockupLight} />
         <div className="featureContainer">
           <p className="featureTitle">Feature 2</p>
           <p className="featureBody">
@@ -33,6 +33,7 @@ const MainBody = () => {
             Lorem ipsum dolor sit amet.
           </p>
         </div>
+        <img className="featureMockup afterMockup" src={FeatureMockupLight} />
       </div>
       <div className="infoContainer">
         <div className="featureContainer">

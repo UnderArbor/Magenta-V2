@@ -225,7 +225,13 @@ $header-font: "Cinzel";
   position: relative;
   text-align: center;
   font-family: $header-font;
-  font-size: 68px;
+  font-size: 50px;
+  @include respond-to("small") {
+    font-size: 58px;
+  }
+  @include respond-to("medium") {
+    font-size: 68px;
+  }
   color: $light-text;
   margin-bottom: 84px;
 }
@@ -404,51 +410,69 @@ $header-font: "Cinzel";
   width: 100%;
   min-height: 1200px;
   display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  @include respond-to("large") {
+    flex-direction: row;
+    // min-height: 1200px;
+  }
   align-items: center;
-  justify-content: space-between;
   text-align: left;
 }
 
-.infoContainer > .featureContainer {
-  margin-left: 12vw;
-}
-
 .reverseInfoContainer {
-  justify-content: space-between;
   text-align: right;
   background-color: $dark-background-color;
   color: $light-text;
 }
 
-.reverseInfoContainer > .featureContainer {
-  margin-right: 12vw;
-  margin-left: 0;
-}
-
-.reverseInfoContainer > .featureMockup {
-  margin-right: 0;
-  margin-left: 8vw;
-}
-
 .featureContainer {
-  width: 30%;
+  width: 80%;
+  @include respond-to("large") {
+    width: 30%;
+  }
 }
 
 .featureTitle {
   font-family: $header-font;
-  font-size: 56px;
+  font-size: 44px;
+  @include respond-to("medium") {
+    font-size: 56px;
+  }
   margin: 20px 0;
   font-weight: 550;
 }
 
 .featureBody {
   font-family: $body-font;
-  line-height: 36px;
-  font-size: 28px;
+  line-height: 28px;
+  font-size: 20px;
+  @include respond-to("medium") {
+    font-size: 28px;
+    line-height: 36px;
+  }
 }
 
 .featureMockup {
-  margin-right: 8vw;
+  width: 80vw;
+  @include respond-to("large") {
+    width: 45vw;
+  }
+  height: auto;
+}
+
+.beforeMockup {
+  display: none;
+  @include respond-to("large") {
+    display: inline-block;
+  }
+}
+
+.afterMockup {
+  display: inline-block;
+  @include respond-to("large") {
+    display: none;
+  }
 }
 
 .builderPage {
