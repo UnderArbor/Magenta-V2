@@ -125,21 +125,19 @@ $header-font: "Cinzel";
 .heroText {
   font-family: $header-font;
   font-size: 48px;
+  margin: 0 auto;
+  margin-top: 15vh;
   @include respond-to("small") {
     font-size: 60px;
   }
   @include respond-to("medium") {
     font-size: 72px;
+    margin-top: 20vh;
   }
   @include respond-to("large") {
     font-size: 84px;
   }
   width: 80%;
-  margin: 0 auto;
-  margin-top: 15vh;
-  @include respond-to("medium") {
-    margin-top: 20vh;
-  }
   color: $light-text;
 }
 
@@ -162,12 +160,13 @@ $header-font: "Cinzel";
 .headerButtonsContainer {
   display: flex;
   flex-direction: column;
+  margin: 0 auto;
+  margin-top: 14vh;
   @include respond-to("small") {
     flex-direction: row;
+    margin-top: 18vh;
   }
   justify-content: space-evenly;
-  margin: 0 auto;
-  margin-top: 18vh;
   width: 70%;
 }
 
