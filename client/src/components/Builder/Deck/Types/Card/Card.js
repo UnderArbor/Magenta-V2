@@ -89,9 +89,9 @@ const Card = ({
           movePopup(e, cardImageRef);
         }}
       >
-        {card.secondCard.name !== "" && (
+        {/* {card.secondCard.name !== "" && (
           <div className="cardSwitcher">Click Me</div>
-        )}
+        )} */}
         <AnimatePresence>
           {displaySettings.displayMana && (
             <motion.div

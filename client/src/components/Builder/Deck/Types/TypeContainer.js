@@ -103,6 +103,7 @@ const TypeContainer = ({
       >
         <AnimatePresence>
           {type.cards.map((card, cardIndex) => {
+            console.log("card: ", card);
             if (type.open) {
               return (
                 <CardContainer
