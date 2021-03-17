@@ -23,13 +23,72 @@
   transition: 0.45s;
 }
 
+.deckColorContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 12px;
+}
+
+.colorSymbolContainer {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.deckColorDot {
+  height: 26px;
+  width: 26px;
+  border-radius: 100%;
+  background: transparent;
+  display: block;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin: 0 3px;
+}
+
+.colorBarContainer {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-end;
+  padding-bottom: 12px;
+}
+
+.colorBar {
+  width: 18px;
+  margin: 7px;
+}
+
+.redBar {
+  background-color: darkred;
+  border: 1px solid black;
+}
+
+.blueBar {
+  background-color: darkblue;
+  border: 1px solid black;
+}
+
+.greenBar {
+  background-color: darkgreen;
+  border: 1px solid black;
+}
+
+.whiteBar {
+  background-color: whitesmoke;
+  border: 1px solid black;
+}
+
+.blackBar {
+  background-color: black;
+  border: 1px solid black;
+}
+
 .cardColorDot {
   height: 20px;
   width: 20px;
   margin: 2px 0;
   margin-right: 1px;
   border-radius: 100%;
-  display: inline-block;
   background: transparent;
   border: 1px solid black;
   display: block;
@@ -41,18 +100,24 @@
 
 .blue {
   content: url("../utils/images/mana/BlueMana.png");
+  border: 1px solid black;
 }
 .black {
   content: url("../utils/images/mana/BlackMana.png");
+  border: 1px solid black;
 }
 .green {
   content: url("../utils/images/mana/GreenMana.png");
+  border: 1px solid black;
 }
 .red {
   content: url("../utils/images/mana/RedMana.png");
+  background-color: darkred;
+  border: 1px solid black;
 }
 .white {
   content: url("../utils/images/mana/WhiteMana.png");
+  border: 1px solid black;
 }
 .C {
   content: url("../utils/images/mana/ColorlessMana.png");

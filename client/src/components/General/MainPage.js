@@ -1,22 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import ScrollTrigger from "react-scroll-trigger";
 
 import Navigation from "./Navigation";
 import MainBody from "./MainBody";
 
 const MainPage = () => {
+  const [navSticky, setNavSticky] = useState(false);
+  const [buildSticky, setBuildSticky] = useState(false);
+
   return (
     <div className="mainPage">
+      <Navigation
+        mainPage={true}
+        navSticky={navSticky}
+        buildSticky={buildSticky}
+      />
       <div className="headerBody">
-        <Navigation />
         <div className="heroText">Welcome to Magenta</div>
         <p className="taglineText">A Magic: the Gathering Deckbuilder</p>
         <div className="headerButtonsContainer">
-          <Link to="/builder">
-            <button className="headerButton builderEnter mainBuilderEnter">
-              Deck Builder
-            </button>
-          </Link>
+          <ScrollTrigger
+            onEnter={() => {
+              setNavSticky(false);
+              setBuildSticky(false);
+            }}
+            onExit={() => {
+              setNavSticky(true);
+              setBuildSticky(true);
+            }}
+          >
+            <Link to="/builder">
+              <button className="headerButton builderEnter mainBuilderEnter">
+                Deck Builder
+              </button>
+            </Link>
+          </ScrollTrigger>
           <Link to="/decks">
             <button className="headerButton decklistEnter">Deck List</button>
           </Link>
@@ -33,9 +52,16 @@ const MainPage = () => {
         <div className="salesPitchCover" />
         <div className="salesPitchCTA">
           <p className="salesPitchTitle">Get Started</p>
-          <Link to="/builder" className="salesPitchButton">
-            <button className="headerButton builderEnter">Deck Builder</button>
-          </Link>
+          <ScrollTrigger
+            onEnter={() => setBuildSticky(false)}
+            onExit={() => setBuildSticky(true)}
+          >
+            <Link to="/builder" className="salesPitchButton">
+              <button className="headerButton builderEnter mainBuilderEnter">
+                Deck Builder
+              </button>
+            </Link>
+          </ScrollTrigger>
         </div>
       </div>
     </div>

@@ -1,12 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
-const BuilderButton = () => {
+const BuilderButton = ({ navVariant, buildSticky }) => {
   return (
     <Link to="/builder">
-      <button className="headerButton builderEnter" style={{ height: "40px" }}>
+      <motion.button
+        className="headerButton builderEnter mainBuilderEnter"
+        style={{ height: "40px" }}
+        variants={buildSticky && navVariant}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
         Deck Builder
-      </button>
+      </motion.button>
     </Link>
   );
 };

@@ -17,7 +17,11 @@ const BuilderPage = ({ openDeckList, toggleDeckList }) => {
 
   return (
     <div className="builderPage">
-      <Navigation openDeckList={openDeckList} toggleDeckList={toggleDeckList} />
+      <Navigation
+        openDeckList={openDeckList}
+        toggleDeckList={toggleDeckList}
+        mainPage={false}
+      />
       {openDeckList && <DeckScrollList />}
       <Route exact path={path} component={NewDeckContainer} />
       <Route path={`${path}/:deckId`} component={BuilderContainer} />

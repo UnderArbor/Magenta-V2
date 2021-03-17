@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { produce } from "immer";
+import { AnimatePresence, motion } from "framer-motion";
 
 import HomeLogo from "./HomeLogo";
 import RegisterButton from "../Account/RegisterButton";
@@ -21,6 +22,9 @@ const Navigation = ({
   registerUser,
   loginUser,
   logoutUser,
+  mainPage,
+  navSticky,
+  buildSticky,
 }) => {
   const [errors, setErrors] = useState({
     userName: "",
@@ -63,6 +67,7 @@ const Navigation = ({
       },
     },
     exit: {
+      opacity: 0,
       transition: {
         duration: 0.05,
         ease: "easeOut",
@@ -70,17 +75,58 @@ const Navigation = ({
     },
   };
 
+  const navVariant = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+        ease: "linear",
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        duration: 0.3,
+        ease: "linear",
+      },
+    },
+  };
+
+  let navStyles = {};
+
+  if (!mainPage) {
+    navStyles = {
+      position: "relative",
+    };
+  }
+
   return (
-    <div className="navContainer">
+    <div className="navContainer" style={navStyles}>
+      <AnimatePresence>
+        {mainPage && navSticky && (
+          <motion.div
+            className="navColor"
+            variants={navVariant}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          />
+        )}
+      </AnimatePresence>
       <HomeLogo position={true} />
-      {openDeckList !== undefined ? (
-        <DeckListButton
-          toggleDeckList={toggleDeckList}
-          openDeckList={openDeckList}
-        />
-      ) : (
-        <BuilderButton navBoolean={true} />
-      )}
+      <AnimatePresence>
+        {openDeckList !== undefined ? (
+          <DeckListButton
+            toggleDeckList={toggleDeckList}
+            openDeckList={openDeckList}
+          />
+        ) : buildSticky === true || buildSticky === undefined ? (
+          <BuilderButton navVariant={navVariant} buildSticky={buildSticky} />
+        ) : null}
+      </AnimatePresence>
       <div className="authLinks">
         {!isAuthenticated || user === null ? (
           <Fragment>

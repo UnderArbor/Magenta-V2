@@ -30,13 +30,14 @@ const NewDeckZone = ({
       </div>
       <div className="fieldGroup">
         <p className="fieldTitle">Format</p>
-
-        <button
-          className="newDeckFormatField formatInput"
-          onClick={() => setOpenFormat(true)}
-        >
-          {currentFormat}
-          <img className="menuDownArrow" src={DownArrow} />
+        <div className="deckFormatContainer">
+          <button
+            className="newDeckFormatField formatInput"
+            onClick={() => setOpenFormat(true)}
+          >
+            {currentFormat}
+            <img className="menuDownArrow" src={DownArrow} />
+          </button>
           {openFormat && (
             <FormatOptions
               currentFormat={currentFormat}
@@ -44,7 +45,7 @@ const NewDeckZone = ({
               setOpenFormat={setOpenFormat}
             />
           )}
-        </button>
+        </div>
       </div>
       <div className="fieldGroup">
         <p className="fieldTitle notAllowed">Commander:</p>

@@ -16,6 +16,10 @@ const NewDeckContainer = ({ user, uploadPacket, toggleDeckList }) => {
     deckCommander: "",
   });
 
+  const [openFormat, setOpenFormat] = useState(false);
+
+  const { deckName, deckFormat, deckCommander } = deckInfo;
+
   useEffect(() => {
     if (user !== null) {
       toggleDeckList(true);
@@ -23,10 +27,6 @@ const NewDeckContainer = ({ user, uploadPacket, toggleDeckList }) => {
       toggleDeckList(false);
     }
   }, []);
-
-  const [openFormat, setOpenFormat] = useState(false);
-
-  const { deckName, deckFormat, deckCommander } = deckInfo;
 
   const createDeck = async () => {
     if (user) {

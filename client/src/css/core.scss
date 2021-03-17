@@ -20,10 +20,7 @@ $card-height: 168px;
 $card-border-radius: 3mm;
 $card-border: 5px;
 
-// $popup-width: 420px;
-// $popup-height: 588px;
-
-$popup-width: 27.4vw;
+$popup-width: 24vw;
 $popup-height: calc(#{$popup-width} * 7 / 5);
 
 $tools-width: 300px;
@@ -58,7 +55,7 @@ $header-font: "Cinzel";
 }
 
 .logoFlair {
-  color: lighten($primary-color, 10%);
+  color: lighten($primary-color, 15%);
 }
 
 .topLogo {
@@ -83,6 +80,18 @@ $header-font: "Cinzel";
   align-items: center;
   width: 100%;
   z-index: 10;
+  position: fixed;
+  top: 0;
+}
+
+.navColor {
+  width: 100%;
+  height: 100%;
+  background-color: darken($primary-color, 10%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 
 .authLinks {
@@ -120,19 +129,20 @@ $header-font: "Cinzel";
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  z-index: 200;
 }
 
 .heroText {
   font-family: $header-font;
   font-size: 48px;
   margin: 0 auto;
-  margin-top: 15vh;
+  padding-top: 30vh;
   @include respond-to("small") {
     font-size: 60px;
   }
   @include respond-to("medium") {
     font-size: 72px;
-    margin-top: 20vh;
+    padding-top: 35vh;
   }
   @include respond-to("large") {
     font-size: 84px;
@@ -183,6 +193,8 @@ $header-font: "Cinzel";
   color: $dark-background-color;
   background-color: $accent-color;
   font-weight: bold;
+  opacity: 1;
+  visibility: visible;
 }
 
 .mainBuilderEnter {
@@ -581,6 +593,7 @@ $header-font: "Cinzel";
   color: $dark-background-color;
   font-family: $header-font;
   color: $light-background-color;
+  width: 50%;
 }
 
 .formatHeader {
@@ -593,12 +606,12 @@ $header-font: "Cinzel";
   background-color: transparent;
   font-size: 24px;
   font-family: $header-font;
-  margin-left: 6px;
   color: $light-text;
   background-color: $primary-color;
   display: flex;
   justify-content: space-between;
   position: relative;
+  text-overflow: ellipsis;
 }
 
 .menuDownArrow {
@@ -626,8 +639,8 @@ $header-font: "Cinzel";
   position: absolute;
   display: flex;
   flex-direction: column;
-  top: 32px;
-  left: -2px;
+  top: 46px;
+  left: 0;
   height: 300px;
   overflow-y: scroll;
   background-color: $dark-background-color;
@@ -686,6 +699,12 @@ $header-font: "Cinzel";
   object-position: 50% 50%;
   filter: saturate(110%) contrast(110%);
   opacity: 0.6;
+}
+
+.deckColorContainer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .hoverArt {
@@ -1022,7 +1041,7 @@ $header-font: "Cinzel";
 }
 
 .settingsCover {
-  background-color: hsla(0, 0%, 9%, 0.55);
+  background-color: hsla(0, 0%, 9%, 0.35);
   opacity: 0;
   z-index: 7;
   transition: 0.45s;
@@ -1037,7 +1056,7 @@ $header-font: "Cinzel";
 }
 
 .settingsIcon {
-  opacity: 0.25;
+  opacity: 0.75;
   height: 88px;
   width: 88px;
   margin: auto;
@@ -1141,12 +1160,12 @@ $header-font: "Cinzel";
 
 .popupTR {
   left: calc(#{$card-width} + 4px);
-  bottom: 60px;
+  bottom: 58px;
 }
 
 .popupTL {
   right: calc(#{$card-width} + 4px);
-  bottom: 60px;
+  bottom: 58px;
 }
 
 .hiddenCard {
@@ -1398,9 +1417,9 @@ $header-font: "Cinzel";
   height: 32px;
   font-size: 17px;
   font-family: $body-font;
-  width: 50%;
   margin: 14px 0;
   word-wrap: break-word;
+  width: 100%;
 }
 
 .createDeckButton {
@@ -1433,7 +1452,7 @@ $header-font: "Cinzel";
   border-bottom-width: 3.1px;
   width: fit-content;
   font-family: $header-font;
-  font-size: 52px;
+  font-size: 48px;
   color: $light-text;
   cursor: pointer;
 }

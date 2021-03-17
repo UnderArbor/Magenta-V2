@@ -5,7 +5,7 @@ import Navigation from "../General/Navigation";
 const BuilderError = () => {
   return (
     <div className="builderPage">
-      <Navigation />
+      <Navigation mainPage={false} />
       <div className="errorContainer">
         <p className="errorMessage">Beep Boop, your URL is poop</p>
       </div>

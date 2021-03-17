@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import DeckNameDisplay from "./DeckNameDisplay";
 import DeckFormatSelector from "./DeckFormatSelector";
 import BoardSelector from "./BoardSelector";
+import DeckColors from "./DeckColors";
 
 import ExitIcon from "../../../utils/icons/exitButton.svg";
 
@@ -18,6 +19,7 @@ const DeckBanner = ({
   boards,
   setBoardState,
   currentBoard,
+  colors,
 }) => {
   let history = useHistory();
   const deckImageRef = useRef(null);
@@ -82,6 +84,7 @@ const DeckBanner = ({
           className={!isOver ? "deckArt" : "deckArt hoverArt"}
           src={deckInfo.deckImage}
         />
+        <DeckColors colors={colors} />
       </div>
       <img
         className="builderExit"

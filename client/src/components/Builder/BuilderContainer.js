@@ -57,8 +57,15 @@ const BuilderContainer = ({
     ratio: -1,
     length: -1,
   });
+  const [colors, setColors] = useState({
+    white: 0,
+    green: 0,
+    red: 0,
+    black: 0,
+    blue: 0,
+  });
 
-  const { deckName, deckFormat, deckImage } = deckInfo;
+  const { deckImage } = deckInfo;
 
   function openModal() {
     setIsOpen(true);
@@ -206,6 +213,38 @@ const BuilderContainer = ({
       });
     });
     setCardCount(quantity);
+
+    if (currentBoard === "Mainboard") {
+      const newColors = produce(colors, (draft) => {
+        draft.white = 0;
+        draft.green = 0;
+        draft.red = 0;
+        draft.black = 0;
+        draft.blue = 0;
+        boardTypes.forEach((type) => {
+          type.cards.forEach((card) => {
+            card.colors.forEach((color) => {
+              if (color.includes("W")) {
+                draft.white += Number(card.quantity);
+              }
+              if (color.includes("G")) {
+                draft.green += Number(card.quantity);
+              }
+              if (color.includes("R")) {
+                draft.red += Number(card.quantity);
+              }
+              if (color.includes("B")) {
+                draft.black += Number(card.quantity);
+              }
+              if (color.includes("U")) {
+                draft.blue += Number(card.quantity);
+              }
+            });
+          });
+        });
+      });
+      setColors(newColors);
+    }
 
     var index = -1;
     index = boards.findIndex((board) => {
@@ -395,6 +434,7 @@ const BuilderContainer = ({
             boards={boards}
             setBoardState={setBoardState}
             currentBoard={currentBoard}
+            colors={colors}
           />
           <DeckContainer
             types={boardTypes}

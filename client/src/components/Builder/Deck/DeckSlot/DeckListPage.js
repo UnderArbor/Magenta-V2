@@ -10,7 +10,7 @@ const DeckListPage = ({ user, isAuthenticated, deckId }) => {
 
   return (
     <div className="deckListPage">
-      <Navigation />
+      <Navigation mainPage={false} />
       <div className="deckListUser">{title}</div>
       <div className="deckInventory">
         {user && isAuthenticated ? (

@@ -22,13 +22,13 @@ const FormatOptions = ({ currentFormat, setDeckInfo, setOpenFormat }) => {
       // Unbind the event listener on clean up
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  });
+  }, []);
 
   return (
     <div className="formatOptionContainer" ref={formatWindow}>
       {formatList.map((format) => {
         return (
-          <button
+          <div
             className={
               format !== currentFormat && format !== "Brew"
                 ? "formatOption"
@@ -38,15 +38,15 @@ const FormatOptions = ({ currentFormat, setDeckInfo, setOpenFormat }) => {
             }
             key={format}
             onClick={() => {
+              setOpenFormat(false);
               setDeckInfo((prevState) => ({
                 ...prevState,
                 deckFormat: format,
               }));
-              setOpenFormat(false);
             }}
           >
             {format}
-          </button>
+          </div>
         );
       })}
     </div>
