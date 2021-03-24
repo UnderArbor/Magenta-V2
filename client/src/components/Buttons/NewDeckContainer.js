@@ -35,7 +35,10 @@ const NewDeckContainer = ({ user, uploadPacket, toggleDeckList }) => {
         history.push(`/builder/${res.data._id}`);
       });
     } else {
-      history.push("/builder/NewDeck");
+      history.push({
+        pathname: "/builder/NewDeck",
+        state: { name: deckName, format: deckFormat },
+      });
     }
   };
 

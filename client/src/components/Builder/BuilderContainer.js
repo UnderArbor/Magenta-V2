@@ -5,7 +5,7 @@ import produce from "immer";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 import DeckBanner from "./Deck/DeckBanner";
 import DeckContainer from "./Deck/DeckContainer";
@@ -33,6 +33,7 @@ const BuilderContainer = ({
   settingsCloak,
 }) => {
   let history = useHistory();
+  const location = useLocation();
   const [modalIsOpen, setIsOpen] = useState(false);
   const [currentBoard, setBoardState] = useState("Mainboard");
   const [boards, setBoards] = useState([
@@ -113,8 +114,8 @@ const BuilderContainer = ({
     else {
       setDeckInfo({
         deckId,
-        deckName: "New Deck",
-        deckFormat: "Custom",
+        deckName: location.state.name,
+        deckFormat: location.state.format,
         deckImage:
           "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
       });
@@ -476,11 +477,8 @@ const BuilderContainer = ({
             const result = tokenArray.filter((item) => {
               return item.name !== token.name;
             });
-            console.log("result: ", result);
             if (result.length === tokenArray.length) {
-              console.log("tokenArrayBefore: ", tokenArray);
               tokenArray.push(token);
-              console.log("tokenArrayAfter: ", tokenArray);
             }
           });
         }
