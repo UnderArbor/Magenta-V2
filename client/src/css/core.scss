@@ -62,8 +62,11 @@ $header-font: "Cinzel";
 
 .topLogo {
   margin-top: 10px;
-  font-size: 40px;
+  font-size: 32px;
   @include respond-to("small") {
+    font-size: 40px;
+  }
+  @include respond-to("medium") {
     font-size: 48px;
   }
   font-weight: 600;
@@ -82,18 +85,18 @@ $header-font: "Cinzel";
 }
 
 .navContainer {
-  height: $header-height;
   color: $light-text;
   background-color: transparent;
   display: flex;
   text-align: center;
-  justify-content: center;
+  justify-content: space-between;
+  height: $header-height / 1.2;
   @include respond-to("small") {
-    justify-content: space-between;
+    height: $header-height;
   }
   align-items: center;
   width: 100%;
-  padding: 0 10vw;
+  padding: 0 4vw;
   z-index: 10;
   position: fixed;
   top: 0;
@@ -112,17 +115,23 @@ $header-font: "Cinzel";
 .authLinks {
   position: relative;
   float: right;
-  display: none;
-  @include respond-to("small") {
-    display: flex;
-  }
+  display: flex;
   flex-direction: row;
   align-items: center;
   height: 100%;
 }
 
 .authLink {
-  font-size: 28px;
+  font-size: 18px;
+  @include respond-to("small") {
+    font-size: 21px;
+  }
+  @include respond-to("medium") {
+    font-size: 24px;
+  }
+  @include respond-to("large") {
+    font-size: 28px;
+  }
   color: $light-background-color;
   font-family: $secondary-font;
 }
@@ -1801,7 +1810,7 @@ $header-font: "Cinzel";
 }
 
 .smallDiv {
-  display: flex;
+  display: inline-block;
   @include respond-to("medium") {
     display: none;
   }
@@ -1810,6 +1819,6 @@ $header-font: "Cinzel";
 .largeDiv {
   display: none;
   @include respond-to("medium") {
-    display: flex;
+    display: inline-block;
   }
 }

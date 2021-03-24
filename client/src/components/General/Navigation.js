@@ -116,7 +116,7 @@ const Navigation = ({
           />
         )}
       </AnimatePresence>
-      <HomeLogo position={true} size="large" />
+      <HomeLogo position={true} />
       {/* <button onClick={() => document.body.requestFullscreen()}>
         Fullscreen
       </button> */}
@@ -128,8 +128,7 @@ const Navigation = ({
           />
         ) : buildSticky === true || buildSticky === undefined ? (
           <BuilderButton navVariant={navVariant} buildSticky={buildSticky} />
-        ) : // <HomeLogo position={true} size="small" navVariant={navVariant} />
-        null}
+        ) : null}
       </AnimatePresence>
       <div className="authLinks">
         {!isAuthenticated || user === null ? (

@@ -1,13 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const BuilderButton = ({ navVariant, buildSticky }) => {
   return (
     <Link to="/builder">
       <motion.button
-        className="headerButton builderEnter mainBuilderEnter"
-        style={{ height: "40px" }}
+        className="largeDiv headerButton builderEnter mainBuilderEnter "
+        style={{ height: "40px", textDecoration: "none" }}
         variants={buildSticky && navVariant}
         initial="hidden"
         animate="visible"

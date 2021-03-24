@@ -2,12 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-const HomeLogo = ({ position, size, navVariant }) => {
-  const sizeClass =
-    size === "small" ? "smallDiv" : size === "large" ? "largeDiv" : null;
+const HomeLogo = ({ position, navVariant }) => {
   const positionClass = position
-    ? `${sizeClass} magentaLogo topLogo`
-    : `${sizeClass} magentaLogo bottomLogo`;
+    ? `magentaLogo topLogo`
+    : `magentaLogo bottomLogo`;
 
   return (
     <Link to="/" style={{ textDecoration: "none" }}>
