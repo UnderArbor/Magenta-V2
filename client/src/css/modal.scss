@@ -113,14 +113,15 @@ $modal-border: #fff56b;
 }
 
 .authInput {
-  font-size: 36px;
   height: 44px;
   margin: 10px 0 16px 0;
   border-radius: 4px;
   width: 100%;
+  font-size: 24px;
   @include respond-to("medium") {
     width: 50%;
     margin: 24px 0;
+    font-size: 36px;
   }
   z-index: 3;
 }
