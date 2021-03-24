@@ -135,14 +135,16 @@ const BuilderContainer = ({
           sideboard = true;
           continue;
         }
-        const newCard = uploadCards[i].split(/(?<=^\S+)\s/);
+        const newCard = uploadCards[i].split(
+          /(^[0-9]+x?)\s([^\(]+)|$(\([\S]*\))\s(?:[\d]*)/
+        );
         setImportDisplay({
-          name: newCard[1],
+          name: newCard[2],
           index: i,
           ratio: (i / uploadCards.length) * 100,
           length: uploadCards.length,
         });
-        const card = await getCardInfo(newCard[1]);
+        const card = await getCardInfo(newCard[2]);
         if (card !== null) {
           if (
             deckInfo.deckImage ===
@@ -153,7 +155,8 @@ const BuilderContainer = ({
               deckImage: card.cardArt,
             }));
           }
-          card.quantity = newCard[0];
+          const cardQuant = newCard[1].split(/([\d]+)|$(x)/);
+          card.quantity = cardQuant[1];
           var indexOfType = -1;
           if (!sideboard) {
             for (var j = 0; j < newCardsArray.length; ++j) {
@@ -471,10 +474,13 @@ const BuilderContainer = ({
         if (card.tokens.length > 0) {
           card.tokens.forEach((token) => {
             const result = tokenArray.filter((item) => {
-              item.name === token.name;
+              return item.name !== token.name;
             });
-            if (result.length === 0) {
+            console.log("result: ", result);
+            if (result.length === tokenArray.length) {
+              console.log("tokenArrayBefore: ", tokenArray);
               tokenArray.push(token);
+              console.log("tokenArrayAfter: ", tokenArray);
             }
           });
         }
