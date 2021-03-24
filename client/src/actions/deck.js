@@ -6,6 +6,7 @@ import {
   OPEN_DECK_LIST,
   TOGGLE_DISPLAY,
   DECK_ERROR,
+  SETTINGS_CLOAK,
 } from "./types";
 
 import axios from "axios";
@@ -73,6 +74,14 @@ export const toggleDeckList = (boolean) => (dispatch) => {
 export const toggleDisplaySetting = (checked, id) => (dispatch) => {
   try {
     dispatch({ type: TOGGLE_DISPLAY, payload: { checked, id } });
+  } catch (error) {
+    dispatch({ type: DECK_ERROR });
+  }
+};
+
+export const cloakSettings = (cloakBool) => (dispatch) => {
+  try {
+    dispatch({ type: SETTINGS_CLOAK, payload: cloakBool });
   } catch (error) {
     dispatch({ type: DECK_ERROR });
   }

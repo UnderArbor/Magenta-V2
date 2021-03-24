@@ -1,5 +1,6 @@
-import React, { Fragment } from "react";
+import React from "react";
 import TypeContainer from "./Types/TypeContainer";
+import { motion, AnimatePresence } from "framer-motion";
 
 import Masonry from "react-masonry-css";
 
@@ -22,7 +23,29 @@ const DeckContainer = ({
   setCardDrag,
   toggleType,
   deckImage,
+  boards,
+  currentBoard,
+  moveBoards,
+  settingsCloak,
 }) => {
+  const cloakVariant = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 0.6,
+      transition: {
+        duration: 0.25,
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        duration: 0.25,
+      },
+    },
+  };
+
   let offset = 0;
 
   const breakpointColumnsObj = {
@@ -33,6 +56,17 @@ const DeckContainer = ({
 
   return (
     <div className="deckContainer">
+      <AnimatePresence>
+        {settingsCloak && (
+          <motion.div
+            className="settingsCloak"
+            variants={cloakVariant}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          />
+        )}
+      </AnimatePresence>
       <SearchBarContainer
         types={types}
         setTypes={setTypes}
@@ -62,6 +96,9 @@ const DeckContainer = ({
               cardDrag={cardDrag}
               setCardDrag={setCardDrag}
               toggleType={toggleType}
+              boards={boards}
+              currentBoard={currentBoard}
+              moveBoards={moveBoards}
             />
           );
         })}

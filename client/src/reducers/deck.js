@@ -4,6 +4,7 @@ import {
   OPEN_DECK_LIST,
   TOGGLE_DISPLAY,
   DECK_ERROR,
+  SETTINGS_CLOAK,
 } from "../actions/types";
 
 const initialState = {
@@ -13,9 +14,10 @@ const initialState = {
   displaySettings: {
     displayMana: true,
     displayQuantity: true,
-    displayIndicator: true,
+    displayIndicator: false,
     displayName: true,
   },
+  settingsCloak: false,
 };
 
 export default function (state = initialState, action) {
@@ -63,6 +65,8 @@ export default function (state = initialState, action) {
             },
           };
       }
+    case SETTINGS_CLOAK:
+      return { ...state, settingsCloak: payload };
     case DECK_ERROR:
       return state;
     default:

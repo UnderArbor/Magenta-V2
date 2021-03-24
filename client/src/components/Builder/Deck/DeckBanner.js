@@ -24,6 +24,7 @@ const DeckBanner = ({
   let history = useHistory();
   const deckImageRef = useRef(null);
   const [openFormat, setOpenFormat] = useState(false);
+  const [showBars, setShowBars] = useState(false);
 
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.CARD,
@@ -83,8 +84,10 @@ const DeckBanner = ({
           ref={deckImageRef}
           className={!isOver ? "deckArt" : "deckArt hoverArt"}
           src={deckInfo.deckImage}
+          onMouseEnter={() => setShowBars(true)}
+          onMouseLeave={() => setShowBars(false)}
         />
-        <DeckColors colors={colors} />
+        <DeckColors colors={colors} showBars={showBars} />
       </div>
       <img
         className="builderExit"

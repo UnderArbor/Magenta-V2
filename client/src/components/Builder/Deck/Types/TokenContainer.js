@@ -49,9 +49,9 @@ const TokenContainer = ({ tokens }) => {
 
   return (
     <div className="tokenContent">
+      <div className="typeTitle">Tokens</div>
+      <hr className="typeDivider" />
       <div className="typeContainer">
-        <div className="typeTitle">Tokens</div>
-        <hr className="typeDivider" />
         <AnimatePresence>
           {tokens.map((token) => {
             return (

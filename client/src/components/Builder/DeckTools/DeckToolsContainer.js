@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { motion, AnimatePresence } from "framer-motion";
+import variables from "../../../css/core.scss";
 
 import { toggleDisplaySetting } from "../../../actions/deck";
 
@@ -13,6 +14,7 @@ const DeckToolsContainer = ({
   displaySettings,
   toggleDisplaySetting,
 }) => {
+  const [cardSize, setCardSize] = useState(100);
   const toolsButtonHTML = tools ? "Close" : "Tools";
 
   const buttonVariant = {
@@ -30,6 +32,11 @@ const DeckToolsContainer = ({
       },
     },
   };
+
+  useEffect(() => {
+    root.style.setProperty("--card-width", (cardSize / 100) * 120 + "px");
+    root.style.setProperty("--card-height", (cardSize / 100) * 168 + "px");
+  }, [cardSize]);
 
   return (
     <div className="decktoolsContainer">
@@ -57,6 +64,8 @@ const DeckToolsContainer = ({
         tools={tools}
         displaySettings={displaySettings}
         toggleDisplaySetting={toggleDisplaySetting}
+        cardSize={cardSize}
+        setCardSize={setCardSize}
       />
     </div>
   );

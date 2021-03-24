@@ -3,6 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 import Settings from "./Settings";
 
 import getSets from "../../../../../utils/functions/getSets";
+import { cloakSettings } from "../../../../../actions/deck";
 
 const SettingsContainer = ({
   typeIndex,
@@ -13,6 +14,10 @@ const SettingsContainer = ({
   changeDeckArt,
   flipX,
   flipY,
+  boards,
+  currentBoard,
+  moveBoards,
+  cloakSettings,
 }) => {
   const settingWindow = useRef(null);
   const setImage = useRef(null);
@@ -21,6 +26,7 @@ const SettingsContainer = ({
   const [sets, setSets] = useState({ setList: [], loading: false });
   const [filterSets, setFilterSets] = useState([]);
   const [openSetDropDown, setOpenSetDropDown] = useState(false);
+  const [boardQuantity, setBoardQuantity] = useState(card.quantity);
   const [imageCoords, setImageCoords] = useState({
     top: Number(150),
     left: Number(420),
@@ -34,7 +40,7 @@ const SettingsContainer = ({
       setFilterSets(newSets);
     }
     getData();
-  }, [name]);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -42,15 +48,9 @@ const SettingsContainer = ({
         settingWindow.current &&
         !settingWindow.current.contains(event.target)
       ) {
-        let cardContainers = document.querySelectorAll(".cardContainer");
-
-        cardContainers.forEach(function (item) {
-          item.style.opacity = "1";
-          setTimeout(() => {
-            item.style.pointerEvents = "auto";
-          }, 1);
-        });
-
+        cloakSettings(false);
+        const currentCard = document.getElementById(card.name);
+        currentCard.style.zIndex = null;
         setOpenSettings(false);
       }
     }
@@ -60,9 +60,12 @@ const SettingsContainer = ({
 
     return () => {
       // Unbind the event listener on clean up
+      cloakSettings(false);
+      const currentCard = document.getElementById(card.name);
+      currentCard.style.zIndex = null;
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  });
+  }, []);
 
   useEffect(() => {
     if (userQuery !== "" && sets.loading === false) {
@@ -101,6 +104,11 @@ const SettingsContainer = ({
       changeDeckArt={changeDeckArt}
       flipX={flipX}
       flipY={flipY}
+      boardQuantity={boardQuantity}
+      setBoardQuantity={setBoardQuantity}
+      boards={boards}
+      currentBoard={currentBoard}
+      moveBoards={moveBoards}
     />
   );
 };

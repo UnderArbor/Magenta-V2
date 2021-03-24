@@ -105,7 +105,7 @@ const Navigation = ({
 
   return (
     <div className="navContainer" style={navStyles}>
-      <AnimatePresence>
+      <AnimatePresence exitBeforeEnter>
         {mainPage && navSticky && (
           <motion.div
             className="navColor"
@@ -116,8 +116,11 @@ const Navigation = ({
           />
         )}
       </AnimatePresence>
-      <HomeLogo position={true} />
-      <AnimatePresence>
+      <HomeLogo position={true} size="large" />
+      {/* <button onClick={() => document.body.requestFullscreen()}>
+        Fullscreen
+      </button> */}
+      <AnimatePresence exitBeforeEnter>
         {openDeckList !== undefined ? (
           <DeckListButton
             toggleDeckList={toggleDeckList}
@@ -125,7 +128,8 @@ const Navigation = ({
           />
         ) : buildSticky === true || buildSticky === undefined ? (
           <BuilderButton navVariant={navVariant} buildSticky={buildSticky} />
-        ) : null}
+        ) : // <HomeLogo position={true} size="small" navVariant={navVariant} />
+        null}
       </AnimatePresence>
       <div className="authLinks">
         {!isAuthenticated || user === null ? (

@@ -8,6 +8,7 @@ export const AUTH_ERROR = "AUTH_ERROR";
 
 export const OPEN_DECK_LIST = "OPEN_DECK_LIST";
 export const TOGGLE_DISPLAY = "TOGGLE_DISPLAY";
+export const SETTINGS_CLOAK = "SETTINGS_CLOAK";
 
 export const UPLOAD_PACKET = "UPLOAD_PACKET";
 export const UPDATE_DECKS = "UPDATE_DECKS";

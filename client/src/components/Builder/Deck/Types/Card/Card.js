@@ -27,6 +27,10 @@ const Card = ({
   flipY,
   movePopup,
   displaySettings,
+  boards,
+  currentBoard,
+  moveBoards,
+  cloakSettings,
 }) => {
   const cardClass = isDragging ? "ghostCard" : null;
 
@@ -84,6 +88,7 @@ const Card = ({
     <div className={cardClass}>
       <div
         ref={dragRef}
+        id={card.name}
         className="cardArtContainer"
         onMouseEnter={(e) => {
           movePopup(e, cardImageRef);
@@ -138,16 +143,12 @@ const Card = ({
               ? "settingsHover quantCover settingsCover"
               : "quantCover settingsCover"
           }
-          onClick={() => {
+          onClick={(e) => {
             if (!openSettings) {
-              let cardContainers = document.querySelectorAll(".cardContainer");
-              cardContainers.forEach(function (item) {
-                if (card.name !== item.id) {
-                  item.style.opacity = ".4";
-                }
-                item.style.pointerEvents = "none";
-              });
               setOpenSettings(true);
+              const currentCard = document.getElementById(card.name);
+              currentCard.style.zIndex = 100;
+              cloakSettings(true);
             }
           }}
         >
@@ -245,6 +246,10 @@ const Card = ({
           changeDeckArt={changeDeckArt}
           flipX={flipX}
           flipY={flipY}
+          boards={boards}
+          currentBoard={currentBoard}
+          moveBoards={moveBoards}
+          cloakSettings={cloakSettings}
         />
       ) : isHovering && !cardDrag ? (
         <motion.img
@@ -266,7 +271,7 @@ const Card = ({
         ></motion.img>
       ) : (
         <div
-          className={`bigCardImage hidden ${
+          className={`bigCardImage hiddenCard ${
             !flipX && !flipY
               ? "popupBR"
               : flipX && !flipY

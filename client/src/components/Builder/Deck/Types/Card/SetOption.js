@@ -12,7 +12,6 @@ const SetOption = ({
     <div>
       <div
         className="setOption"
-        style={{ top: `${index * 44}px` }}
         key={set.setName.concat(index)}
         onMouseOver={() => {
           setImage.current.src = set.cardImage;

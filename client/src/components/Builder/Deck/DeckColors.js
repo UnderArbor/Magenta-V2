@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { produce } from "immer";
 import { motion, AnimatePresence } from "framer-motion";
 
-const DeckColors = ({ colors }) => {
+const DeckColors = ({ colors, showBars }) => {
   const colorVariant = {
     hidden: {
       height: 0,
@@ -40,8 +40,6 @@ const DeckColors = ({ colors }) => {
       height5: 0,
     },
   });
-
-  const [showBars, setShowBars] = useState(false);
 
   useEffect(() => {
     var count = 0;
@@ -96,16 +94,8 @@ const DeckColors = ({ colors }) => {
         }
       });
     });
-    console.log("total: ", newColors.colorTotal);
     setColorInfo(newColors);
   }, [colors]);
-
-  useEffect(() => {
-    console.log(
-      "colors: ",
-      (colorInfo.heights.height1 / colorInfo.colorTotal) * 100
-    );
-  }, [colorInfo]);
 
   return (
     <div className="deckColorContainer">
@@ -161,11 +151,7 @@ const DeckColors = ({ colors }) => {
           </motion.ul>
         )}
       </AnimatePresence>
-      <ul
-        className="colorSymbolContainer"
-        onMouseEnter={() => setShowBars(true)}
-        onMouseLeave={() => setShowBars(false)}
-      >
+      <ul className="colorSymbolContainer">
         <li className={`deckColorDot ${colorInfo.classNames.class1}`}></li>
         <li
           className={`deckColorDot ${colorInfo.classNames.class2}`}

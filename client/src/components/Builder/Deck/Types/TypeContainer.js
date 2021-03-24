@@ -17,6 +17,9 @@ const TypeContainer = ({
   cardDrag,
   setCardDrag,
   toggleType,
+  boards,
+  currentBoard,
+  moveBoards,
 }) => {
   const typeRef = useRef(null);
 
@@ -67,7 +70,9 @@ const TypeContainer = ({
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.CARD,
     drop: (item) => {
-      moveCard(item.typeIndex, item.cardIndex, typeIndex, type.cards.length);
+      if (item.typeIndex !== typeIndex) {
+        moveCard(item.typeIndex, item.cardIndex, typeIndex, type.cards.length);
+      }
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -116,6 +121,9 @@ const TypeContainer = ({
                   moveCard={moveCard}
                   cardDrag={cardDrag}
                   setCardDrag={setCardDrag}
+                  boards={boards}
+                  currentBoard={currentBoard}
+                  moveBoards={moveBoards}
                 />
               );
             }

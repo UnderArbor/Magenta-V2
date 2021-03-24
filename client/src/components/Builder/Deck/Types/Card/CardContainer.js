@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 
 import { ItemTypes } from "../../../../Constants";
 import Card from "./Card";
+import { cloakSettings } from "../../../../../actions/deck";
 
 const CardContainer = ({
   typeIndex,
@@ -21,6 +22,10 @@ const CardContainer = ({
   cardDrag,
   setCardDrag,
   displaySettings,
+  boards,
+  currentBoard,
+  moveBoards,
+  cloakSettings,
 }) => {
   const cardRef = useRef(null);
   const cardImageRef = useRef(null);
@@ -462,6 +467,10 @@ const CardContainer = ({
           flipY={flipY}
           movePopup={movePopup}
           displaySettings={displaySettings}
+          boards={boards}
+          currentBoard={currentBoard}
+          moveBoards={moveBoards}
+          cloakSettings={cloakSettings}
         />
       </ReactHoverObserver>
     </motion.div>
@@ -470,10 +479,11 @@ const CardContainer = ({
 
 CardContainer.propTypes = {
   displaySettings: PropTypes.object.isRequired,
+  cloakSettings: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   displaySettings: state.deck.displaySettings,
 });
 
-export default connect(mapStateToProps)(CardContainer);
+export default connect(mapStateToProps, { cloakSettings })(CardContainer);

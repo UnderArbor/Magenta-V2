@@ -23,6 +23,11 @@ const Settings = ({
   changeDeckArt,
   flipX,
   flipY,
+  boardQuantity,
+  setBoardQuantity,
+  boards,
+  currentBoard,
+  moveBoards,
 }) => {
   return (
     <div
@@ -39,7 +44,7 @@ const Settings = ({
     >
       <p className="settingsTitle">{card.name}</p>
       <div className="settingSelector">
-        <p className="settingName">Change Set: </p>
+        <p className="settingName">Change Set </p>
         <input
           className="setInput"
           type="text"
@@ -78,14 +83,14 @@ const Settings = ({
           />
         ) : null}
       </div>
-      <img
+      {/* <img
         ref={setImage}
         draggable="false"
         className="smallCardImage hidden"
         style={{ left: `${imageCoords.left}px`, top: `${imageCoords.top}px` }}
         src={placeholder}
         alt="Doopsie"
-      ></img>
+      ></img> */}
       <button
         className="settingButton"
         onClick={() =>
@@ -97,6 +102,53 @@ const Settings = ({
       >
         Make Deck Image
       </button>
+      <div className="settingSelector">
+        <p className="settingName">Transfer to Board</p>
+        <div className="flexGroup">
+          <div className="settingMoveBoards">
+            <input
+              className="moveBoardInput"
+              value={boardQuantity}
+              onChange={(e) => {
+                if (
+                  !isNaN(e.target.value) &&
+                  Number(e.target.value) <= card.quantity
+                ) {
+                  setBoardQuantity(e.target.value);
+                }
+              }}
+            />
+            <p className="ofText">(of {card.quantity})</p>
+          </div>
+          <div className="settingBoardButtons">
+            {boards.map((board) => {
+              return (
+                <button
+                  key={board.name}
+                  className={
+                    board.name === currentBoard
+                      ? "boardButton invalidBoardButton notAllowed"
+                      : "boardButton"
+                  }
+                  onClick={() => {
+                    if (board.name !== currentBoard) {
+                      moveBoards(
+                        typeIndex,
+                        cardIndex,
+                        card,
+                        boardQuantity,
+                        board.name
+                      );
+                    }
+                  }}
+                >
+                  {board.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

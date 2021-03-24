@@ -17,6 +17,7 @@ $tools-color: #331036;
 
 $card-width: 120px;
 $card-height: 168px;
+
 $card-border-radius: 3mm;
 $card-border: 5px;
 
@@ -25,8 +26,8 @@ $popup-height: calc(#{$popup-width} * 7 / 5);
 
 $tools-width: 300px;
 
-$header-height: 140px;
-$footer-height: 180px;
+$header-height: 12vh;
+$footer-height: 15vh;
 
 $builder-height: 250vh;
 $deck-height: calc(#{$builder-height} - #{$banner-height});
@@ -45,6 +46,7 @@ $header-font: "Cinzel";
   background-color: $light-background-color;
   --card-width: #{$card-width};
   --card-height: #{$card-height};
+  width: 100%;
 }
 
 .magentaLogo {
@@ -59,15 +61,24 @@ $header-font: "Cinzel";
 }
 
 .topLogo {
-  margin-left: 60px;
   margin-top: 10px;
-  font-size: 48px;
+  font-size: 40px;
+  @include respond-to("small") {
+    font-size: 48px;
+  }
   font-weight: 600;
 }
 
 .bottomLogo {
-  font-size: 84px;
+  font-size: 60px;
+  @include respond-to("medium") {
+    font-size: 72px;
+  }
+  @include respond-to("large") {
+    font-size: 84px;
+  }
   font-weight: 700;
+  padding: 16px;
 }
 
 .navContainer {
@@ -76,9 +87,13 @@ $header-font: "Cinzel";
   background-color: transparent;
   display: flex;
   text-align: center;
-  justify-content: space-between;
+  justify-content: center;
+  @include respond-to("small") {
+    justify-content: space-between;
+  }
   align-items: center;
   width: 100%;
+  padding: 0 10vw;
   z-index: 10;
   position: fixed;
   top: 0;
@@ -97,11 +112,13 @@ $header-font: "Cinzel";
 .authLinks {
   position: relative;
   float: right;
-  display: flex;
+  display: none;
+  @include respond-to("small") {
+    display: flex;
+  }
   flex-direction: row;
   align-items: center;
   height: 100%;
-  margin: auto 128px;
 }
 
 .authLink {
@@ -165,6 +182,7 @@ $header-font: "Cinzel";
   color: $light-text;
   margin-top: 2vh;
   font-family: $body-font;
+  line-height: 32px;
 }
 
 .headerButtonsContainer {
@@ -172,21 +190,25 @@ $header-font: "Cinzel";
   flex-direction: column;
   margin: 0 auto;
   margin-top: 10vh;
+  width: 80%;
   @include respond-to("small") {
     flex-direction: row;
     margin-top: 18vh;
+    width: 70%;
   }
   justify-content: space-evenly;
-  width: 70%;
 }
 
 .headerButton {
   position: relative;
   height: 54px;
   border-radius: 13px;
-  width: 272px;
+  width: 230px;
+  @include respond-to("small") {
+    width: 272px;
+  }
   font-size: 24px;
-  margin: 12px 8px;
+  margin: 12px 0;
 }
 
 .builderEnter {
@@ -202,7 +224,7 @@ $header-font: "Cinzel";
 }
 
 .salesPitchDiv {
-  height: 900px;
+  height: 100vh - $header-height - $footer-height;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -410,7 +432,16 @@ $header-font: "Cinzel";
 
 .featureHeader {
   font-family: $header-font;
-  font-size: 64px;
+  font-size: 48px;
+  @include respond-to("small") {
+    font-size: 52px;
+  }
+  @include respond-to("medium") {
+    font-size: 58px;
+  }
+  @include respond-to("large") {
+    font-size: 64px;
+  }
   font-weight: bold;
   margin: 80px auto -40px auto;
   text-align: center;
@@ -426,7 +457,6 @@ $header-font: "Cinzel";
   justify-content: space-evenly;
   @include respond-to("large") {
     flex-direction: row;
-    // min-height: 1200px;
   }
   align-items: center;
   text-align: left;
@@ -447,9 +477,15 @@ $header-font: "Cinzel";
 
 .featureTitle {
   font-family: $header-font;
-  font-size: 44px;
+  font-size: 40px;
+  @include respond-to("small") {
+    font-size: 44px;
+  }
   @include respond-to("medium") {
-    font-size: 56px;
+    font-size: 50px;
+  }
+  @include respond-to("large") {
+    font-size: 58px;
   }
   margin: 20px 0;
   font-weight: 550;
@@ -641,8 +677,6 @@ $header-font: "Cinzel";
   flex-direction: column;
   top: 46px;
   left: 0;
-  height: 300px;
-  overflow-y: scroll;
   background-color: $dark-background-color;
   border: 1px solid grey;
   z-index: 10;
@@ -769,6 +803,16 @@ $header-font: "Cinzel";
   padding: 0 4%;
 }
 
+.settingsCloak {
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+  background-color: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 //TYPES
 
 .typeGrid {
@@ -780,7 +824,7 @@ $header-font: "Cinzel";
 }
 
 .skinnyGrid {
-  width: calc(100% - 580px);
+  width: calc(100% - 30vw);
   -webkit-transition: all 0.35s;
   transition: all 0.35s;
 }
@@ -791,15 +835,10 @@ $header-font: "Cinzel";
 }
 
 .typeContainer {
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  flex-wrap: wrap;
-  -webkit-column-break-inside: avoid; /* Chrome, Safari, Opera */
-  page-break-inside: avoid; /* Firefox */
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  min-height: $card-height / 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr));
+  column-gap: 8px;
+  min-height: var(--card-height) / 2;
 }
 
 .typeHeader {
@@ -890,20 +929,13 @@ $header-font: "Cinzel";
 }
 
 .typeContent {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  flex-wrap: wrap;
   width: 100%;
   margin-bottom: 40px;
 }
 
 .tokenContent {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin: 0 10px;
-  width: calc(100% - 20px);
+  width: 100%;
+  padding-bottom: 40px;
 }
 
 //CARDS
@@ -922,8 +954,8 @@ $header-font: "Cinzel";
 
 .cardContainer {
   position: relative;
-  width: $card-width;
-  margin: 20px 14px;
+  width: var(--card-width);
+  margin: 20px auto;
   border-radius: $card-border-radius;
   text-align: center;
   background-color: transparent;
@@ -931,8 +963,8 @@ $header-font: "Cinzel";
 
 .tokenContainer {
   position: relative;
-  width: $card-width;
-  margin: 16px 14px;
+  width: var(--card-width);
+  margin: 20px auto;
   border-radius: $card-border-radius;
   text-align: center;
 }
@@ -940,7 +972,7 @@ $header-font: "Cinzel";
 .cardArtContainer {
   position: relative;
   width: 100%;
-  height: $card-height;
+  height: var(--card-height);
   border-radius: $card-border-radius;
 }
 
@@ -980,7 +1012,6 @@ $header-font: "Cinzel";
   display: block;
   border-radius: $card-border-radius;
   border: $card-border solid hsl(300, 50, 7);
-  border-top-width: calc(#{$card-border} - 3px);
   background-color: $dark-background-color;
   object-fit: cover;
   object-position: 50% 0%;
@@ -1057,8 +1088,8 @@ $header-font: "Cinzel";
 
 .settingsIcon {
   opacity: 0.75;
-  height: 88px;
-  width: 88px;
+  width: 70%;
+  height: auto;
   margin: auto;
   z-index: 6;
   transform: translateY(-18px);
@@ -1149,38 +1180,38 @@ $header-font: "Cinzel";
 }
 
 .popupBR {
-  left: calc(#{$card-width + 4px});
+  left: calc(var(--card-width) + 4px);
   top: 0;
 }
 
 .popupBL {
-  right: calc(#{$card-width} + 4px);
+  right: calc(var(--card-width) + 4px);
   top: 0;
 }
 
 .popupTR {
-  left: calc(#{$card-width} + 4px);
+  left: calc(var(--card-width) + 4px);
   bottom: 58px;
 }
 
 .popupTL {
-  right: calc(#{$card-width} + 4px);
+  right: calc(var(--card-width) + 4px);
   bottom: 58px;
 }
 
 .hiddenCard {
-  border: 1px solid red;
+  visibility: hidden;
   pointer-events: none;
 }
 
 .cardDragImage {
-  width: $card-width;
-  height: $card-height;
+  width: var(--card-width);
+  height: var(--card-height);
 }
 
 .ghostCard {
-  width: $card-width;
-  height: $card-height;
+  width: var(--card-width);
+  height: var(--card-height);
   border: 3px dotted grey;
   border-radius: $card-border-radius;
   position: relative;
@@ -1207,7 +1238,9 @@ $header-font: "Cinzel";
   pointer-events: auto;
   opacity: 0.97;
   padding: 20% 30%;
-  box-shadow: 0px 4px 8px 2px darken($primary-color, 5%);
+  box-shadow: 0px 2px 8px 1px lighten($primary-color, 5%);
+  overflow-y: auto;
+  overflow-x: visible;
 }
 
 .settingsTitle {
@@ -1273,11 +1306,10 @@ $header-font: "Cinzel";
   white-space: nowrap;
   overflow-y: auto;
   overflow-x: hidden;
-  min-height: 350px;
+  max-height: 350px;
 }
 
 .setOption {
-  position: absolute;
   display: flex;
   align-items: center;
   width: 100%;
@@ -1285,6 +1317,7 @@ $header-font: "Cinzel";
   background-color: $dark-background-color;
   color: $light-text;
   border: 3px solid $primary-color;
+  border-top: 0px;
   text-indent: 4px;
   font-size: 24px;
   white-space: nowrap;
@@ -1314,16 +1347,61 @@ $header-font: "Cinzel";
   opacity: 1;
 }
 
+.settingMoveBoards {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.moveBoardInput {
+  background-color: $dark-background-color;
+  color: $light-text;
+  width: 36px;
+  font-size: 20px;
+  font-family: $body-font;
+}
+
+.settingBoardButtons {
+  display: flex;
+  flex-direction: column;
+}
+
+.boardButton {
+  padding: 4px 8px;
+  margin: 8px 0;
+  background-color: $primary-color;
+  font-family: $body-font;
+  font-size: 16px;
+  color: $light-text;
+}
+
+.invalidBoardButton {
+  background-color: $null-color;
+}
+
+.flexGroup {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 85%;
+  margin-left: 15%;
+}
+
+.ofText {
+  text-indent: 6px;
+}
+
 //Footer
 
 .footerContainer {
   background-color: $dark-background-color;
   color: $light-text;
   width: 100%;
-  height: $footer-height;
+  min-height: $footer-height;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  flex-wrap: wrap;
   align-items: center;
   border: none;
 }
@@ -1331,12 +1409,15 @@ $header-font: "Cinzel";
 .footerInfo {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  padding: 16px;
 }
 
 .footerCategory {
   display: flex;
   flex-direction: column;
   margin-right: 20px;
+  padding: 10px;
 }
 
 .footerLabel {
@@ -1523,7 +1604,7 @@ $header-font: "Cinzel";
   border: 1px solid $dark-text;
   background-color: $light-background-color;
   z-index: 10;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   color: $light-background-color;
   background-color: $dark-background-color;
@@ -1653,16 +1734,22 @@ $header-font: "Cinzel";
 .displayToggleContainer {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   margin: 40px 0;
+  padding-left: 44px;
 }
 
 .displaySetting {
   display: flex;
   flex-direction: row;
-  margin: 20px 80px;
-  width: 70%;
+  margin: 20px 0;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
+}
+
+.displaySlider {
+  width: 50%;
 }
 
 .displaySettingName {
@@ -1681,6 +1768,10 @@ $header-font: "Cinzel";
   font-weight: 600;
 }
 
+.toolSlider {
+  width: 10%;
+}
+
 // Utility
 
 #draggable {
@@ -1689,6 +1780,7 @@ $header-font: "Cinzel";
 
 .hidden {
   visibility: hidden;
+  display: none;
 }
 
 .noHover {
@@ -1706,4 +1798,18 @@ $header-font: "Cinzel";
   position: absolute;
   top: 180vh;
   right: 15vw;
+}
+
+.smallDiv {
+  display: flex;
+  @include respond-to("medium") {
+    display: none;
+  }
+}
+
+.largeDiv {
+  display: none;
+  @include respond-to("medium") {
+    display: flex;
+  }
 }

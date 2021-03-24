@@ -1,18 +1,27 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Switch from "react-switch";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+import Slider from "@material-ui/core/Slider";
 
 import DownArrow from "../../../utils/icons/format-down.svg";
+import { createMuiTheme, SwipeableDrawer } from "@material-ui/core";
 
-const DeckToolsItems = ({ tools, displaySettings, toggleDisplaySetting }) => {
+const DeckToolsItems = ({
+  tools,
+  displaySettings,
+  toggleDisplaySetting,
+  cardSize,
+  setCardSize,
+}) => {
   const toolsVariant = {
     hidden: {
       right: 0,
       width: "0px",
     },
     visible: {
-      right: 550,
-      width: "550px",
+      right: "30vw",
+      width: "30vw",
       transition: {
         ease: "easeOut",
         duration: 0.35,
@@ -52,6 +61,47 @@ const DeckToolsItems = ({ tools, displaySettings, toggleDisplaySetting }) => {
       },
     },
   };
+
+  const handleSliderChange = (event, newValue) => {
+    setCardSize(newValue);
+  };
+
+  // const SizeSlider = withStyles({
+  //   root: {
+  //     color: "#3a8589",
+  //     height: 3,
+  //     padding: "13px 0",
+  //   },
+  //   thumb: {
+  //     height: 27,
+  //     width: 27,
+  //     backgroundColor: "#fff",
+  //     border: "1px solid currentColor",
+  //     marginTop: -12,
+  //     marginLeft: -13,
+  //     boxShadow: "#ebebeb 0 2px 2px",
+  //     "&:focus, &:hover, &$active": {
+  //       boxShadow: "#ccc 0 2px 3px 1px",
+  //     },
+  //     "& .bar": {
+  //       // display: inline-block !important;
+  //       height: 9,
+  //       width: 1,
+  //       backgroundColor: "currentColor",
+  //       marginLeft: 1,
+  //       marginRight: 1,
+  //     },
+  //   },
+  //   active: {},
+  //   track: {
+  //     height: 3,
+  //   },
+  //   rail: {
+  //     color: "#d8d8d8",
+  //     opacity: 1,
+  //     height: 3,
+  //   },
+  // })(Slider);
 
   return (
     <AnimatePresence exitBeforeEnter>
@@ -148,6 +198,18 @@ const DeckToolsItems = ({ tools, displaySettings, toggleDisplaySetting }) => {
                   offHandleColor={"#a0a0a0"}
                   handleDiameter={36}
                 />
+              </div>
+              <div className="displaySetting">
+                <p className="displaySettingName">Card Size %</p>
+                <div className="displaySlider">
+                  <Slider
+                    value={cardSize}
+                    min={80}
+                    max={120}
+                    onChange={handleSliderChange}
+                    valueLabelDisplay="auto"
+                  />
+                </div>
               </div>
             </div>
           </div>

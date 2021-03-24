@@ -30,6 +30,7 @@ const BuilderContainer = ({
   savingDeck,
   setDeckId,
   match,
+  settingsCloak,
 }) => {
   let history = useHistory();
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -312,6 +313,78 @@ const BuilderContainer = ({
     setTypes(newTypes);
   }
 
+  async function moveBoards(
+    typeIndex,
+    cardIndex,
+    card,
+    moveQuantity,
+    newBoard
+  ) {
+    var oldBoardIndex = boards.findIndex((board) => {
+      return board.name == currentBoard;
+    });
+    var newBoardIndex = boards.findIndex((board) => {
+      return board.name == newBoard;
+    });
+
+    var newCardIndex = -1;
+    var newTypeIndex = -1;
+    newTypeIndex = boards[newBoardIndex].boardTypes.findIndex((type) => {
+      return card.mainType === type.name;
+    });
+
+    if (newTypeIndex !== -1) {
+      newCardIndex = boards[newBoardIndex].boardTypes[
+        newTypeIndex
+      ].cards.findIndex((searchCard) => {
+        return searchCard.name === card.name;
+      });
+    }
+
+    const newBoards = produce(boards, (draft) => {
+      //Remove appropriate quantity of card from old board
+      if (card.quantity > moveQuantity) {
+        draft[oldBoardIndex].boardTypes[typeIndex].cards[
+          cardIndex
+        ].quantity -= moveQuantity;
+      } else {
+        draft[oldBoardIndex].boardTypes[typeIndex].cards.splice(cardIndex, 1);
+        if (draft[oldBoardIndex].boardTypes[typeIndex].cards.length === 0) {
+          draft[oldBoardIndex].boardTypes.splice(typeIndex, 1);
+        }
+      }
+
+      //Check if card or type exists in new board, then move accordingly
+      if (newTypeIndex !== -1 && newCardIndex !== -1) {
+        draft[newBoardIndex].boardTypes[newTypeIndex].cards[
+          newCardIndex
+        ].quantity += moveQuantity;
+      } else if (newTypeIndex !== -1) {
+        draft[newBoardIndex].boardTypes[newTypeIndex].cards.push({
+          ...card,
+          quantity: moveQuantity,
+        });
+      } else {
+        draft[newBoardIndex].boardTypes.push({
+          name: card.mainType,
+          open: true,
+          cards: [{ ...card, quantity: moveQuantity }],
+        });
+      }
+    });
+    await setBoards(newBoards);
+    if (isAuthenticated && deckInfo.deckId !== "loading...") {
+      const boardTypes = newBoards[newBoardIndex].boardTypes;
+      const index = newBoardIndex;
+      const body = {
+        boardTypes,
+        index,
+      };
+      await axios.put(`api/deck/boardChange/${deckInfo.deckId}`, body);
+    }
+    await setTypes(newBoards[oldBoardIndex].boardTypes);
+  }
+
   async function changeQuantity(cardName, mainType, quantChange) {
     let success = false;
     for (var i = 0; i < boardTypes.length; ++i) {
@@ -451,6 +524,10 @@ const BuilderContainer = ({
             cardDrag={cardDrag}
             setCardDrag={setCardDrag}
             toggleType={toggleType}
+            boards={boards}
+            currentBoard={currentBoard}
+            moveBoards={moveBoards}
+            settingsCloak={settingsCloak}
           />
         </div>
       </DndProvider>
@@ -474,6 +551,7 @@ BuilderContainer.propTypes = {
   user: PropTypes.object,
   isAuthenticated: PropTypes.bool.isRequired,
   saveDeck: PropTypes.bool.isRequired,
+  settingsCloak: PropTypes.bool.isRequired,
   emptyPacket: PropTypes.func.isRequired,
   updateDecks: PropTypes.func.isRequired,
   savingDeck: PropTypes.func.isRequired,
@@ -485,6 +563,7 @@ const mapStateToProps = (state) => ({
   user: state.auth.user,
   isAuthenticated: state.auth.isAuthenticated,
   saveDeck: state.auth.saveDeck,
+  settingsCloak: state.deck.settingsCloak,
 });
 
 export default connect(mapStateToProps, {
