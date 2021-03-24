@@ -112,10 +112,14 @@ const BuilderContainer = ({
         history.push("/error");
       }
     else {
+      const name =
+        location.state === undefined ? "New Deck" : location.state.name;
+      const format =
+        location.state === undefined ? "Brew" : location.state.format;
       setDeckInfo({
         deckId,
-        deckName: location.state.name,
-        deckFormat: location.state.format,
+        deckName: name,
+        deckFormat: format,
         deckImage:
           "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
       });

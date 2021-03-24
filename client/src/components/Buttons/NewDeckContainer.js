@@ -11,7 +11,7 @@ import ImportDeckZone from "./ImportDeckZone";
 const NewDeckContainer = ({ user, uploadPacket, toggleDeckList }) => {
   let history = useHistory();
   const [deckInfo, setDeckInfo] = useState({
-    deckName: "",
+    deckName: "New Deck",
     deckFormat: "Brew",
     deckCommander: "",
   });
