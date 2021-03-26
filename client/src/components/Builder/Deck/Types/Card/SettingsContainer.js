@@ -27,10 +27,6 @@ const SettingsContainer = ({
   const [filterSets, setFilterSets] = useState([]);
   const [openSetDropDown, setOpenSetDropDown] = useState(false);
   const [boardQuantity, setBoardQuantity] = useState(card.quantity);
-  const [imageCoords, setImageCoords] = useState({
-    top: Number(150),
-    left: Number(420),
-  });
 
   useEffect(() => {
     async function getData() {
@@ -92,7 +88,6 @@ const SettingsContainer = ({
       cardIndex={cardIndex}
       settingWindow={settingWindow}
       setImage={setImage}
-      imageCoords={imageCoords}
       card={card}
       sets={sets}
       filterSets={filterSets}

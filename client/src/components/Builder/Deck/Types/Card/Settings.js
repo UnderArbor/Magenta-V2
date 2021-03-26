@@ -11,7 +11,6 @@ const Settings = ({
   cardIndex,
   settingWindow,
   setImage,
-  imageCoords,
   card,
   sets,
   filterSets,
@@ -83,14 +82,6 @@ const Settings = ({
           />
         ) : null}
       </div>
-      {/* <img
-        ref={setImage}
-        draggable="false"
-        className="smallCardImage hidden"
-        style={{ left: `${imageCoords.left}px`, top: `${imageCoords.top}px` }}
-        src={placeholder}
-        alt="Doopsie"
-      ></img> */}
       <button
         className="settingButton"
         onClick={() =>
@@ -112,7 +103,8 @@ const Settings = ({
               onChange={(e) => {
                 if (
                   !isNaN(e.target.value) &&
-                  Number(e.target.value) <= card.quantity
+                  Number(e.target.value) <= card.quantity &&
+                  Number(e.target.value) > 0
                 ) {
                   setBoardQuantity(e.target.value);
                 }

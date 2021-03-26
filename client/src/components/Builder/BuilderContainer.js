@@ -381,6 +381,7 @@ const BuilderContainer = ({
       }
     });
     await setBoards(newBoards);
+    console.log("is: ", isAuthenticated);
     if (isAuthenticated && deckInfo.deckId !== "loading...") {
       const boardTypes = newBoards[newBoardIndex].boardTypes;
       const index = newBoardIndex;
@@ -390,6 +391,7 @@ const BuilderContainer = ({
       };
       await axios.put(`api/deck/boardChange/${deckInfo.deckId}`, body);
     }
+    console.log("new: ", newBoards[oldBoardIndex].boardTypes);
     await setTypes(newBoards[oldBoardIndex].boardTypes);
   }
 
