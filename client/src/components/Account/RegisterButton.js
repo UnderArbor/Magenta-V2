@@ -115,7 +115,7 @@ const RegisterButton = ({
                   errors["email"].length > 0 && "errorInput"
                 }`}
                 type="email"
-                placeholder="Email Address"
+                placeholder="example@email.com"
                 name="registerEmail"
                 value={registerEmail}
                 onChange={(e) => onChange(e)}

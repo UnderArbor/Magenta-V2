@@ -101,6 +101,7 @@ $modal-border: #fff56b;
 
 .form-label {
   font-size: 22px;
+  text-align: left;
   @include respond-to("small") {
     font-size: 26px;
   }
@@ -128,8 +129,12 @@ $modal-border: #fff56b;
 }
 
 .authInput::placeholder {
-  font-size: 30px;
+  font-size: 20px;
   opacity: 0.5;
+  padding: auto 0;
+  @include respond-to("medium") {
+    font-size: 36px;
+  }
 }
 
 .authButtons {

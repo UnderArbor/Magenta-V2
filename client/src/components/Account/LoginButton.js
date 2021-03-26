@@ -78,7 +78,7 @@ const LoginButton = ({
                   errors["email"].length > 0 && "errorInput"
                 }`}
                 type="email"
-                placeholder="user@example.com"
+                placeholder="example@email.com"
                 name="loginEmail"
                 value={loginEmail}
                 onChange={(e) => onChange(e)}
