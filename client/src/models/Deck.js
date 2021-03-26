@@ -74,6 +74,27 @@ const DeckSchema = new Schema({
                   parentName: { type: String },
                 },
               ],
+              secondCard: {
+                name: { type: String },
+                imageURL: { type: String },
+                cardImageURL: { type: String },
+                cmc: { type: Number },
+                manaCost: [
+                  {
+                    type: String,
+                  },
+                ],
+                types: [
+                  {
+                    type: String,
+                  },
+                ],
+                colors: [
+                  {
+                    type: String,
+                  },
+                ],
+              },
             },
           ],
         },

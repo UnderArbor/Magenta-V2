@@ -30,6 +30,7 @@ const CardContainer = ({
   const cardRef = useRef(null);
   const cardImageRef = useRef(null);
 
+  const [bigImageSrc, setImageSrc] = useState(card.cardImage);
   const [flips, setFlips] = useState({
     flipX: false,
     flipY: false,
@@ -442,6 +443,11 @@ const CardContainer = ({
               unsetIsHovering();
             } else {
               if (!openSettings) {
+                if (e.target.classList.contains("secondCover")) {
+                  setImageSrc(card.secondCard.cardImageURL);
+                } else {
+                  setImageSrc(card.cardImage);
+                }
                 setIsHovering();
               }
             }
@@ -471,6 +477,7 @@ const CardContainer = ({
           currentBoard={currentBoard}
           moveBoards={moveBoards}
           cloakSettings={cloakSettings}
+          bigImageSrc={bigImageSrc}
         />
       </ReactHoverObserver>
     </motion.div>

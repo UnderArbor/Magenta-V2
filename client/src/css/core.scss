@@ -1058,7 +1058,6 @@ $header-font: "Cinzel";
     hsla(0, 0%, 0%, 0.989) 99.8%,
     hsl(0, 0%, 0%) 100%
   );
-
   border-radius: $card-border-radius;
   width: 100%;
   height: 100%;
@@ -1067,6 +1066,25 @@ $header-font: "Cinzel";
   top: 0;
   left: 0;
   transition: background-color 0.5s;
+}
+
+.secondCover {
+  width: calc(50% - #{$card-border});
+  position: absolute;
+  top: $card-border;
+  right: $card-border;
+  height: calc(100% - #{$card-border} * 2);
+  z-index: 7;
+  background-image: linear-gradient(
+    to bottom,
+    hsla(45, 100, 100, 0.1),
+    hsla(45, 100, 50, 0.3)
+  );
+  border-bottom-right-radius: $card-border-radius;
+  border-top-right-radius: $card-border-radius;
+  opacity: 0;
+  transition: 0.45s;
+  cursor: pointer;
 }
 
 .shadowBox {
@@ -1102,6 +1120,7 @@ $header-font: "Cinzel";
   margin: auto;
   z-index: 6;
   transform: translateY(-18px);
+  pointer-events: none;
 }
 
 .quantContainer {

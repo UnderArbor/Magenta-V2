@@ -51,8 +51,7 @@ const getCardInfo = async (name, quantity) => {
         //Get Second Card
         if (secondJSON !== null) {
           const names = cardName.split(" // ");
-          console.log("names: ", names);
-          cardName = names[0];
+          // cardName = names[0];
           secondCard.name = names[1];
           secondCard.imageURL = secondJSON.image_uris.art_crop;
           secondCard.cardImageURL = secondJSON.image_uris.normal;

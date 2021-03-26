@@ -31,6 +31,7 @@ const Card = ({
   currentBoard,
   moveBoards,
   cloakSettings,
+  bigImageSrc,
 }) => {
   const cardClass = isDragging ? "ghostCard" : null;
 
@@ -138,11 +139,9 @@ const Card = ({
         </AnimatePresence>
         <img className="cardArt" src={card.cardArt} alt="Whoopsie"></img>
         <div
-          className={
-            isHovering && !openSettings && !cardDrag
-              ? "settingsHover quantCover settingsCover"
-              : "quantCover settingsCover"
-          }
+          className={`settingsCover quantCover ${
+            isHovering && !openSettings && !cardDrag && "settingsHover"
+          }`}
           onClick={(e) => {
             if (!openSettings) {
               setOpenSettings(true);
@@ -154,6 +153,21 @@ const Card = ({
         >
           <img src={settingsIcon} alt="settings" className="settingsIcon" />
         </div>
+        {card.secondCard.name !== "" && (
+          <div
+            className={`secondCover ${
+              isHovering && !openSettings && !cardDrag && "settingsHover"
+            }`}
+            onClick={(e) => {
+              if (!openSettings) {
+                setOpenSettings(true);
+                const currentCard = document.getElementById(card.name);
+                currentCard.style.zIndex = 100;
+                cloakSettings(true);
+              }
+            }}
+          ></div>
+        )}
         <AnimatePresence>
           {displaySettings.displayQuantity && (
             <motion.div
@@ -263,7 +277,7 @@ const Card = ({
               : "popupTL"
           }`}
           draggable="false"
-          src={card.cardImage}
+          src={bigImageSrc}
           variants={imageVariant}
           initial="hidden"
           animate="visible"
