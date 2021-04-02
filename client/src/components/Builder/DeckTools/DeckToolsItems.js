@@ -5,7 +5,7 @@ import { withStyles, makeStyles } from "@material-ui/core/styles";
 import Slider from "@material-ui/core/Slider";
 
 import DownArrow from "../../../utils/icons/format-down.svg";
-import { createMuiTheme, SwipeableDrawer } from "@material-ui/core";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 
 const DeckToolsItems = ({
   tools,
@@ -66,42 +66,49 @@ const DeckToolsItems = ({
     setCardSize(newValue);
   };
 
-  // const SizeSlider = withStyles({
-  //   root: {
-  //     color: "#3a8589",
-  //     height: 3,
-  //     padding: "13px 0",
-  //   },
-  //   thumb: {
-  //     height: 27,
-  //     width: 27,
-  //     backgroundColor: "#fff",
-  //     border: "1px solid currentColor",
-  //     marginTop: -12,
-  //     marginLeft: -13,
-  //     boxShadow: "#ebebeb 0 2px 2px",
-  //     "&:focus, &:hover, &$active": {
-  //       boxShadow: "#ccc 0 2px 3px 1px",
-  //     },
-  //     "& .bar": {
-  //       // display: inline-block !important;
-  //       height: 9,
-  //       width: 1,
-  //       backgroundColor: "currentColor",
-  //       marginLeft: 1,
-  //       marginRight: 1,
-  //     },
-  //   },
-  //   active: {},
-  //   track: {
-  //     height: 3,
-  //   },
-  //   rail: {
-  //     color: "#d8d8d8",
-  //     opacity: 1,
-  //     height: 3,
-  //   },
-  // })(Slider);
+  const SizeSlider = createMuiTheme({
+    overrides: {
+      MuiSlider: {
+        root: {
+          color: "#dbd599",
+          height: 8,
+        },
+        thumb: {
+          height: 24,
+          width: 24,
+          backgroundColor: "#fff340",
+          marginTop: -10,
+          marginLeft: -12,
+          boxShadow: "0 0 0 0 #000",
+          "&:hover": {
+            boxShadow: "0 0 2px 7px rgba(219, 213, 153, 0.2)",
+            // Reset on touch devices, it doesn't add specificity
+            "@media (hover: none)": {
+              boxShadow: "0 0 0 0 #000",
+            },
+          },
+          "&:active": {
+            boxShadow: "0 0 3px 10px rgba(219, 213, 153, 0.35)",
+          },
+        },
+        valueLabel: {
+          left: -4,
+          "& *": {
+            background: "#601466",
+            color: "#f1e6f2",
+          },
+        },
+        track: {
+          height: 4,
+          borderRadius: 2,
+        },
+        rail: {
+          height: 4,
+          borderRadius: 2,
+        },
+      },
+    },
+  });
 
   return (
     <AnimatePresence exitBeforeEnter>
@@ -202,13 +209,15 @@ const DeckToolsItems = ({
               <div className="displaySetting">
                 <p className="displaySettingName">Card Size %</p>
                 <div className="displaySlider">
-                  <Slider
-                    value={cardSize}
-                    min={80}
-                    max={120}
-                    onChange={handleSliderChange}
-                    valueLabelDisplay="auto"
-                  />
+                  <ThemeProvider theme={SizeSlider}>
+                    <Slider
+                      value={cardSize}
+                      min={60}
+                      max={120}
+                      onChange={handleSliderChange}
+                      valueLabelDisplay="auto"
+                    />
+                  </ThemeProvider>
                 </div>
               </div>
             </div>

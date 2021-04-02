@@ -33,8 +33,6 @@ const Card = ({
   cloakSettings,
   bigImageSrc,
 }) => {
-  const cardClass = isDragging ? "ghostCard" : null;
-
   useEffect(() => {
     const cardArt = document.querySelectorAll(".cardArtContainer");
     if (cardArt.length > 0) {
@@ -86,7 +84,7 @@ const Card = ({
   };
 
   return (
-    <div className={cardClass}>
+    <div className={isDragging ? "dragCard" : null}>
       <div
         ref={dragRef}
         id={card.name}
@@ -95,9 +93,6 @@ const Card = ({
           movePopup(e, cardImageRef);
         }}
       >
-        {/* {card.secondCard.name !== "" && (
-          <div className="cardSwitcher">Click Me</div>
-        )} */}
         <AnimatePresence>
           {displaySettings.displayMana && (
             <motion.div
@@ -106,7 +101,7 @@ const Card = ({
               animate="visible"
               exit="exit"
               className={
-                isHovering && !openSettings && !cardDrag
+                isHovering && !openSettings && !isDragging
                   ? "manaHover cardColorContainer"
                   : "cardColorContainer"
               }

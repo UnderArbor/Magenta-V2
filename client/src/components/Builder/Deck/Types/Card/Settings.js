@@ -82,6 +82,13 @@ const Settings = ({
           />
         ) : null}
       </div>
+      <img
+        ref={setImage}
+        draggable="false"
+        className="smallCardImage hidden"
+        src={placeholder}
+        alt="Doopsie"
+      ></img>
       <button
         className="settingButton"
         onClick={() =>

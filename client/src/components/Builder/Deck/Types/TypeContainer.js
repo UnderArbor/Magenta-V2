@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
-import { useDrop } from "react-dnd";
+import { useDrop, useDrag } from "react-dnd";
 
 import CardContainer from "./Card/CardContainer";
+import GhostCardContainer from "./Card/GhostCardContainer";
 import TypeHeader from "./TypeHeader";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -20,13 +21,45 @@ const TypeContainer = ({
   boards,
   currentBoard,
   moveBoards,
+  moveType,
+  ghostCards,
 }) => {
   const typeRef = useRef(null);
+  const typeHeaderRef = useRef(null);
+  const typeContainerRef = useRef(null);
 
   var quantity = 0;
   for (var i = 0; i < type.cards.length; ++i) {
     quantity = Number(quantity) + Number(type.cards[i].quantity);
   }
+
+  const [{ isDragging }, drag, preview] = useDrag({
+    item: {
+      type: ItemTypes.TYPE,
+      typeIndex,
+      name: type.name,
+    },
+    isDragging: (monitor) => {
+      return type.name === monitor.getItem().name;
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+  const [, typeDrop] = useDrop({
+    accept: ItemTypes.TYPE,
+    hover: (item, monitor) => {
+      if (item.typeIndex === typeIndex) {
+        return;
+      } else if (item.typeIndex !== typeIndex) {
+        moveType(item.typeIndex, typeIndex);
+        item.typeIndex = typeIndex;
+      }
+    },
+  });
+
+  drag(typeHeaderRef);
+  typeDrop(typeContainerRef);
 
   const headerVariant = {
     hidden: {
@@ -67,15 +100,17 @@ const TypeContainer = ({
     exit: {},
   };
 
-  const [{ isOver }, drop] = useDrop({
+  const [{ isOver, canDrop }, drop] = useDrop({
     accept: ItemTypes.CARD,
     drop: (item) => {
       if (item.typeIndex !== typeIndex) {
         moveCard(item.typeIndex, item.cardIndex, typeIndex, type.cards.length);
       }
     },
+    canDrop: (item) => item.typeIndex !== typeIndex,
     collect: (monitor) => ({
       isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
     }),
   });
 
@@ -88,20 +123,23 @@ const TypeContainer = ({
       initial="hidden"
       animate="visible"
       exit="exit"
+      ref={typeContainerRef}
     >
       <TypeHeader
         type={type}
         toggleType={toggleType}
         typeIndex={typeIndex}
         quantity={quantity}
+        typeHeaderRef={typeHeaderRef}
+        isDragging={isDragging}
       />
       <motion.div
         ref={typeRef}
-        className="typeContainer"
+        className={`typeContainer ${isDragging && "dragType"}`}
         variants={containerVariant}
         id={`type${typeIndex}`}
         style={
-          isOver
+          isOver && canDrop
             ? { opacity: 0.4, backgroundColor: "rgba(0, 0, 0, 0.4" }
             : { opacity: 1, backgroundColor: "transparent" }
         }
@@ -128,6 +166,18 @@ const TypeContainer = ({
               );
             }
           })}
+          {typeof ghostCards !== "undefined"
+            ? ghostCards.cards.map((ghostCard) => {
+                if (type.open) {
+                  return (
+                    <GhostCardContainer
+                      ghostCard={ghostCard}
+                      key={ghostCard.name + "ghost"}
+                    />
+                  );
+                }
+              })
+            : null}
         </AnimatePresence>
       </motion.div>
     </motion.div>

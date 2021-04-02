@@ -21,8 +21,9 @@ $card-height: 168px;
 $card-border-radius: 3mm;
 $card-border: 5px;
 
-$popup-width: 24vw;
-$popup-height: calc(#{$popup-width} * 7 / 5);
+// $popup-height: 58vh;
+$popup-height: calc(50vh + var(--card-height) / 2);
+$popup-width: calc(#{$popup-height} * 5 / 7);
 
 $tools-width: 300px;
 
@@ -46,6 +47,9 @@ $header-font: "Cinzel";
   background-color: $light-background-color;
   --card-width: #{$card-width};
   --card-height: #{$card-height};
+  --card-name-size: 18px;
+  --quant-button-size: 40px;
+  --quant-size: 30px;
   width: 100%;
 }
 
@@ -666,9 +670,15 @@ $header-font: "Cinzel";
 }
 
 .deckListArrow {
-  width: 34px;
+  width: 30px;
   margin-top: 12px;
   margin-left: 34px;
+  transform: rotate(180deg);
+}
+
+.deckListArrowReverse {
+  margin-top: 16px;
+  transform: rotate(0deg);
 }
 
 .setArrow {
@@ -862,6 +872,23 @@ $header-font: "Cinzel";
   z-index: 1;
 }
 
+.dragType {
+  border: 3px dotted grey;
+  border-top: none;
+  position: relative;
+  background-image: rgb(255, 255, 255);
+}
+
+.dragType > * {
+  // opacity: 0;
+  visibility: hidden;
+}
+
+.dragType > * > * {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* Arrow Experiment */
 
 .arrow-down {
@@ -937,6 +964,11 @@ $header-font: "Cinzel";
   margin: 0 auto;
 }
 
+.dragDivider {
+  border-top: 3px dotted grey;
+  border-bottom: none;
+}
+
 .typeContent {
   width: 100%;
   margin-bottom: 40px;
@@ -951,23 +983,34 @@ $header-font: "Cinzel";
 
 .cardNameContainer {
   height: 50px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .cardName {
-  font-size: 18px;
+  font-size: var(--card-name-size);
   line-height: 20px;
   font-family: $body-font;
   color: $light-background-color;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 .cardContainer {
   position: relative;
   width: var(--card-width);
-  margin: 20px auto;
+  // margin: 20px auto;
+  margin: calc(var(--card-height) / 15) auto;
   border-radius: $card-border-radius;
   text-align: center;
   background-color: transparent;
+}
+
+.ghostContainer {
+  opacity: 0.5;
+}
+
+.ghostContainer > *:not(.bigGhostImage) {
+  opacity: 0.5;
 }
 
 .tokenContainer {
@@ -1025,6 +1068,12 @@ $header-font: "Cinzel";
   object-fit: cover;
   object-position: 50% 0%;
   filter: saturate(130%) contrast(110%);
+}
+
+.ghostArt {
+  filter: gray;
+  filter: grayscale(0.9);
+  -webkit-filter: grayscale(0.9);
 }
 
 .lastCard {
@@ -1124,26 +1173,28 @@ $header-font: "Cinzel";
 }
 
 .quantContainer {
-  position: relative;
-  height: 24px;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
+  position: absolute;
+  height: 20%;
+  width: calc(100% - 2 * #{$card-border});
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
-  transform: translateY(-30px);
+  justify-items: center;
+  bottom: 10px;
+  left: $card-border;
   z-index: 8;
 }
 
 .quantButton {
   font-weight: bold;
-  font-size: 40px;
+  font-size: var(--quant-button-size);
   opacity: 0.4;
   color: rgb(179, 179, 179);
   z-index: 10;
   height: 100%;
   display: inline-flex;
   align-items: center;
+  padding: 0;
 }
 
 .decrementCard {
@@ -1175,24 +1226,25 @@ $header-font: "Cinzel";
 .cardQuantity {
   display: flex;
   flex-direction: row;
-  font-size: 25px;
-  align-items: end;
+  font-size: var(--quant-size);
+  align-items: flex-end;
   color: $light-text;
   text-shadow: -0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000,
     0.5px 0.5px 0 #000;
   z-index: 3;
   font-family: $header-font;
   letter-spacing: 2px;
-  margin-left: 5px;
 }
 
 .quantityX {
+  height: 100%;
+  margin-bottom: 2px;
   font-family: inherit;
-  margin-top: 6px;
-  font-size: 18px;
+  font-size: calc(var(--quant-size) * 3 / 4);
 }
 
 .quantInput {
+  height: 100%;
   font-family: inherit;
   display: inline-block;
   white-space: nowrap;
@@ -1205,6 +1257,14 @@ $header-font: "Cinzel";
   height: $popup-height;
   z-index: 20;
   filter: saturate(120%) contrast(110%);
+}
+
+.bigGhostImage {
+  opacity: 1;
+  filter: grayscale(0.9);
+  filter: gray;
+  -webkit-filter: grayscale(0.9);
+  opacity: 1;
 }
 
 .popupBR {
@@ -1237,7 +1297,7 @@ $header-font: "Cinzel";
   height: var(--card-height);
 }
 
-.ghostCard {
+.dragCard {
   width: var(--card-width);
   height: var(--card-height);
   border: 3px dotted grey;
@@ -1245,7 +1305,7 @@ $header-font: "Cinzel";
   position: relative;
 }
 
-.ghostCard > * {
+.dragCard > * {
   opacity: 0;
 }
 
@@ -1266,7 +1326,7 @@ $header-font: "Cinzel";
   pointer-events: auto;
   opacity: 0.97;
   padding: 20% 30%;
-  box-shadow: 0px 2px 8px 1px lighten($primary-color, 5%);
+  box-shadow: 0px 0px 4px 1px lighten($primary-color, 5%);
   overflow-y: auto;
   overflow-x: visible;
 }
@@ -1721,11 +1781,12 @@ $header-font: "Cinzel";
   border: 4px solid lighten($accent-color, 15%);
   border-right: none;
   background-color: $tools-color;
-  height: 100%;
+  height: 100vh;
   position: relative;
   z-index: 2;
-  box-shadow: -8px 0px 7px -8px lighten($primary-color, 15%);
+  // box-shadow: -8px 0px 7px -8px lighten($primary-color, 15%);
   padding: 32px;
+  overflow-y: auto;
 }
 
 .toolsCategory {

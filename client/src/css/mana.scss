@@ -84,7 +84,7 @@
 }
 
 .blackBar {
-  background-color: black;
+  background-color: lighten(black, 10%);
   border: 1px solid black;
 }
 
@@ -98,6 +98,12 @@
   background-repeat: no-repeat;
   background-size: contain;
   filter: contrast(100%);
+}
+
+.ghostColorDot {
+  filter: gray;
+  filter: grayscale(0.85);
+  -webkit-filter: grayscale(0.85);
 }
 
 .blue {

@@ -27,6 +27,8 @@ const DeckContainer = ({
   currentBoard,
   moveBoards,
   settingsCloak,
+  moveType,
+  ghostCards,
 }) => {
   const cloakVariant = {
     hidden: {
@@ -45,8 +47,6 @@ const DeckContainer = ({
       },
     },
   };
-
-  let offset = 0;
 
   const breakpointColumnsObj = {
     default: 3,
@@ -83,7 +83,6 @@ const DeckContainer = ({
         columnClassName="typeGridColumn"
       >
         {types.map((type, typeIndex) => {
-          offset += type.cards.length;
           return (
             <TypeContainer
               type={type}
@@ -99,6 +98,10 @@ const DeckContainer = ({
               boards={boards}
               currentBoard={currentBoard}
               moveBoards={moveBoards}
+              moveType={moveType}
+              ghostCards={ghostCards.find(
+                (ghostType) => ghostType.name === type.name
+              )}
             />
           );
         })}

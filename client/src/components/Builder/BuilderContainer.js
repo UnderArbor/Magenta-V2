@@ -2,8 +2,13 @@ import React, { useState, useEffect, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import produce from "immer";
-import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from "react-dnd-touch-backend";
+import {
+  DndProvider,
+  TouchTransition,
+  MouseTransition,
+} from "react-dnd-multi-backend";
 import axios from "axios";
 import { useHistory, useLocation } from "react-router-dom";
 
@@ -42,6 +47,7 @@ const BuilderContainer = ({
     { name: "Maybepile", boardTypes: [] },
   ]);
   const [boardTypes, setTypes] = useState([]);
+  const [ghostCards, setGhostCards] = useState([]);
   const [tokens, setTokens] = useState([]);
   const [tools, setTools] = useState(false);
   const [deckInfo, setDeckInfo] = useState({
@@ -52,6 +58,7 @@ const BuilderContainer = ({
       "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
   });
   const [cardDrag, setCardDrag] = useState(false);
+  const [typeDrag, setTypeDrag] = useState(false);
   const [cardCount, setCardCount] = useState(0);
   const [importDisplay, setImportDisplay] = useState({
     name: "",
@@ -82,9 +89,11 @@ const BuilderContainer = ({
       if (boards[i].name === currentBoard) {
         const types = boards[i].boardTypes;
         setTokens([]);
+        setGhostCards([]);
         setTypes(types);
         setTimeout(() => {
           compileTokens(types);
+          compileGhosts(types);
         }, 50);
         break;
       }
@@ -106,6 +115,7 @@ const BuilderContainer = ({
           const mainboardTypes = res.data.boards[0].boardTypes;
           setTypes(mainboardTypes);
           compileTokens(mainboardTypes);
+          compileGhosts(mainboardTypes);
         });
         setDeckId(deckId);
       } catch (error) {
@@ -265,6 +275,7 @@ const BuilderContainer = ({
     });
 
     compileTokens(boardTypes);
+    compileGhosts(boardTypes);
 
     setBoards(newBoards);
     if (isAuthenticated && deckInfo.deckId !== "loading...") {
@@ -317,6 +328,20 @@ const BuilderContainer = ({
       const removedCard = draft[dragTypeIndex].cards.splice(dragCardIndex, 1);
       draft[hoverTypeIndex].cards.splice(hoverCardIndex, 0, removedCard[0]);
       draft[hoverTypeIndex].open = true;
+      draft[hoverTypeIndex].cards[hoverCardIndex].mainType =
+        draft[hoverTypeIndex].name;
+      if (draft[dragTypeIndex].cards.length <= 0) {
+        draft.splice(dragTypeIndex, 1);
+      }
+    });
+    setTypes(newTypes);
+  }
+
+  async function moveType(dragTypeIndex, hoverTypeIndex) {
+    const newTypes = produce(boardTypes, (draft) => {
+      const movedType = draft.splice(dragTypeIndex, 1);
+      console.log("type: ", movedType);
+      draft.splice(hoverTypeIndex, 0, movedType[0]);
     });
     setTypes(newTypes);
   }
@@ -381,7 +406,6 @@ const BuilderContainer = ({
       }
     });
     await setBoards(newBoards);
-    console.log("is: ", isAuthenticated);
     if (isAuthenticated && deckInfo.deckId !== "loading...") {
       const boardTypes = newBoards[newBoardIndex].boardTypes;
       const index = newBoardIndex;
@@ -391,7 +415,6 @@ const BuilderContainer = ({
       };
       await axios.put(`api/deck/boardChange/${deckInfo.deckId}`, body);
     }
-    console.log("new: ", newBoards[oldBoardIndex].boardTypes);
     await setTypes(newBoards[oldBoardIndex].boardTypes);
   }
 
@@ -493,12 +516,69 @@ const BuilderContainer = ({
     setTimeout(() => setTokens(tokenArray), 500);
   }
 
+  function compileGhosts(types) {
+    let ghostArray = [];
+    setGhostCards(ghostArray);
+
+    types.forEach((type) => {
+      type.cards.forEach((card) => {
+        const acceptedTypes = card.types.filter((type) => {
+          return type !== "Basic";
+        });
+        if (acceptedTypes.length > 1) {
+          acceptedTypes.forEach((type) => {
+            const index = ghostArray.findIndex((item) => {
+              return type === item.name;
+            });
+            if (card.mainType !== type) {
+              if (index === -1) {
+                ghostArray.push({ name: type, cards: [card] });
+              } else {
+                ghostArray[index].cards.push(card);
+              }
+            }
+          });
+        }
+      });
+    });
+
+    const newTypes = produce(boardTypes, (draft) => {
+      ghostArray.forEach((ghostType) => {
+        const exists = boardTypes.filter((type) => {
+          return ghostType.name === type.name;
+        });
+        if (exists.length === 0) {
+          draft.push({ name: ghostType.name, open: true, cards: [] });
+        }
+      });
+    });
+    setTypes(newTypes);
+    setGhostCards(ghostArray);
+  }
+
   async function toggleType(typeIndex, open) {
     const newTypes = produce(boardTypes, (draft) => {
       draft[typeIndex].open = !open;
     });
     setTypes(newTypes);
   }
+
+  const HTML5toTouch = {
+    backends: [
+      {
+        id: "html5",
+        backend: HTML5Backend,
+        transition: MouseTransition,
+      },
+      {
+        id: "touch",
+        backend: TouchBackend,
+        options: { enableMouseEvents: true },
+        preview: true,
+        transition: TouchTransition,
+      },
+    ],
+  };
 
   const customStyles = {
     content: {},
@@ -507,7 +587,7 @@ const BuilderContainer = ({
 
   return (
     <Fragment>
-      <DndProvider backend={HTML5Backend}>
+      <DndProvider options={HTML5toTouch}>
         <div className="builderContainer">
           <DeckBanner
             deckInfo={deckInfo}
@@ -538,6 +618,8 @@ const BuilderContainer = ({
             currentBoard={currentBoard}
             moveBoards={moveBoards}
             settingsCloak={settingsCloak}
+            moveType={moveType}
+            ghostCards={ghostCards}
           />
         </div>
       </DndProvider>

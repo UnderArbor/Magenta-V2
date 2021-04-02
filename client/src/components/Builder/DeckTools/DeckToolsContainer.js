@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { motion, AnimatePresence } from "framer-motion";
-import variables from "../../../css/core.scss";
+import StickyBox from "react-sticky-box";
 
 import { toggleDisplaySetting } from "../../../actions/deck";
 
@@ -36,6 +36,9 @@ const DeckToolsContainer = ({
   useEffect(() => {
     root.style.setProperty("--card-width", (cardSize / 100) * 120 + "px");
     root.style.setProperty("--card-height", (cardSize / 100) * 168 + "px");
+    root.style.setProperty("--card-name-size", (cardSize / 100) * 18 + "px");
+    root.style.setProperty("--quant-button-size", (cardSize / 100) * 40 + "px");
+    root.style.setProperty("--quant-size", (cardSize / 100) * 30 + "px");
   }, [cardSize]);
 
   return (
@@ -60,13 +63,15 @@ const DeckToolsContainer = ({
       >
         {toolsButtonHTML}
       </motion.button>
-      <DeckToolsItems
-        tools={tools}
-        displaySettings={displaySettings}
-        toggleDisplaySetting={toggleDisplaySetting}
-        cardSize={cardSize}
-        setCardSize={setCardSize}
-      />
+      <StickyBox>
+        <DeckToolsItems
+          tools={tools}
+          displaySettings={displaySettings}
+          toggleDisplaySetting={toggleDisplaySetting}
+          cardSize={cardSize}
+          setCardSize={setCardSize}
+        />
+      </StickyBox>
     </div>
   );
 };

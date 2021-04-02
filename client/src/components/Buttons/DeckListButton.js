@@ -12,7 +12,12 @@ const DeckListButton = ({ toggleDeckList, openDeckList }) => {
         className="deckListDropdown"
         onClick={() => toggleDeckList(!openDeckList)}
       >
-        <img className="menuDownArrow deckListArrow" src={DownArrow} />
+        <img
+          className={`menuDownArrow deckListArrow ${
+            !openDeckList && "deckListArrowReverse"
+          }`}
+          src={DownArrow}
+        />
       </div>
     </div>
   );

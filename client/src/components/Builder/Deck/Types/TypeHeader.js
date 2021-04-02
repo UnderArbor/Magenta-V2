@@ -1,9 +1,16 @@
 import React, { Fragment } from "react";
 
-const TypeHeader = ({ type, toggleType, typeIndex, quantity }) => {
+const TypeHeader = ({
+  type,
+  toggleType,
+  typeIndex,
+  quantity,
+  typeHeaderRef,
+  isDragging,
+}) => {
   return (
     <Fragment>
-      <div className="typeHeader">
+      <div className="typeHeader" ref={typeHeaderRef}>
         <div className="typeTitle">
           {type.name} ({quantity}){type.open ? null : "..."}
         </div>
@@ -12,7 +19,7 @@ const TypeHeader = ({ type, toggleType, typeIndex, quantity }) => {
           onClick={() => toggleType(typeIndex, type.open)}
         />
       </div>
-      <hr className="typeDivider" />
+      <hr className={`typeDivider ${isDragging && "dragDivider"}`} />
     </Fragment>
   );
 };
