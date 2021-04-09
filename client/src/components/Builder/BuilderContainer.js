@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import produce from "immer";
+import { motion, AnimatePresence } from "framer-motion";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import {
@@ -21,9 +22,28 @@ import {
   updateDecks,
   savingDeck,
   setDeckId,
+  loadTools,
 } from "../../actions/deck";
 
 import getCardInfo from "../../utils/functions/getCardInfo";
+
+const cloakVariant = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 0.6,
+    transition: {
+      duration: 0.25,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.25,
+    },
+  },
+};
 
 const BuilderContainer = ({
   uploadCards,
@@ -36,6 +56,7 @@ const BuilderContainer = ({
   setDeckId,
   match,
   settingsCloak,
+  loadTools,
 }) => {
   let history = useHistory();
   const location = useLocation();
@@ -58,7 +79,6 @@ const BuilderContainer = ({
       "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
   });
   const [cardDrag, setCardDrag] = useState(false);
-  const [typeDrag, setTypeDrag] = useState(false);
   const [cardCount, setCardCount] = useState(0);
   const [importDisplay, setImportDisplay] = useState({
     name: "",
@@ -111,11 +131,10 @@ const BuilderContainer = ({
             deckFormat: res.data.format,
             deckImage: res.data.picture,
           });
+          loadTools(res.data.toolBooleans, res.data.displaySettings);
           setBoards(res.data.boards);
           const mainboardTypes = res.data.boards[0].boardTypes;
           setTypes(mainboardTypes);
-          compileTokens(mainboardTypes);
-          compileGhosts(mainboardTypes);
         });
         setDeckId(deckId);
       } catch (error) {
@@ -133,6 +152,16 @@ const BuilderContainer = ({
         deckImage:
           "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
       });
+      loadTools(
+        { manaCurve: true, displaySettings: true },
+        {
+          displayMana: true,
+          displayQuantity: true,
+          displayIndicator: false,
+          displayName: true,
+          cardSize: 100,
+        }
+      );
     }
   }, []);
 
@@ -225,65 +254,83 @@ const BuilderContainer = ({
   }, [uploadCards]);
 
   useEffect(async () => {
+    compileTokens(boardTypes);
+    const newGhosts = compileGhosts(boardTypes);
+
     var quantity = 0;
-    boardTypes.forEach((type) => {
-      type.cards.forEach((card) => {
-        quantity += Number(card.quantity);
-      });
+    var emptyArray = [];
+    boardTypes.forEach((type, index) => {
+      if (
+        type.cards.length === 0 &&
+        typeof newGhosts.find((ghostType) => ghostType.name === type.name) ===
+          "undefined"
+      ) {
+        emptyArray.push(index);
+      } else {
+        type.cards.forEach((card) => {
+          quantity += Number(card.quantity);
+        });
+      }
     });
     setCardCount(quantity);
 
-    if (currentBoard === "Mainboard") {
-      const newColors = produce(colors, (draft) => {
-        draft.white = 0;
-        draft.green = 0;
-        draft.red = 0;
-        draft.black = 0;
-        draft.blue = 0;
-        boardTypes.forEach((type) => {
-          type.cards.forEach((card) => {
-            card.colors.forEach((color) => {
-              if (color.includes("W")) {
-                draft.white += Number(card.quantity);
-              }
-              if (color.includes("G")) {
-                draft.green += Number(card.quantity);
-              }
-              if (color.includes("R")) {
-                draft.red += Number(card.quantity);
-              }
-              if (color.includes("B")) {
-                draft.black += Number(card.quantity);
-              }
-              if (color.includes("U")) {
-                draft.blue += Number(card.quantity);
-              }
+    if (emptyArray.length > 0) {
+      const newTypes = produce(boardTypes, (draft) => {
+        for (var i = 0; i < emptyArray.length; ++i) {
+          draft.splice(emptyArray[i], 1);
+        }
+      });
+      setTypes(newTypes);
+    } else {
+      if (currentBoard === "Mainboard") {
+        const newColors = produce(colors, (draft) => {
+          draft.white = 0;
+          draft.green = 0;
+          draft.red = 0;
+          draft.black = 0;
+          draft.blue = 0;
+          boardTypes.forEach((type) => {
+            type.cards.forEach((card) => {
+              card.colors.forEach((color) => {
+                if (color.includes("W")) {
+                  draft.white += Number(card.quantity);
+                }
+                if (color.includes("G")) {
+                  draft.green += Number(card.quantity);
+                }
+                if (color.includes("R")) {
+                  draft.red += Number(card.quantity);
+                }
+                if (color.includes("B")) {
+                  draft.black += Number(card.quantity);
+                }
+                if (color.includes("U")) {
+                  draft.blue += Number(card.quantity);
+                }
+              });
             });
           });
         });
+        setColors(newColors);
+      }
+
+      var index = -1;
+      index = boards.findIndex((board) => {
+        return board.name == currentBoard;
       });
-      setColors(newColors);
-    }
 
-    var index = -1;
-    index = boards.findIndex((board) => {
-      return board.name == currentBoard;
-    });
+      const newBoards = produce(boards, (draft) => {
+        draft[index].boardTypes = boardTypes;
+      });
 
-    const newBoards = produce(boards, (draft) => {
-      draft[index].boardTypes = boardTypes;
-    });
-
-    compileTokens(boardTypes);
-    compileGhosts(boardTypes);
-
-    setBoards(newBoards);
-    if (isAuthenticated && deckInfo.deckId !== "loading...") {
-      const body = {
-        boardTypes,
-        index,
-      };
-      await axios.put(`api/deck/boardChange/${deckInfo.deckId}`, body);
+      setBoards(newBoards);
+      if (isAuthenticated && deckInfo.deckId !== "loading...") {
+        const body = {
+          boardTypes,
+          index,
+        };
+        await axios.put(`api/deck/boardChange/${deckInfo.deckId}`, body);
+      }
     }
   }, [boardTypes]);
 
@@ -324,6 +371,13 @@ const BuilderContainer = ({
     hoverTypeIndex,
     hoverCardIndex
   ) {
+    if (typeof hoverTypeIndex === "string") {
+      hoverTypeIndex = boardTypes.findIndex((type) => {
+        return type.name === hoverTypeIndex;
+      });
+      hoverCardIndex = boardTypes[hoverTypeIndex].cards.length;
+    }
+
     const newTypes = produce(boardTypes, (draft) => {
       const removedCard = draft[dragTypeIndex].cards.splice(dragCardIndex, 1);
       draft[hoverTypeIndex].cards.splice(hoverCardIndex, 0, removedCard[0]);
@@ -340,7 +394,6 @@ const BuilderContainer = ({
   async function moveType(dragTypeIndex, hoverTypeIndex) {
     const newTypes = produce(boardTypes, (draft) => {
       const movedType = draft.splice(dragTypeIndex, 1);
-      console.log("type: ", movedType);
       draft.splice(hoverTypeIndex, 0, movedType[0]);
     });
     setTypes(newTypes);
@@ -425,43 +478,35 @@ const BuilderContainer = ({
         for (var j = 0; j < boardTypes[i].cards.length; ++j) {
           if (boardTypes[i].cards[j].name === cardName) {
             await setTypes((prevTypes) => {
-              return prevTypes
-                .filter(
-                  (type, filterIndex) =>
-                    i !== filterIndex ||
-                    Number(type.cards[j].quantity) + Number(quantChange) > 0 ||
-                    type.cards.length > 1
-                )
-                .map((type, index) => {
-                  if (i !== index || type.name !== mainType) {
-                    return type;
-                  } else if (
-                    i === index &&
-                    Number(type.cards[j].quantity) + Number(quantChange) !== 0
-                  ) {
-                    return {
-                      ...type,
-                      cards: [
-                        ...type.cards.slice(0, j),
-                        {
-                          ...type.cards[j],
-                          quantity:
-                            Number(type.cards[j].quantity) +
-                            Number(quantChange),
-                        },
-                        ...type.cards.slice(j + 1),
-                      ],
-                    };
-                  } else if (i === index && type.cards.length > 1) {
-                    return {
-                      ...type,
-                      cards: [
-                        ...type.cards.slice(0, j),
-                        ...type.cards.slice(j + 1),
-                      ],
-                    };
-                  }
-                });
+              return prevTypes.map((type, index) => {
+                if (i !== index || type.name !== mainType) {
+                  return type;
+                } else if (
+                  i === index &&
+                  Number(type.cards[j].quantity) + Number(quantChange) !== 0
+                ) {
+                  return {
+                    ...type,
+                    cards: [
+                      ...type.cards.slice(0, j),
+                      {
+                        ...type.cards[j],
+                        quantity:
+                          Number(type.cards[j].quantity) + Number(quantChange),
+                      },
+                      ...type.cards.slice(j + 1),
+                    ],
+                  };
+                } else {
+                  return {
+                    ...type,
+                    cards: [
+                      ...type.cards.slice(0, j),
+                      ...type.cards.slice(j + 1),
+                    ],
+                  };
+                }
+              });
             });
             success = true;
             break;
@@ -519,10 +564,9 @@ const BuilderContainer = ({
   function compileGhosts(types) {
     let ghostArray = [];
     setGhostCards(ghostArray);
-
     types.forEach((type) => {
       type.cards.forEach((card) => {
-        const acceptedTypes = card.types.filter((type) => {
+        const acceptedTypes = card.modifiedTypes.filter((type) => {
           return type !== "Basic";
         });
         if (acceptedTypes.length > 1) {
@@ -539,9 +583,22 @@ const BuilderContainer = ({
             }
           });
         }
+        if (card.secondCard.name !== "") {
+          const secondCard = card.secondCard;
+          console.log("second: ", secondCard);
+          secondCard.types.forEach((type) => {
+            const index = ghostArray.findIndex((item) => {
+              return type === item.name;
+            });
+            if (index === -1) {
+              ghostArray.push({ name: type, cards: [secondCard] });
+            } else {
+              ghostArray[index].cards.push(secondCard);
+            }
+          });
+        }
       });
     });
-
     const newTypes = produce(boardTypes, (draft) => {
       ghostArray.forEach((ghostType) => {
         const exists = boardTypes.filter((type) => {
@@ -554,6 +611,7 @@ const BuilderContainer = ({
     });
     setTypes(newTypes);
     setGhostCards(ghostArray);
+    return ghostArray;
   }
 
   async function toggleType(typeIndex, open) {
@@ -589,6 +647,17 @@ const BuilderContainer = ({
     <Fragment>
       <DndProvider options={HTML5toTouch}>
         <div className="builderContainer">
+          <AnimatePresence>
+            {settingsCloak && (
+              <motion.div
+                className="settingsCloak"
+                variants={cloakVariant}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              />
+            )}
+          </AnimatePresence>
           <DeckBanner
             deckInfo={deckInfo}
             setDeckInfo={setDeckInfo}
@@ -617,7 +686,6 @@ const BuilderContainer = ({
             boards={boards}
             currentBoard={currentBoard}
             moveBoards={moveBoards}
-            settingsCloak={settingsCloak}
             moveType={moveType}
             ghostCards={ghostCards}
           />
@@ -648,6 +716,7 @@ BuilderContainer.propTypes = {
   updateDecks: PropTypes.func.isRequired,
   savingDeck: PropTypes.func.isRequired,
   setDeckId: PropTypes.func.isRequired,
+  loadTools: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -663,4 +732,5 @@ export default connect(mapStateToProps, {
   updateDecks,
   savingDeck,
   setDeckId,
+  loadTools,
 })(BuilderContainer);

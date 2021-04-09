@@ -1,10 +1,11 @@
 import React from "react";
 
 import SetDropDown from "./SetDropDown";
-import LoadingIcon from "../../../SearchBar/LoadingIcon";
+import LoadingIcon from "../../../../SearchBar/LoadingIcon";
+import TypeSetting from "./TypeSetting";
 
-import placeholder from "../../../../../utils/images/Placeholder.jpg";
-import DownArrow from "../../../../../utils/icons/settings-down.svg";
+import placeholder from "../../../../../../utils/images/Placeholder.jpg";
+import DownArrow from "../../../../../../utils/icons/settings-down.svg";
 
 const Settings = ({
   typeIndex,
@@ -27,6 +28,9 @@ const Settings = ({
   boards,
   currentBoard,
   moveBoards,
+  cardTypes,
+  modifyType,
+  moveCard,
 }) => {
   return (
     <div
@@ -147,6 +151,87 @@ const Settings = ({
             })}
           </div>
         </div>
+      </div>
+      <div className="settingSelector">
+        <p className="settingName">Modify Types</p>
+        <TypeSetting
+          key={card.mainType}
+          type={card.mainType}
+          modifyType={modifyType}
+          typeIndex={typeIndex}
+          cardIndex={cardIndex}
+          mainType={true}
+          currentType={true}
+          moveCard={moveCard}
+        />
+        {card.modifiedTypes.map((type) => {
+          if (type !== card.mainType && type !== "Basic") {
+            return (
+              <TypeSetting
+                key={type}
+                type={type}
+                modifyType={modifyType}
+                typeIndex={typeIndex}
+                cardIndex={cardIndex}
+                mainType={false}
+                currentType={true}
+                moveCard={moveCard}
+              />
+            );
+          }
+        })}
+
+        {card.types.map((type) => {
+          if (
+            card.modifiedTypes.filter((modType) => {
+              return modType === type;
+            }).length === 0
+          ) {
+            return (
+              <TypeSetting
+                key={type}
+                type={type}
+                modifyType={modifyType}
+                typeIndex={typeIndex}
+                cardIndex={cardIndex}
+                mainType={false}
+                currentType={false}
+                moveCard={moveCard}
+              />
+            );
+          }
+        })}
+        {cardTypes.map((type) => {
+          if (
+            card.types.filter((cardType) => {
+              return (
+                type === cardType ||
+                type === "Hero" ||
+                type === "Vanguard" ||
+                type === "Conspiracy" ||
+                type === "Scheme" ||
+                type === "Plane" ||
+                type === "Phenomenon" ||
+                card.modifiedTypes.filter((modType) => {
+                  return modType === type;
+                }).length !== 0
+              );
+            }).length === 0
+          ) {
+            return (
+              <TypeSetting
+                key={type}
+                type={type}
+                modifyType={modifyType}
+                typeIndex={typeIndex}
+                cardIndex={cardIndex}
+                mainType={false}
+                currentType={false}
+                moveCard={moveCard}
+              />
+            );
+          }
+        })}
       </div>
     </div>
   );

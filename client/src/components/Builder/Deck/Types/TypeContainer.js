@@ -23,6 +23,7 @@ const TypeContainer = ({
   moveBoards,
   moveType,
   ghostCards,
+  modifyType,
 }) => {
   const typeRef = useRef(null);
   const typeHeaderRef = useRef(null);
@@ -31,6 +32,14 @@ const TypeContainer = ({
   var quantity = 0;
   for (var i = 0; i < type.cards.length; ++i) {
     quantity = Number(quantity) + Number(type.cards[i].quantity);
+  }
+
+  var ghostQuantity = 0;
+  if (typeof ghostCards !== "undefined") {
+    for (var i = 0; i < ghostCards.cards.length; ++i) {
+      ghostQuantity =
+        Number(ghostQuantity) + Number(ghostCards.cards[i].quantity);
+    }
   }
 
   const [{ isDragging }, drag, preview] = useDrag({
@@ -130,6 +139,7 @@ const TypeContainer = ({
         toggleType={toggleType}
         typeIndex={typeIndex}
         quantity={quantity}
+        ghostQuantity={ghostQuantity}
         typeHeaderRef={typeHeaderRef}
         isDragging={isDragging}
       />
@@ -162,6 +172,7 @@ const TypeContainer = ({
                   boards={boards}
                   currentBoard={currentBoard}
                   moveBoards={moveBoards}
+                  modifyType={modifyType}
                 />
               );
             }

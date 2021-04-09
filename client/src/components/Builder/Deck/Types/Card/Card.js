@@ -3,35 +3,23 @@ import React, { useEffect, Fragment } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Dotdotdot from "react-dotdotdot";
 
-import SettingsContainer from "./SettingsContainer";
-
 import settingsIcon from "../../../../../utils/images/Settings_Cog.png";
+import { current } from "immer";
 
 const Card = ({
   dragRef,
   isDragging,
-  typeIndex,
-  cardIndex,
   card,
   changeQuantity,
-  changeCardSet,
-  changeDeckArt,
-  isHovering = false,
+  isHovering,
   openSettings,
   setOpenSettings,
   currentManaCost,
-  imageVariant,
   cardDrag,
   cardImageRef,
-  flipX,
-  flipY,
   movePopup,
   displaySettings,
-  boards,
-  currentBoard,
-  moveBoards,
   cloakSettings,
-  bigImageSrc,
 }) => {
   useEffect(() => {
     const cardArt = document.querySelectorAll(".cardArtContainer");
@@ -93,23 +81,25 @@ const Card = ({
           movePopup(e, cardImageRef);
         }}
       >
-        <AnimatePresence>
-          {displaySettings.displayMana && (
-            <motion.div
-              variants={toggleVariant}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className={
-                isHovering && !openSettings && !isDragging
-                  ? "manaHover cardColorContainer"
-                  : "cardColorContainer"
-              }
-            >
-              {currentManaCost}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="manaContainer">
+          <AnimatePresence>
+            {displaySettings.displayMana && (
+              <motion.div
+                variants={toggleVariant}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className={
+                  isHovering && !openSettings && !isDragging
+                    ? "manaHover cardColorContainer"
+                    : "cardColorContainer"
+                }
+              >
+                {currentManaCost}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
         <div className="quantCover" />
         <AnimatePresence>
           {displaySettings.displayIndicator && (
@@ -245,53 +235,6 @@ const Card = ({
           </motion.div>
         )}
       </AnimatePresence>
-      {openSettings ? (
-        <SettingsContainer
-          typeIndex={typeIndex}
-          cardIndex={cardIndex}
-          setOpenSettings={setOpenSettings}
-          card={card}
-          changeCardSet={changeCardSet}
-          changeDeckArt={changeDeckArt}
-          flipX={flipX}
-          flipY={flipY}
-          boards={boards}
-          currentBoard={currentBoard}
-          moveBoards={moveBoards}
-          cloakSettings={cloakSettings}
-        />
-      ) : isHovering && !cardDrag ? (
-        <motion.img
-          className={`bigCardImage ${
-            !flipX && !flipY
-              ? "popupBR"
-              : flipX && !flipY
-              ? "popupBL"
-              : !flipX && flipY
-              ? "popupTR"
-              : "popupTL"
-          }`}
-          draggable="false"
-          src={bigImageSrc}
-          variants={imageVariant}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        ></motion.img>
-      ) : (
-        <div
-          className={`bigCardImage hiddenCard ${
-            !flipX && !flipY
-              ? "popupBR"
-              : flipX && !flipY
-              ? "popupBL"
-              : !flipX && flipY
-              ? "popupTR"
-              : "popupTL"
-          }`}
-          ref={cardImageRef}
-        />
-      )}
     </div>
   );
 };

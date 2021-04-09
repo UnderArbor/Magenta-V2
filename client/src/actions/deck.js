@@ -7,6 +7,7 @@ import {
   TOGGLE_DISPLAY,
   DECK_ERROR,
   SETTINGS_CLOAK,
+  TOGGLE_TOOLS,
 } from "./types";
 
 import axios from "axios";
@@ -63,6 +64,14 @@ export const setDeckId = (deckId) => async (dispatch) => {
   }
 };
 
+export const cloakSettings = (cloakBool) => (dispatch) => {
+  try {
+    dispatch({ type: SETTINGS_CLOAK, payload: cloakBool });
+  } catch (error) {
+    dispatch({ type: DECK_ERROR });
+  }
+};
+
 export const toggleDeckList = (boolean) => (dispatch) => {
   try {
     dispatch({ type: OPEN_DECK_LIST, payload: boolean });
@@ -79,9 +88,23 @@ export const toggleDisplaySetting = (checked, id) => (dispatch) => {
   }
 };
 
-export const cloakSettings = (cloakBool) => (dispatch) => {
+export const toggleToolBooleans = (name, toggle) => (dispatch) => {
   try {
-    dispatch({ type: SETTINGS_CLOAK, payload: cloakBool });
+    dispatch({ type: TOGGLE_TOOLS, payload: { name, toggle } });
+  } catch (error) {
+    dispatch({ type: DECK_ERROR });
+  }
+};
+
+export const loadTools = (toolBooleans, displaySettings) => (dispatch) => {
+  try {
+    for (const [key, value] of Object.entries(toolBooleans)) {
+      dispatch({ type: TOGGLE_TOOLS, payload: { name: key, toggle: value } });
+    }
+    for (const [key, value] of Object.entries(displaySettings)) {
+      // console.log(`${key}: ${value}`);
+      dispatch({ type: TOGGLE_DISPLAY, payload: { checked: value, id: key } });
+    }
   } catch (error) {
     dispatch({ type: DECK_ERROR });
   }

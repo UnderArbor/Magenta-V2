@@ -21,9 +21,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Define Routes
-app.use("/api/auth", require("./client/server/api/auth"));
-app.use("/api/user", require("./client/server/api/user"));
-app.use("/api/deck", require("./client/server/api/deck"));
+app.use("/api/auth", require("./server/api/auth"));
+app.use("/api/user", require("./server/api/user"));
+app.use("/api/deck", require("./server/api/deck"));
 
 if (process.env.NODE_ENV === "production") {
   //Set static folder

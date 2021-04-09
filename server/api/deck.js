@@ -1,14 +1,13 @@
 const express = require("express");
 const config = require("config");
-const fetch = require("node-fetch");
-const auth = require("../../src/utils/middleware/auth");
+const auth = require("../../client/src/utils/middleware/auth");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 
 const SCRYFALL_API = config.get("ScryFallAPI");
 
-const Deck = require("../../src/models/Deck");
-const User = require("../../src/models/User");
+const Deck = require("../../client/src/models/Deck");
+const User = require("../../client/src/models/User");
 
 //Fetch All Decks
 router.get("/", async (req, res) => {
@@ -51,6 +50,17 @@ router.post("/init", async (req, res) => {
         { name: "Maybepile", boardTypes: [] },
       ],
       user: user,
+      displaySettings: {
+        displayMana: true,
+        displayQuantity: true,
+        displayIndicator: false,
+        displayName: true,
+        cardSize: 100,
+      },
+      toolBooleans: {
+        manaCurve: true,
+        displaySettings: true,
+      },
     });
 
     await newDeck.save();
@@ -103,7 +113,26 @@ router.put("/boardChange/:deckId", async (req, res) => {
 
     deck.boards[index].boardTypes = boardTypes;
     await deck.save();
-    return res.json(boardTypes);
+    return res.json(deck);
+  } catch (error) {
+    res.status(500).send("Server Error");
+  }
+});
+
+//Update Tool Info
+router.put("/toolChange/:deckId", async (req, res) => {
+  try {
+    const deck = await Deck.findOne({ _id: req.params.deckId });
+    const { displaySettings, toolBooleans } = req.body;
+
+    if (displaySettings !== undefined) {
+      deck.displaySettings = displaySettings;
+    }
+    if (toolBooleans !== undefined) {
+      deck.toolBooleans = toolBooleans;
+    }
+    await deck.save();
+    return res.json(deck);
   } catch (error) {
     res.status(500).send("Server Error");
   }

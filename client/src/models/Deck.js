@@ -43,7 +43,13 @@ const DeckSchema = new Schema({
               cmc: {
                 type: Number,
               },
+              modifiedCMC: [{ type: Number }],
               manaCost: [
+                {
+                  type: String,
+                },
+              ],
+              secondManaCost: [
                 {
                   type: String,
                 },
@@ -56,6 +62,7 @@ const DeckSchema = new Schema({
                   type: String,
                 },
               ],
+              modifiedTypes: [{ type: String }],
               subtypes: [
                 {
                   type: String,
@@ -76,8 +83,8 @@ const DeckSchema = new Schema({
               ],
               secondCard: {
                 name: { type: String },
-                imageURL: { type: String },
-                cardImageURL: { type: String },
+                cardArt: { type: String },
+                cardImage: { type: String },
                 cmc: { type: Number },
                 manaCost: [
                   {
@@ -85,6 +92,12 @@ const DeckSchema = new Schema({
                   },
                 ],
                 types: [
+                  {
+                    type: String,
+                  },
+                ],
+                modifiedTypes: [{ type: String }],
+                subtypes: [
                   {
                     type: String,
                   },
@@ -119,6 +132,31 @@ const DeckSchema = new Schema({
     },
     black: {
       type: Number,
+    },
+  },
+  displaySettings: {
+    displayMana: {
+      type: Boolean,
+    },
+    displayQuantity: {
+      type: Boolean,
+    },
+    displayName: {
+      type: Boolean,
+    },
+    displayIndicator: {
+      type: Boolean,
+    },
+    cardSize: {
+      type: Number,
+    },
+  },
+  toolBooleans: {
+    manaCurve: {
+      type: Boolean,
+    },
+    displaySettings: {
+      type: Boolean,
     },
   },
 });

@@ -13,15 +13,15 @@ const getCardInfo = async (name, quantity) => {
     let imageURL = "";
     let cardImageURL = "";
     let cmc = "";
-    let manaCost = "";
+    let manaCost = [""];
     let types = ["", ""];
     let colors = "";
     let set = "";
     let tokens = [];
     let secondCard = {
       name: "",
-      imageURL: "",
-      cardImageURL: "",
+      cardArt: "",
+      cardImage: "",
       cmc: "",
       manaCost: "",
       types: ["", ""],
@@ -43,21 +43,29 @@ const getCardInfo = async (name, quantity) => {
         }
         imageURL = json.image_uris.art_crop;
         cardImageURL = json.image_uris.normal;
+        console.log("json: ", json);
         cmc = json.cmc;
-        manaCost = json.mana_cost;
+        manaCost = [json.mana_cost];
+        if (json.mana_cost.includes("//")) {
+          manaCost = json.mana_cost.split(" // ");
+        }
         types = json.type_line.split("—");
         colors = json.colors;
 
         //Get Second Card
         if (secondJSON !== null) {
           const names = cardName.split(" // ");
-          // cardName = names[0];
+          const typeLine = secondJSON.type_line.split("—");
+          const mainTypeList = typeLine[0].trim().split(" ");
+          cardName = names[0];
           secondCard.name = names[1];
-          secondCard.imageURL = secondJSON.image_uris.art_crop;
-          secondCard.cardImageURL = secondJSON.image_uris.normal;
+          secondCard.cardArt = secondJSON.image_uris.art_crop;
+          secondCard.cardImage = secondJSON.image_uris.normal;
           secondCard.cmc = secondJSON.cmc;
           secondCard.manaCost = secondJSON.mana_cost;
-          secondCard.types = secondJSON.type_line.split("-");
+          secondCard.types = mainTypeList;
+          secondCard.modifiedTypes = mainTypeList;
+          secondCard.subtypes = typeLine[1].trim().split(" ");
           secondCard.colors = secondJSON.colors;
         }
 
@@ -96,10 +104,13 @@ const getCardInfo = async (name, quantity) => {
         break;
       }
     }
-
-    manaCost = manaCost.replace(/\{/g, "").replace(/\}/g, ",").split(",");
-
-    manaCost.pop();
+    for (var i = 0; i < manaCost.length; ++i) {
+      manaCost[i] = manaCost[i]
+        .replace(/\{/g, "")
+        .replace(/\}/g, ",")
+        .split(",");
+      manaCost[i].pop();
+    }
 
     //Create new card
     const card = {
@@ -109,14 +120,19 @@ const getCardInfo = async (name, quantity) => {
       cardArt: imageURL,
       cardImage: cardImageURL,
       cmc,
+      modifiedCMC: [cmc],
       manaCost,
+      secondManaCost: manaCost,
       mainType,
       types: mainTypeList,
+      modifiedTypes: mainTypeList,
       subtypes: types[1].trim().split(" "),
       colors,
       tokens,
       secondCard,
     };
+
+    console.log("card: ", card);
 
     return card;
   } catch (err) {

@@ -33,6 +33,8 @@ $footer-height: 15vh;
 $builder-height: 250vh;
 $deck-height: calc(#{$builder-height} - #{$banner-height});
 
+$ghost-opacity: 0.5;
+
 @font-face {
   font-family: "Cinzel";
   src: url("../utils/fonts/Cinzel/Cinzel-VariableFont_wght.ttf");
@@ -50,6 +52,7 @@ $header-font: "Cinzel";
   --card-name-size: 18px;
   --quant-button-size: 40px;
   --quant-size: 30px;
+  --line-height: 20px;
   width: 100%;
 }
 
@@ -818,8 +821,12 @@ $header-font: "Cinzel";
   position: relative;
   min-height: $deck-height;
   box-shadow: 0px 4px 12px -4px $primary-color;
-  z-index: 4;
   padding: 0 4%;
+}
+
+.emptyDeck {
+  color: white;
+  font-size: 44px;
 }
 
 .settingsCloak {
@@ -843,7 +850,7 @@ $header-font: "Cinzel";
 }
 
 .skinnyGrid {
-  width: calc(100% - 30vw);
+  width: calc(100% - 500px);
   -webkit-transition: all 0.35s;
   transition: all 0.35s;
 }
@@ -988,11 +995,15 @@ $header-font: "Cinzel";
 
 .cardName {
   font-size: var(--card-name-size);
-  line-height: 20px;
+  line-height: var(--line-height);
   font-family: $body-font;
   color: $light-background-color;
   word-wrap: break-word;
   hyphens: auto;
+}
+
+.ghostName {
+  opacity: $ghost-opacity;
 }
 
 .cardContainer {
@@ -1003,14 +1014,6 @@ $header-font: "Cinzel";
   border-radius: $card-border-radius;
   text-align: center;
   background-color: transparent;
-}
-
-.ghostContainer {
-  opacity: 0.5;
-}
-
-.ghostContainer > *:not(.bigGhostImage) {
-  opacity: 0.5;
 }
 
 .tokenContainer {
@@ -1026,14 +1029,6 @@ $header-font: "Cinzel";
   width: 100%;
   height: var(--card-height);
   border-radius: $card-border-radius;
-}
-
-.cardSwitcher {
-  position: absolute;
-  background-color: purple;
-  top: 0;
-  right: 0;
-  z-index: 3;
 }
 
 .shadow1 {
@@ -1074,6 +1069,7 @@ $header-font: "Cinzel";
   filter: gray;
   filter: grayscale(0.9);
   -webkit-filter: grayscale(0.9);
+  opacity: $ghost-opacity;
 }
 
 .lastCard {
@@ -1168,7 +1164,7 @@ $header-font: "Cinzel";
   height: auto;
   margin: auto;
   z-index: 6;
-  transform: translateY(-18px);
+  transform: translateY(-20%);
   pointer-events: none;
 }
 
@@ -1252,19 +1248,19 @@ $header-font: "Cinzel";
 
 .bigCardImage {
   position: absolute;
-  border-radius: 20px;
+  border-radius: 28px;
   width: $popup-width;
   height: $popup-height;
   z-index: 20;
   filter: saturate(120%) contrast(110%);
+  background-color: transparent;
 }
 
 .bigGhostImage {
-  opacity: 1;
   filter: grayscale(0.9);
   filter: gray;
   -webkit-filter: grayscale(0.9);
-  opacity: 1;
+  z-index: 20;
 }
 
 .popupBR {
@@ -1279,12 +1275,12 @@ $header-font: "Cinzel";
 
 .popupTR {
   left: calc(var(--card-width) + 4px);
-  bottom: 58px;
+  bottom: 54px;
 }
 
 .popupTL {
   right: calc(var(--card-width) + 4px);
-  bottom: 58px;
+  bottom: 54px;
 }
 
 .hiddenCard {
@@ -1324,7 +1320,6 @@ $header-font: "Cinzel";
   border-radius: $card-border-radius;
   font-size: 24px;
   pointer-events: auto;
-  opacity: 0.97;
   padding: 20% 30%;
   box-shadow: 0px 0px 4px 1px lighten($primary-color, 5%);
   overflow-y: auto;
@@ -1349,12 +1344,11 @@ $header-font: "Cinzel";
 }
 
 .settingName {
-  margin: 8px 0;
+  margin: 4px auto 8px 0;
   text-align: left;
   font-family: $body-font;
   font-size: 24px;
   font-weight: 600;
-  margin-right: auto;
   padding: 4px 0;
 }
 
@@ -1465,6 +1459,86 @@ $header-font: "Cinzel";
 
 .invalidBoardButton {
   background-color: $null-color;
+}
+
+.typeSettingContainer {
+  width: 90%;
+  height: auto;
+}
+
+.typeSettingDiv {
+  width: 100%;
+  margin: 0 0 -2px auto;
+  padding: 5px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-family: $body-font;
+  font-weight: 600;
+  font-size: 20px;
+  text-align: left;
+  text-indent: 8px;
+  border: 2px solid $dark-background-color;
+}
+
+.typeSettingButton {
+  font-size: 20px;
+  font-weight: bolder;
+  font-family: $body-font;
+  color: white;
+  margin-right: 12px;
+}
+
+.mainTypeButton {
+  color: $light-text;
+  background-color: $primary-color;
+}
+
+.mainTypeButon > .typeSettingButton {
+  color: $light-text;
+}
+
+.currentTypeButton {
+  color: $dark-text;
+  background-color: $secondary-color;
+}
+
+.currentTypeButton > .typeSettingButton {
+  color: $dark-text;
+}
+
+.nullTypeButton {
+  color: darken(white, 20%);
+  background-color: grey;
+}
+
+.nullTypeButton > .typeSettingButton {
+  color: darken(white, 20%);
+}
+
+.selectorGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.typeSelector {
+  height: 20px;
+  width: 20px;
+  border: 1px solid white;
+  margin: 0 4px;
+}
+
+.mainTypeSelector {
+  background-color: white;
+}
+
+.currentTypeSelector {
+  background-color: transparent;
+}
+
+.nullTypeSelector {
+  opacity: 0;
 }
 
 .flexGroup {
@@ -1738,55 +1812,45 @@ $header-font: "Cinzel";
   position: absolute;
   top: 0;
   right: 0;
-  width: 0px;
+  width: auto;
   height: 100%;
   z-index: 2;
 }
 
-.activeDeckTools {
-  font-size: 24px;
-  text-align: center;
-  position: absolute;
-  right: 48px;
-  top: 76px;
-  z-index: 10;
-  border-radius: 8px;
-  color: $dark-text;
-  background-color: $secondary-color;
-  font-family: $header-font;
-  font-weight: 700;
-  padding: 4px 20px;
-  border: 1px solid lighten($primary-color, 20%);
-  transition: color 0.35s, background-color 0.35s, border 0.35s;
+.decktoolsSubContainer {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  border-left: 4px solid lighten($accent-color, 15%);
 }
 
-.inactiveDeckTools {
-  font-size: 24px;
+.decktoolsButton {
   text-align: center;
-  position: absolute;
-  right: 48px;
-  top: 76px;
+  position: relative;
+  right: 0;
+  top: 0;
   z-index: 10;
-  border-radius: 8px;
-  color: $secondary-color;
+  background-color: lighten($accent-color, 15%);
+  padding: 0 8px;
+  height: 100vh;
+  transition: background-color 0.35s, padding 0.35s;
+}
+
+.inactiveToolsButton {
   background-color: $primary-color;
-  font-family: $header-font;
-  font-weight: 700;
-  padding: 4px 20px;
-  border: 1px solid $accent-color;
-  transition: color 0.25s, background-color 0.25s, border 0.25s;
+  padding: 0 12px;
+  transition: background-color 0.35s, padding 0.35s;
 }
 
 .toolsMenu {
-  border: 4px solid lighten($accent-color, 15%);
-  border-right: none;
   background-color: $tools-color;
   height: 100vh;
   position: relative;
   z-index: 2;
-  // box-shadow: -8px 0px 7px -8px lighten($primary-color, 15%);
-  padding: 32px;
+  padding: 20px;
   overflow-y: auto;
+  border-top: 4px solid lighten($accent-color, 15%);
+  border-bottom: 4px solid lighten($accent-color, 15%);
 }
 
 .toolsCategory {
@@ -1806,9 +1870,8 @@ $header-font: "Cinzel";
 
 .manaCurveContainer {
   height: 500px;
-  width: 80%;
+  width: 100%;
   margin: 28px auto;
-  background-color: rgba(70, 70, 70, 0.8);
   text-align: center;
   display: flex;
   align-items: center;

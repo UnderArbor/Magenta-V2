@@ -3,6 +3,7 @@ import {
   SET_DECK_ID,
   OPEN_DECK_LIST,
   TOGGLE_DISPLAY,
+  TOGGLE_TOOLS,
   DECK_ERROR,
   SETTINGS_CLOAK,
 } from "../actions/types";
@@ -16,6 +17,11 @@ const initialState = {
     displayQuantity: true,
     displayIndicator: false,
     displayName: true,
+    cardSize: 100,
+  },
+  toolBooleans: {
+    manaCurve: true,
+    displaySettings: true,
   },
   settingsCloak: false,
 };
@@ -32,7 +38,7 @@ export default function (state = initialState, action) {
       return { ...state, openDeckList: payload };
     case TOGGLE_DISPLAY:
       switch (payload.id) {
-        case "manaDisplay":
+        case "displayMana":
           return {
             ...state,
             displaySettings: {
@@ -40,7 +46,7 @@ export default function (state = initialState, action) {
               displayMana: payload.checked,
             },
           };
-        case "quantityDisplay":
+        case "displayQuantity":
           return {
             ...state,
             displaySettings: {
@@ -48,7 +54,7 @@ export default function (state = initialState, action) {
               displayQuantity: payload.checked,
             },
           };
-        case "indicatorDisplay":
+        case "displayIndicator":
           return {
             ...state,
             displaySettings: {
@@ -56,7 +62,7 @@ export default function (state = initialState, action) {
               displayIndicator: payload.checked,
             },
           };
-        case "nameDisplay":
+        case "displayName":
           return {
             ...state,
             displaySettings: {
@@ -64,6 +70,37 @@ export default function (state = initialState, action) {
               displayName: payload.checked,
             },
           };
+        case "cardSize":
+          return {
+            ...state,
+            displaySettings: {
+              ...state.displaySettings,
+              cardSize: payload.checked,
+            },
+          };
+        default:
+          return state;
+      }
+    case TOGGLE_TOOLS:
+      switch (payload.name) {
+        case "manaCurve":
+          return {
+            ...state,
+            toolBooleans: {
+              ...state.toolBooleans,
+              manaCurve: payload.toggle,
+            },
+          };
+        case "displaySettings":
+          return {
+            ...state,
+            toolBooleans: {
+              ...state.toolBooleans,
+              displaySettings: payload.toggle,
+            },
+          };
+        default:
+          return state;
       }
     case SETTINGS_CLOAK:
       return { ...state, settingsCloak: payload };

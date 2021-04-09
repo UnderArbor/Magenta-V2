@@ -2,8 +2,8 @@ import React, { useRef, useEffect, useState } from "react";
 
 import Settings from "./Settings";
 
-import getSets from "../../../../../utils/functions/getSets";
-import { cloakSettings } from "../../../../../actions/deck";
+import getSets from "../../../../../../utils/functions/getSets";
+import cardTypes from "../../../../../../utils/json/cardTypes.json";
 
 const SettingsContainer = ({
   typeIndex,
@@ -18,6 +18,8 @@ const SettingsContainer = ({
   currentBoard,
   moveBoards,
   cloakSettings,
+  modifyType,
+  moveCard,
 }) => {
   const settingWindow = useRef(null);
   const setImage = useRef(null);
@@ -35,10 +37,7 @@ const SettingsContainer = ({
       setSets({ ...sets, setList: newSets, loading: false });
       setFilterSets(newSets);
     }
-    getData();
-  }, []);
 
-  useEffect(() => {
     function handleClickOutside(event) {
       if (
         settingWindow.current &&
@@ -53,6 +52,8 @@ const SettingsContainer = ({
 
     // Bind the event listener
     document.addEventListener("mousedown", handleClickOutside);
+
+    getData();
 
     return () => {
       // Unbind the event listener on clean up
@@ -104,6 +105,9 @@ const SettingsContainer = ({
       boards={boards}
       currentBoard={currentBoard}
       moveBoards={moveBoards}
+      cardTypes={cardTypes}
+      modifyType={modifyType}
+      moveCard={moveCard}
     />
   );
 };

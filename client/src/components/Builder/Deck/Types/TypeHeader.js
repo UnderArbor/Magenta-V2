@@ -5,6 +5,7 @@ const TypeHeader = ({
   toggleType,
   typeIndex,
   quantity,
+  ghostQuantity,
   typeHeaderRef,
   isDragging,
 }) => {
@@ -12,7 +13,9 @@ const TypeHeader = ({
     <Fragment>
       <div className="typeHeader" ref={typeHeaderRef}>
         <div className="typeTitle">
-          {type.name} ({quantity}){type.open ? null : "..."}
+          {type.name}: {quantity}{" "}
+          {ghostQuantity > 0 ? `(+${ghostQuantity})` : null}
+          {type.open ? null : "..."}
         </div>
         <button
           className={type.open ? "arrow-down active" : "arrow-down"}

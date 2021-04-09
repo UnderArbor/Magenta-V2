@@ -1,6 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+
+import SettingsContainer from "./Settings/SettingsContainer";
 
 import ReactHoverObserver from "react-hover-observer";
 import { useDrag, useDrop } from "react-dnd";
@@ -26,6 +28,7 @@ const CardContainer = ({
   currentBoard,
   moveBoards,
   cloakSettings,
+  modifyType,
 }) => {
   const cardRef = useRef(null);
   const cardImageRef = useRef(null);
@@ -123,253 +126,468 @@ const CardContainer = ({
   const manaCost = card.manaCost;
 
   for (var j = 0; j < manaCost.length; ++j) {
-    switch (manaCost[j]) {
-      case "W":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot white" alt="W" />
-        );
-        break;
-      case "U":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot blue" alt="U" />
-        );
-        break;
-      case "B":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot black" alt="B" />
-        );
-        break;
-      case "G":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot green" alt="G" />
-        );
-        break;
-      case "R":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot red" alt="R" />
-        );
-        break;
-      case "C":
-        currentManaCost.push(<li key={j} className="cardColorDot C" alt="C" />);
-        break;
-      case "X":
-        currentManaCost.push(<li key={j} className="cardColorDot X" alt="X" />);
-        break;
-      case "S":
-        currentManaCost.push(<li key={j} className="cardColorDot S" alt="S" />);
-        break;
-      case "0":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana0" alt="0" />
-        );
-        break;
-      case "1":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana1" alt="1" />
-        );
-        break;
-      case "2":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana2" alt="2" />
-        );
-        break;
-      case "3":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana3" alt="3" />
-        );
-        break;
-      case "4":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana4" alt="4" />
-        );
-        break;
-      case "5":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana5" alt="5" />
-        );
-        break;
-      case "6":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana6" alt="6" />
-        );
-        break;
-      case "7":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana7" alt="7" />
-        );
-        break;
-      case "8":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana8" alt="8" />
-        );
-        break;
-      case "9":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana9" alt="9" />
-        );
-        break;
-      case "10":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana10" alt="10" />
-        );
-        break;
-      case "11":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana11" alt="11" />
-        );
-        break;
-      case "12":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana12" alt="12" />
-        );
-        break;
-      case "13":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana13" alt="13" />
-        );
-        break;
-      case "14":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana14" alt="14" />
-        );
-        break;
-      case "15":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana15" alt="15" />
-        );
-        break;
-      case "16":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana16" alt="16" />
-        );
-        break;
-      case "17":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana17" alt="17" />
-        );
-        break;
-      case "18":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana18" alt="18" />
-        );
-        break;
-      case "19":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana19" alt="19" />
-        );
-        break;
-      case "20":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot mana20" alt="20" />
-        );
-        break;
-      case "2/U":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot Uor2" alt="2/U" />
-        );
-        break;
-      case "2/G":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot Gor2" alt="2/G" />
-        );
-        break;
-      case "2/R":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot Ror2" alt="2/R" />
-        );
-        break;
-      case "2/W":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot Wor2" alt="2/W" />
-        );
-        break;
-      case "2/B":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot Uor2" alt="2/B" />
-        );
-        break;
-      case "R/W":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot RorW" alt="R/W" />
-        );
-        break;
-      case "G/U":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot GorU" alt="G/U" />
-        );
-        break;
-      case "B/G":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot BorG" alt="B/G" />
-        );
-        break;
-      case "B/R":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot BorR" alt="B/R" />
-        );
-        break;
-      case "G/W":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot GorW" alt="G/W" />
-        );
-        break;
-      case "R/G":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot RorG" alt="R/G" />
-        );
-        break;
-      case "W/B":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot WorB" alt="W/B" />
-        );
-        break;
-      case "U/B":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot UorB" alt="U/B" />
-        );
-        break;
-      case "U/R":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot UorR" alt="U/R" />
-        );
-        break;
-      case "W/U":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot WorU" alt="W/U" />
-        );
-        break;
-      case "R/P":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot RP" alt="R/P" />
-        );
-        break;
-      case "G/P":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot GP" alt="G/P" />
-        );
-        break;
-      case "U/P":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot UP" alt="U/P" />
-        );
-        break;
-      case "W/P":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot WP" alt="W/P" />
-        );
-        break;
-      case "B/P":
-        currentManaCost.push(
-          <li key={j} className="cardColorDot BP" alt="B/P" />
-        );
-        break;
-      case "HW":
-        currentManaCost.push(
-          <img key={j} className="cardColorDot HW" alt="HW" />
-        );
-        break;
-      default:
-        break;
+    for (var k = 0; k < manaCost[j].length; ++k) {
+      switch (manaCost[j][k]) {
+        case "W":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot white"
+              alt="W"
+            />
+          );
+          break;
+        case "U":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot blue"
+              alt="U"
+            />
+          );
+          break;
+        case "B":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot black"
+              alt="B"
+            />
+          );
+          break;
+        case "G":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot green"
+              alt="G"
+            />
+          );
+          break;
+        case "R":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot red"
+              alt="R"
+            />
+          );
+          break;
+        case "C":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot C"
+              alt="C"
+            />
+          );
+          break;
+        case "X":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot X"
+              alt="X"
+            />
+          );
+          break;
+        case "S":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot S"
+              alt="S"
+            />
+          );
+          break;
+        case "0":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana0"
+              alt="0"
+            />
+          );
+          break;
+        case "1":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana1"
+              alt="1"
+            />
+          );
+          break;
+        case "2":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana2"
+              alt="2"
+            />
+          );
+          break;
+        case "3":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana3"
+              alt="3"
+            />
+          );
+          break;
+        case "4":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana4"
+              alt="4"
+            />
+          );
+          break;
+        case "5":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana5"
+              alt="5"
+            />
+          );
+          break;
+        case "6":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana6"
+              alt="6"
+            />
+          );
+          break;
+        case "7":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana7"
+              alt="7"
+            />
+          );
+          break;
+        case "8":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana8"
+              alt="8"
+            />
+          );
+          break;
+        case "9":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana9"
+              alt="9"
+            />
+          );
+          break;
+        case "10":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana10"
+              alt="10"
+            />
+          );
+          break;
+        case "11":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana11"
+              alt="11"
+            />
+          );
+          break;
+        case "12":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana12"
+              alt="12"
+            />
+          );
+          break;
+        case "13":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana13"
+              alt="13"
+            />
+          );
+          break;
+        case "14":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana14"
+              alt="14"
+            />
+          );
+          break;
+        case "15":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana15"
+              alt="15"
+            />
+          );
+          break;
+        case "16":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana16"
+              alt="16"
+            />
+          );
+          break;
+        case "17":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana17"
+              alt="17"
+            />
+          );
+          break;
+        case "18":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana18"
+              alt="18"
+            />
+          );
+          break;
+        case "19":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana19"
+              alt="19"
+            />
+          );
+          break;
+        case "20":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot mana20"
+              alt="20"
+            />
+          );
+          break;
+        case "2/U":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot Uor2"
+              alt="2/U"
+            />
+          );
+          break;
+        case "2/G":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot Gor2"
+              alt="2/G"
+            />
+          );
+          break;
+        case "2/R":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot Ror2"
+              alt="2/R"
+            />
+          );
+          break;
+        case "2/W":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot Wor2"
+              alt="2/W"
+            />
+          );
+          break;
+        case "2/B":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot Uor2"
+              alt="2/B"
+            />
+          );
+          break;
+        case "R/W":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot RorW"
+              alt="R/W"
+            />
+          );
+          break;
+        case "G/U":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot GorU"
+              alt="G/U"
+            />
+          );
+          break;
+        case "B/G":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot BorG"
+              alt="B/G"
+            />
+          );
+          break;
+        case "B/R":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot BorR"
+              alt="B/R"
+            />
+          );
+          break;
+        case "G/W":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot GorW"
+              alt="G/W"
+            />
+          );
+          break;
+        case "R/G":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot RorG"
+              alt="R/G"
+            />
+          );
+          break;
+        case "W/B":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot WorB"
+              alt="W/B"
+            />
+          );
+          break;
+        case "U/B":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot UorB"
+              alt="U/B"
+            />
+          );
+          break;
+        case "U/R":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot UorR"
+              alt="U/R"
+            />
+          );
+          break;
+        case "W/U":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot WorU"
+              alt="W/U"
+            />
+          );
+          break;
+        case "R/P":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot RP"
+              alt="R/P"
+            />
+          );
+          break;
+        case "G/P":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot GP"
+              alt="G/P"
+            />
+          );
+          break;
+        case "U/P":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot UP"
+              alt="U/P"
+            />
+          );
+          break;
+        case "W/P":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot WP"
+              alt="W/P"
+            />
+          );
+          break;
+        case "B/P":
+          currentManaCost.push(
+            <li
+              key={`${card.name + j + k}`}
+              className="cardColorDot BP"
+              alt="B/P"
+            />
+          );
+          break;
+        case "HW":
+          currentManaCost.push(
+            <img
+              key={`${card.name + j + k}`}
+              className="cardColorDot HW"
+              alt="HW"
+            />
+          );
+          break;
+        default:
+          break;
+      }
+    }
+    if (j + 1 !== manaCost.length) {
+      currentManaCost.push(
+        <p className="manaDivider" key={`${card.name + j}divider`}>
+          //
+        </p>
+      );
     }
   }
 
@@ -444,7 +662,7 @@ const CardContainer = ({
             } else {
               if (!openSettings) {
                 if (e.target.classList.contains("secondCover")) {
-                  setImageSrc(card.secondCard.cardImageURL);
+                  setImageSrc(card.secondCard.cardImage);
                 } else {
                   setImageSrc(card.cardImage);
                 }
@@ -454,31 +672,74 @@ const CardContainer = ({
           },
         }}
       >
-        <Card
-          isDragging={isDragging}
-          dragRef={cardRef}
-          typeIndex={typeIndex}
-          cardIndex={cardIndex}
-          card={card}
-          changeQuantity={changeQuantity}
-          openSettings={openSettings}
-          setOpenSettings={setOpenSettings}
-          currentManaCost={currentManaCost}
-          imageVariant={imageVariant}
-          changeCardSet={changeCardSet}
-          changeDeckArt={changeDeckArt}
-          cardDrag={cardDrag}
-          cardImageRef={cardImageRef}
-          flipX={flipX}
-          flipY={flipY}
-          movePopup={movePopup}
-          displaySettings={displaySettings}
-          boards={boards}
-          currentBoard={currentBoard}
-          moveBoards={moveBoards}
-          cloakSettings={cloakSettings}
-          bigImageSrc={bigImageSrc}
-        />
+        {({ isHovering }) => (
+          <Fragment>
+            <Card
+              dragRef={cardRef}
+              isDragging={isDragging}
+              card={card}
+              changeQuantity={changeQuantity}
+              isHovering={isHovering}
+              openSettings={openSettings}
+              setOpenSettings={setOpenSettings}
+              currentManaCost={currentManaCost}
+              cardDrag={cardDrag}
+              cardImageRef={cardImageRef}
+              movePopup={movePopup}
+              displaySettings={displaySettings}
+              cloakSettings={cloakSettings}
+            />
+            {openSettings ? (
+              <SettingsContainer
+                typeIndex={typeIndex}
+                cardIndex={cardIndex}
+                setOpenSettings={setOpenSettings}
+                card={card}
+                changeCardSet={changeCardSet}
+                changeDeckArt={changeDeckArt}
+                flipX={flipX}
+                flipY={flipY}
+                boards={boards}
+                currentBoard={currentBoard}
+                moveBoards={moveBoards}
+                cloakSettings={cloakSettings}
+                modifyType={modifyType}
+                moveCard={moveCard}
+              />
+            ) : isHovering && !cardDrag ? (
+              <motion.img
+                className={`bigCardImage ${
+                  !flipX && !flipY
+                    ? "popupBR"
+                    : flipX && !flipY
+                    ? "popupBL"
+                    : !flipX && flipY
+                    ? "popupTR"
+                    : "popupTL"
+                }`}
+                draggable="false"
+                src={bigImageSrc}
+                variants={imageVariant}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              ></motion.img>
+            ) : (
+              <div
+                className={`bigCardImage hiddenCard ${
+                  !flipX && !flipY
+                    ? "popupBR"
+                    : flipX && !flipY
+                    ? "popupBL"
+                    : !flipX && flipY
+                    ? "popupTR"
+                    : "popupTL"
+                }`}
+                ref={cardImageRef}
+              />
+            )}
+          </Fragment>
+        )}
       </ReactHoverObserver>
     </motion.div>
   );

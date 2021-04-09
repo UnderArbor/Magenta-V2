@@ -97,7 +97,7 @@ const GhostCard = ({
             exit="exit"
           >
             <Dotdotdot clamp={4}>
-              <p className="cardName">{ghostCard.name}</p>
+              <p className="cardName ghostName">{ghostCard.name}</p>
             </Dotdotdot>
           </motion.div>
         )}
