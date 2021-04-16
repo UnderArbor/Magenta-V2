@@ -8,6 +8,7 @@ import StickyBox from "react-sticky-box";
 import {
   toggleDisplaySetting,
   toggleToolBooleans,
+  setSortCategory,
 } from "../../../actions/deck";
 
 import DeckToolsItems from "./DeckToolsItems";
@@ -38,12 +39,16 @@ const DeckToolsContainer = ({
   toggleDisplaySetting,
   toggleToolBooleans,
   types,
+  currentCategory,
+  setSortCategory,
 }) => {
   const [manaCurveData, setCurveData] = useState([]);
+  const [ghostCurveData, setGhostData] = useState([]);
   const [manaCurveLabels, setCurveLabels] = useState([]);
 
   useEffect(() => {
     var data = [];
+    var ghostData = [];
     var labels = [];
 
     types.forEach((type) => {
@@ -51,23 +56,57 @@ const DeckToolsContainer = ({
         type.cards.forEach((card) => {
           for (var i = 0; i < card.modifiedCMC.length; ++i) {
             const currentCMC = card.modifiedCMC[i];
-            if (data[currentCMC] === undefined) {
-              data[currentCMC] = Number(card.quantity);
+
+            if (currentCMC === card.mainCMC) {
+              if (data[currentCMC] === undefined) {
+                data[currentCMC] = Number(card.quantity);
+              } else {
+                data[currentCMC] += Number(card.quantity);
+              }
             } else {
-              data[currentCMC] += Number(card.quantity);
+              if (ghostData[currentCMC] === undefined) {
+                ghostData[currentCMC] = Number(card.quantity);
+              } else {
+                ghostData[currentCMC] += Number(card.quantity);
+              }
+            }
+          }
+          if (card.secondCard.name !== "") {
+            for (var i = 0; i < card.secondCard.modifiedCMC.length; ++i) {
+              const currentCMC = card.secondCard.modifiedCMC[i];
+
+              if (currentCMC === card.mainCMC) {
+                if (data[currentCMC] === undefined) {
+                  data[currentCMC] = Number(card.quantity);
+                } else {
+                  data[currentCMC] += Number(card.quantity);
+                }
+              } else {
+                if (ghostData[currentCMC] === undefined) {
+                  ghostData[currentCMC] = Number(card.quantity);
+                } else {
+                  ghostData[currentCMC] += Number(card.quantity);
+                }
+              }
             }
           }
         });
       }
     });
 
-    for (var i = 0; i < data.length; ++i) {
+    const dataLength =
+      data.length > ghostData.length ? data.length : ghostData.length;
+    for (var i = 0; i < dataLength; ++i) {
       labels.push(i);
       if (data[i] === undefined) {
         data[i] = 0;
       }
+      if (ghostData[i] === undefined) {
+        ghostData[i] = 0;
+      }
     }
     setCurveData(data);
+    setGhostData(ghostData);
     setCurveLabels(labels);
   }, [types]);
 
@@ -123,7 +162,10 @@ const DeckToolsContainer = ({
             toggleDisplaySetting={toggleDisplaySetting}
             toggleToolBooleans={toggleToolBooleans}
             manaCurveData={manaCurveData}
+            ghostCurveData={ghostCurveData}
             manaCurveLabels={manaCurveLabels}
+            currentCategory={displaySettings.sortCategory}
+            setCategory={setSortCategory}
           />
         </div>
       </StickyBox>
@@ -138,6 +180,7 @@ DeckToolsContainer.propTypes = {
   toolBooleans: PropTypes.object.isRequired,
   toggleDisplaySetting: PropTypes.func.isRequired,
   toggleToolBooleans: PropTypes.func.isRequired,
+  setSortCategory: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -150,4 +193,5 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   toggleDisplaySetting,
   toggleToolBooleans,
+  setSortCategory,
 })(DeckToolsContainer);

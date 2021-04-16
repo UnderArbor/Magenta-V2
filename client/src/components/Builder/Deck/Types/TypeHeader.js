@@ -8,13 +8,14 @@ const TypeHeader = ({
   ghostQuantity,
   typeHeaderRef,
   isDragging,
+  currentCategory,
 }) => {
   return (
     <Fragment>
       <div className="typeHeader" ref={typeHeaderRef}>
         <div className="typeTitle">
-          {type.name}: {quantity}{" "}
-          {ghostQuantity > 0 ? `(+${ghostQuantity})` : null}
+          {currentCategory !== "Cost" ? type.name : `${type.name}-Cost`}:{" "}
+          {quantity} {ghostQuantity > 0 ? `(+${ghostQuantity})` : null}
           {type.open ? null : "..."}
         </div>
         <button

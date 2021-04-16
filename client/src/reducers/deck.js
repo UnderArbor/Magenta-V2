@@ -6,6 +6,7 @@ import {
   TOGGLE_TOOLS,
   DECK_ERROR,
   SETTINGS_CLOAK,
+  ADJUST_SETTING_PROPERTIES,
 } from "../actions/types";
 
 const initialState = {
@@ -18,10 +19,15 @@ const initialState = {
     displayIndicator: false,
     displayName: true,
     cardSize: 100,
+    sortCategory: "Types",
   },
   toolBooleans: {
     manaCurve: true,
     displaySettings: true,
+    cardSorting: true,
+  },
+  settingBooleans: {
+    property: "Types",
   },
   settingsCloak: false,
 };
@@ -78,6 +84,14 @@ export default function (state = initialState, action) {
               cardSize: payload.checked,
             },
           };
+        case "sortCategory":
+          return {
+            ...state,
+            displaySettings: {
+              ...state.displaySettings,
+              sortCategory: payload.checked,
+            },
+          };
         default:
           return state;
       }
@@ -99,9 +113,22 @@ export default function (state = initialState, action) {
               displaySettings: payload.toggle,
             },
           };
+        case "cardSorting":
+          return {
+            ...state,
+            toolBooleans: {
+              ...state.toolBooleans,
+              cardSorting: payload.toggle,
+            },
+          };
         default:
           return state;
       }
+    case ADJUST_SETTING_PROPERTIES:
+      return {
+        ...state,
+        settingBooleans: { ...state.settingBooleans, property: payload },
+      };
     case SETTINGS_CLOAK:
       return { ...state, settingsCloak: payload };
     case DECK_ERROR:

@@ -1,13 +1,14 @@
 import React from "react";
 
-const TypeSetting = ({
-  type,
-  modifyType,
+const PropertySetting = ({
+  property,
+  propertyType,
+  modifyProperty,
   typeIndex,
   cardIndex,
   mainType,
   currentType,
-  moveCard,
+  changeMainProperty,
 }) => {
   const buttonContent = currentType ? "-" : "+";
 
@@ -36,19 +37,36 @@ const TypeSetting = ({
           `}
             onClick={() => {
               if (currentType && !mainType)
-                moveCard(typeIndex, cardIndex, type);
+                changeMainProperty(
+                  propertyType,
+                  property,
+                  typeIndex,
+                  cardIndex
+                );
             }}
           />
-          {type}
+          {property}
         </div>
-        {!mainType && (
+        {(!mainType || (mainType && propertyType === "Tags")) && (
           <button
             className="typeSettingButton"
             onClick={() => {
               if (!currentType) {
-                modifyType(typeIndex, cardIndex, type, true);
+                modifyProperty(
+                  propertyType,
+                  property,
+                  typeIndex,
+                  cardIndex,
+                  true
+                );
               } else {
-                modifyType(typeIndex, cardIndex, type, false);
+                modifyProperty(
+                  propertyType,
+                  property,
+                  typeIndex,
+                  cardIndex,
+                  false
+                );
               }
             }}
           >
@@ -60,4 +78,4 @@ const TypeSetting = ({
   );
 };
 
-export default TypeSetting;
+export default PropertySetting;

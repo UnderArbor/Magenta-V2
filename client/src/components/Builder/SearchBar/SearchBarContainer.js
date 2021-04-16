@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import produce from "immer";
+import produce, { current } from "immer";
 
 import SearchBar from "./SearchBar";
 
@@ -9,11 +9,10 @@ import jsonNames from "../../../utils/json/names.json";
 const SearchBarContainer = ({
   types,
   setTypes,
-  tokens,
-  setTokens,
   changeQuantity,
   deckImage,
   changeDeckArt,
+  currentCategory,
 }) => {
   const [query, setQuery] = useState({
     userQuery: "",
@@ -63,24 +62,34 @@ const SearchBarContainer = ({
           deckImage: card.cardArt,
         }));
       }
-      var index1 = -1;
-      for (var i = 0; i < types.length; ++i) {
-        if (types[i].name === card.mainType) {
-          index1 = i;
-          break;
-        }
-      }
-      if (index1 === -1) {
+
+      const mainProp =
+        currentCategory === "Types"
+          ? card.mainType
+          : currentCategory === "Cost"
+          ? card.mainCMC
+          : currentCategory === "Tags" && card.mainTag !== undefined
+          ? card.mainTag
+          : currentCategory === "Tags"
+          ? "untagged"
+          : null;
+
+      const typeIndex = types.findIndex((type) => {
+        return type.name === mainProp;
+      });
+      if (typeIndex === -1) {
         setTypes((types) => [
           ...types,
-          { name: card.mainType, open: true, cards: [card] },
+          { name: mainProp, open: true, cards: [card] },
         ]);
       } else {
-        const quantChange = await changeQuantity(card.name, card.mainType, 1);
-        if (!quantChange) {
+        const cardIndex = types[typeIndex].cards.findIndex((currentCard) => {
+          return currentCard.name === card.name;
+        });
+        if (cardIndex === -1) {
           setTypes((prevTypes) => {
             return prevTypes.map((type, index) => {
-              if (index === index1) {
+              if (index === typeIndex) {
                 return {
                   ...prevTypes[index],
                   cards: [...prevTypes[index].cards, card],
@@ -90,24 +99,9 @@ const SearchBarContainer = ({
               }
             });
           });
+        } else {
+          changeQuantity(typeIndex, types[typeIndex].cards.length, 1);
         }
-      }
-      if (card.tokens.length > 0) {
-        var exists = false;
-        const newTokens = produce(tokens, (draft) => {
-          for (var i = 0; i < card.tokens.length; ++i) {
-            for (var j = 0; j < tokens.length; ++j) {
-              if (tokens[j].name === card.tokens[i].name) {
-                exists = true;
-                break;
-              }
-            }
-            if (!exists) {
-              draft.push(card.tokens[i]);
-            }
-          }
-        });
-        setTokens(newTokens);
       }
     }
     setQuery({ ...query, userQuery: "", loading: false });

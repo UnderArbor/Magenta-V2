@@ -2,6 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DisplayContainer from "./DisplayContainer";
 import ManaCurveContainer from "./ManaCurveContainer";
+import CardSorting from "./CardSorting";
 
 import DownArrow from "../../../utils/icons/format-down.svg";
 
@@ -12,7 +13,10 @@ const DeckToolsItems = ({
   toggleDisplaySetting,
   toggleToolBooleans,
   manaCurveData,
+  ghostCurveData,
   manaCurveLabels,
+  currentCategory,
+  setCategory,
 }) => {
   const toolsVariant = {
     hidden: {
@@ -90,6 +94,7 @@ const DeckToolsItems = ({
             {toolBooleans.manaCurve && (
               <ManaCurveContainer
                 manaCurveData={manaCurveData}
+                ghostCurveData={ghostCurveData}
                 manaCurveLabels={manaCurveLabels}
               />
             )}
@@ -113,6 +118,24 @@ const DeckToolsItems = ({
                 displaySettings={displaySettings}
                 toggleDisplaySetting={toggleDisplaySetting}
                 handleSliderChange={handleSliderChange}
+              />
+            )}
+          </div>
+          <div className="toolsCategory">
+            <p className="toolsName">
+              Sort Cards
+              <img
+                src={DownArrow}
+                className="menuDownArrow"
+                onClick={() =>
+                  toggleToolBooleans("cardSorting", !toolBooleans.cardSorting)
+                }
+              />
+            </p>
+            {toolBooleans.cardSorting && (
+              <CardSorting
+                currentCategory={currentCategory}
+                setCategory={setCategory}
               />
             )}
           </div>

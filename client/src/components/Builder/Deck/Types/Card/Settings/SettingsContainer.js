@@ -18,8 +18,10 @@ const SettingsContainer = ({
   currentBoard,
   moveBoards,
   cloakSettings,
-  modifyType,
-  moveCard,
+  modifyProperty,
+  changeMainProperty,
+  adjustSettingProperties,
+  settingBooleans,
 }) => {
   const settingWindow = useRef(null);
   const setImage = useRef(null);
@@ -29,6 +31,97 @@ const SettingsContainer = ({
   const [filterSets, setFilterSets] = useState([]);
   const [openSetDropDown, setOpenSetDropDown] = useState(false);
   const [boardQuantity, setBoardQuantity] = useState(card.quantity);
+  const [newPropertyValue, setNewPropertyValue] = useState("");
+  const [inputPlaceholder, setInputPlaceholder] = useState(false);
+  const [propertySpecs, setPropertySpecs] = useState(
+    settingBooleans.property === "Types"
+      ? {
+          name: "Types",
+          mainProp: card.mainType,
+          currentProps: card.modifiedTypes,
+          otherProps: card.types,
+          existingProps: cardTypes.filter((cardType) => {
+            return (
+              cardType !== "Hero" &&
+              cardType !== "Vanguard" &&
+              cardType !== "Conspiracy" &&
+              cardType !== "Scheme" &&
+              cardType !== "Plane" &&
+              cardType !== "Phenomenon"
+            );
+          }),
+        }
+      : settingBooleans.property === "Cost"
+      ? {
+          name: "Cost",
+          mainProp: card.mainCMC,
+          currentProps: card.modifiedCMC,
+          otherProps: card.cmc,
+          existingProps: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        }
+      : {
+          name: "Tags",
+          mainProp: card.mainTag,
+          currentProps: card.tags,
+          otherProps: [],
+          existingProps: [],
+        }
+  );
+
+  useEffect(() => {
+    switch (settingBooleans.property) {
+      case "Types":
+        return setPropertySpecs({
+          name: "Types",
+          mainProp: card.mainType,
+          currentProps: card.modifiedTypes,
+          otherProps: card.types,
+          existingProps: cardTypes.filter((cardType) => {
+            return (
+              cardType !== "Hero" &&
+              cardType !== "Vanguard" &&
+              cardType !== "Conspiracy" &&
+              cardType !== "Scheme" &&
+              cardType !== "Plane" &&
+              cardType !== "Phenomenon"
+            );
+          }),
+        });
+      case "Cost":
+        return setPropertySpecs({
+          name: "Cost",
+          mainProp: card.mainCMC,
+          currentProps: card.modifiedCMC,
+          otherProps: card.cmc,
+          existingProps: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        });
+      case "Tags":
+        return setPropertySpecs({
+          name: "Tags",
+          mainProp: card.mainTag,
+          currentProps: card.tags,
+          otherProps: [],
+          existingProps: [],
+        });
+      default:
+        return setPropertySpecs({
+          name: "Type",
+          mainProp: card.mainType,
+          currentProps: card.modifiedTypes,
+          otherProps: card.types,
+          existingProps: cardTypes.filter((cardType) => {
+            return (
+              cardType !== "Hero" &&
+              cardType !== "Vanguard" &&
+              cardType !== "Conspiracy" &&
+              cardType !== "Scheme" &&
+              cardType !== "Plane" &&
+              cardType !== "Phenomenon"
+            );
+          }),
+        });
+    }
+  }, [settingBooleans.property, card]);
 
   useEffect(() => {
     async function getData() {
@@ -105,9 +198,15 @@ const SettingsContainer = ({
       boards={boards}
       currentBoard={currentBoard}
       moveBoards={moveBoards}
-      cardTypes={cardTypes}
-      modifyType={modifyType}
-      moveCard={moveCard}
+      modifyProperty={modifyProperty}
+      changeMainProperty={changeMainProperty}
+      adjustSettingProperties={adjustSettingProperties}
+      settingBooleans={settingBooleans}
+      propertySpecs={propertySpecs}
+      newPropertyValue={newPropertyValue}
+      setNewPropertyValue={setNewPropertyValue}
+      inputPlaceholder={inputPlaceholder}
+      setInputPlaceholder={setInputPlaceholder}
     />
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import produce from "immer";
+import produce, { current } from "immer";
 import { motion, AnimatePresence } from "framer-motion";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
@@ -57,6 +57,7 @@ const BuilderContainer = ({
   match,
   settingsCloak,
   loadTools,
+  displaySettings,
 }) => {
   let history = useHistory();
   const location = useLocation();
@@ -108,17 +109,62 @@ const BuilderContainer = ({
     for (var i = 0; i < boards.length; ++i) {
       if (boards[i].name === currentBoard) {
         const types = boards[i].boardTypes;
-        setTokens([]);
-        setGhostCards([]);
         setTypes(types);
-        setTimeout(() => {
-          compileTokens(types);
-          compileGhosts(types);
-        }, 50);
         break;
       }
     }
   }, [currentBoard]);
+
+  useEffect(() => {
+    var newTypes = [];
+    for (var i = 0; i < boardTypes.length; ++i) {
+      for (var j = 0; j < boardTypes[i].cards.length; ++j) {
+        const card = boardTypes[i].cards[j];
+        const newIndex = -1;
+        switch (displaySettings.sortCategory) {
+          case "Types":
+            newIndex = newTypes.findIndex((type) => {
+              return type.name === card.mainType;
+            });
+            if (newIndex === -1) {
+              newTypes.push({ name: card.mainType, open: true, cards: [card] });
+            } else {
+              newTypes[newIndex].cards.push(card);
+            }
+            break;
+          case "Cost":
+            newIndex = newTypes.findIndex((type) => {
+              return type.name === card.mainCMC;
+            });
+            if (newIndex === -1) {
+              newTypes.push({ name: card.mainCMC, open: true, cards: [card] });
+            } else {
+              newTypes[newIndex].cards.push(card);
+            }
+            break;
+          case "Tags":
+            newIndex = newTypes.findIndex((type) => {
+              if (card.mainTag === undefined) {
+                return type.name === "untagged";
+              } else {
+                return type.name === card.mainTag;
+              }
+            });
+            if (newIndex === -1) {
+              newTypes.push({
+                name: card.mainTag === undefined ? "untagged" : card.mainTag,
+                open: true,
+                cards: [card],
+              });
+            } else {
+              newTypes[newIndex].cards.push(card);
+            }
+            break;
+        }
+      }
+    }
+    setTypes(newTypes);
+  }, [displaySettings.sortCategory]);
 
   useEffect(async () => {
     const deckId = match.params.deckId;
@@ -131,10 +177,10 @@ const BuilderContainer = ({
             deckFormat: res.data.format,
             deckImage: res.data.picture,
           });
-          loadTools(res.data.toolBooleans, res.data.displaySettings);
           setBoards(res.data.boards);
           const mainboardTypes = res.data.boards[0].boardTypes;
           setTypes(mainboardTypes);
+          loadTools(res.data.toolBooleans, res.data.displaySettings);
         });
         setDeckId(deckId);
       } catch (error) {
@@ -160,6 +206,7 @@ const BuilderContainer = ({
           displayIndicator: false,
           displayName: true,
           cardSize: 100,
+          sortCategory: "Types",
         }
       );
     }
@@ -254,6 +301,7 @@ const BuilderContainer = ({
   }, [uploadCards]);
 
   useEffect(async () => {
+    console.log("boardTypes: ", boardTypes);
     compileTokens(boardTypes);
     const newGhosts = compileGhosts(boardTypes);
 
@@ -262,8 +310,9 @@ const BuilderContainer = ({
     boardTypes.forEach((type, index) => {
       if (
         type.cards.length === 0 &&
-        typeof newGhosts.find((ghostType) => ghostType.name === type.name) ===
-          "undefined"
+        typeof newGhosts.find((ghostType) => {
+          return ghostType.name === type.name;
+        }) === "undefined"
       ) {
         emptyArray.push(index);
       } else {
@@ -276,8 +325,8 @@ const BuilderContainer = ({
 
     if (emptyArray.length > 0) {
       const newTypes = produce(boardTypes, (draft) => {
-        for (var i = 0; i < emptyArray.length; ++i) {
-          draft.splice(emptyArray[i], 1);
+        for (var i = emptyArray.length; i > 0; --i) {
+          draft.splice(emptyArray[i - 1], 1);
         }
       });
       setTypes(newTypes);
@@ -368,7 +417,7 @@ const BuilderContainer = ({
   async function moveCard(
     dragTypeIndex,
     dragCardIndex,
-    hoverTypeIndex,
+    hoverTypeIndex, // Or Property Name and leave next blank
     hoverCardIndex
   ) {
     if (typeof hoverTypeIndex === "string") {
@@ -379,11 +428,31 @@ const BuilderContainer = ({
     }
 
     const newTypes = produce(boardTypes, (draft) => {
+      switch (displaySettings.sortCategory) {
+        case "Types":
+          draft[dragTypeIndex].cards[dragCardIndex].mainType =
+            draft[hoverTypeIndex].name;
+          break;
+        case "Cost":
+          draft[dragTypeIndex].cards[dragCardIndex].mainCMC =
+            draft[hoverTypeIndex].name;
+          break;
+        case "Tags":
+          if (draft[dragTypeIndex].name !== "untagged") {
+            draft[dragTypeIndex].cards[dragCardIndex].mainTag =
+              draft[hoverTypeIndex].name;
+          } else {
+            draft[dragTypeIndex].cards[dragCardIndex].mainTag = undefined;
+          }
+          break;
+        default:
+          draft[dragTypeIndex].cards[dragCardIndex].mainType =
+            draft[hoverTypeIndex].name;
+          break;
+      }
       const removedCard = draft[dragTypeIndex].cards.splice(dragCardIndex, 1);
       draft[hoverTypeIndex].cards.splice(hoverCardIndex, 0, removedCard[0]);
       draft[hoverTypeIndex].open = true;
-      draft[hoverTypeIndex].cards[hoverCardIndex].mainType =
-        draft[hoverTypeIndex].name;
       if (draft[dragTypeIndex].cards.length <= 0) {
         draft.splice(dragTypeIndex, 1);
       }
@@ -471,50 +540,16 @@ const BuilderContainer = ({
     await setTypes(newBoards[oldBoardIndex].boardTypes);
   }
 
-  async function changeQuantity(cardName, mainType, quantChange) {
-    let success = false;
-    for (var i = 0; i < boardTypes.length; ++i) {
-      if (boardTypes[i].name === mainType) {
-        for (var j = 0; j < boardTypes[i].cards.length; ++j) {
-          if (boardTypes[i].cards[j].name === cardName) {
-            await setTypes((prevTypes) => {
-              return prevTypes.map((type, index) => {
-                if (i !== index || type.name !== mainType) {
-                  return type;
-                } else if (
-                  i === index &&
-                  Number(type.cards[j].quantity) + Number(quantChange) !== 0
-                ) {
-                  return {
-                    ...type,
-                    cards: [
-                      ...type.cards.slice(0, j),
-                      {
-                        ...type.cards[j],
-                        quantity:
-                          Number(type.cards[j].quantity) + Number(quantChange),
-                      },
-                      ...type.cards.slice(j + 1),
-                    ],
-                  };
-                } else {
-                  return {
-                    ...type,
-                    cards: [
-                      ...type.cards.slice(0, j),
-                      ...type.cards.slice(j + 1),
-                    ],
-                  };
-                }
-              });
-            });
-            success = true;
-            break;
-          }
-        }
+  async function changeQuantity(typeIndex, cardIndex, quantChange) {
+    const newTypes = produce(boardTypes, (draft) => {
+      if (boardTypes[typeIndex].cards[cardIndex].quantity + quantChange === 0) {
+        draft[typeIndex].cards.splice(cardIndex, 1);
+      } else {
+        draft[typeIndex].cards[cardIndex].quantity += quantChange;
       }
-    }
-    return success;
+    });
+
+    setTypes(newTypes);
   }
 
   async function changeCardSet(set, typeIndex, cardIndex) {
@@ -566,36 +601,95 @@ const BuilderContainer = ({
     setGhostCards(ghostArray);
     types.forEach((type) => {
       type.cards.forEach((card) => {
-        const acceptedTypes = card.modifiedTypes.filter((type) => {
-          return type !== "Basic";
-        });
-        if (acceptedTypes.length > 1) {
-          acceptedTypes.forEach((type) => {
-            const index = ghostArray.findIndex((item) => {
-              return type === item.name;
-            });
-            if (card.mainType !== type) {
-              if (index === -1) {
-                ghostArray.push({ name: type, cards: [card] });
-              } else {
-                ghostArray[index].cards.push(card);
+        switch (displaySettings.sortCategory) {
+          case "Types":
+            card.modifiedTypes.forEach((type) => {
+              const index = ghostArray.findIndex((item) => {
+                return type === item.name;
+              });
+              if (card.mainType !== type) {
+                if (index === -1) {
+                  ghostArray.push({ name: type, cards: [card] });
+                } else {
+                  ghostArray[index].cards.push(card);
+                }
               }
-            }
-          });
+            });
+            break;
+          case "Cost":
+            card.modifiedCMC.forEach((cmc) => {
+              const index = ghostArray.findIndex((item) => {
+                return cmc === item.name;
+              });
+              if (card.mainCMC !== cmc) {
+                if (index === -1) {
+                  ghostArray.push({ name: cmc, cards: [card] });
+                } else {
+                  ghostArray[index].cards.push(card);
+                }
+              }
+            });
+            break;
+          case "Tags":
+            card.tags.forEach((tag) => {
+              const index = ghostArray.findIndex((item) => {
+                return tag === item.name;
+              });
+              if (card.mainTag !== tag) {
+                if (index === -1) {
+                  ghostArray.push({ name: tag, cards: [card] });
+                } else {
+                  ghostArray[index].cards.push(card);
+                }
+              }
+            });
+            break;
+          default:
+            break;
         }
+
         if (card.secondCard.name !== "") {
           const secondCard = card.secondCard;
-          console.log("second: ", secondCard);
-          secondCard.types.forEach((type) => {
-            const index = ghostArray.findIndex((item) => {
-              return type === item.name;
-            });
-            if (index === -1) {
-              ghostArray.push({ name: type, cards: [secondCard] });
-            } else {
-              ghostArray[index].cards.push(secondCard);
-            }
-          });
+          switch (displaySettings.sortCategory) {
+            case "Types":
+              secondCard.modifiedTypes.forEach((type) => {
+                const index = ghostArray.findIndex((item) => {
+                  return type === item.name;
+                });
+                if (index === -1) {
+                  ghostArray.push({ name: type, cards: [secondCard] });
+                } else {
+                  ghostArray[index].cards.push(secondCard);
+                }
+              });
+              break;
+            case "Cost":
+              secondCard.modifiedCMC.forEach((cmc) => {
+                const index = ghostArray.findIndex((item) => {
+                  return cmc === item.name;
+                });
+                if (index === -1) {
+                  ghostArray.push({ name: cmc, cards: [secondCard] });
+                } else {
+                  ghostArray[index].cards.push(secondCard);
+                }
+              });
+              break;
+            case "Tags":
+              secondCard.tags.forEach((tag) => {
+                const index = ghostArray.findIndex((item) => {
+                  return tag === item.name;
+                });
+                if (index === -1) {
+                  ghostArray.push({ name: tag, cards: [secondCard] });
+                } else {
+                  ghostArray[index].cards.push(secondCard);
+                }
+              });
+              break;
+            default:
+              break;
+          }
         }
       });
     });
@@ -688,6 +782,7 @@ const BuilderContainer = ({
             moveBoards={moveBoards}
             moveType={moveType}
             ghostCards={ghostCards}
+            currentCategory={displaySettings.sortCategory}
           />
         </div>
       </DndProvider>
@@ -712,6 +807,7 @@ BuilderContainer.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
   saveDeck: PropTypes.bool.isRequired,
   settingsCloak: PropTypes.bool.isRequired,
+  displaySettings: PropTypes.object.isRequired,
   emptyPacket: PropTypes.func.isRequired,
   updateDecks: PropTypes.func.isRequired,
   savingDeck: PropTypes.func.isRequired,
@@ -725,6 +821,7 @@ const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
   saveDeck: state.auth.saveDeck,
   settingsCloak: state.deck.settingsCloak,
+  displaySettings: state.deck.displaySettings,
 });
 
 export default connect(mapStateToProps, {

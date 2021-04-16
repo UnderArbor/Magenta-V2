@@ -29,6 +29,7 @@ const DeckContainer = ({
   moveBoards,
   moveType,
   ghostCards,
+  currentCategory,
 }) => {
   const breakpointColumnsObj = {
     default: 3,
@@ -36,20 +37,140 @@ const DeckContainer = ({
     920: 1,
   };
 
-  function modifyType(typeIndex, cardIndex, newType, addBoolean) {
+  function modifyProperty(propertyType, property, typeIndex, cardIndex, add) {
     const card = types[typeIndex].cards[cardIndex];
 
     const newTypes = produce(types, (draft) => {
-      if (addBoolean) {
-        draft[typeIndex].cards[cardIndex].modifiedTypes.push(newType);
+      if (add) {
+        switch (propertyType) {
+          case "Types":
+            draft[typeIndex].cards[cardIndex].modifiedTypes.push(property);
+            break;
+          case "Cost":
+            draft[typeIndex].cards[cardIndex].modifiedCMC.push(property);
+            break;
+          case "Tags":
+            draft[typeIndex].cards[cardIndex].tags.push(property);
+            if (draft[typeIndex].cards[cardIndex].mainTag === undefined) {
+              draft[typeIndex].cards[cardIndex].mainTag = property;
+              if (propertyType === currentCategory) {
+                const removedCard = draft[typeIndex].cards.splice(cardIndex, 1);
+                const newTypeIndex = types.findIndex((type) => {
+                  return type.name === property;
+                });
+                if (newTypeIndex === -1) {
+                  draft.push({
+                    name: property,
+                    open: true,
+                    cards: [removedCard[0]],
+                  });
+                } else {
+                  const newCardIndex = draft[newTypeIndex].length;
+                  draft[newTypeIndex].cards.splice(
+                    newCardIndex,
+                    0,
+                    removedCard[0]
+                  );
+                  draft[newTypeIndex].open = true;
+                }
+              }
+            }
+            break;
+          default:
+            break;
+        }
       } else {
-        const removedIndex = card.modifiedTypes.findIndex((type) => {
-          return type === newType;
-        });
-        draft[typeIndex].cards[cardIndex].modifiedTypes.splice(removedIndex, 1);
+        var removedIndex = -1;
+        switch (propertyType) {
+          case "Types":
+            removedIndex = card.modifiedTypes.findIndex((type) => {
+              return type === property;
+            });
+            draft[typeIndex].cards[cardIndex].modifiedTypes.splice(
+              removedIndex,
+              1
+            );
+            break;
+          case "Cost":
+            removedIndex = card.modifiedCMC.findIndex((cmc) => {
+              return cmc === property;
+            });
+            draft[typeIndex].cards[cardIndex].modifiedCMC.splice(
+              removedIndex,
+              1
+            );
+            break;
+          case "Tags":
+            removedIndex = card.tags.findIndex((tag) => {
+              return tag === property;
+            });
+            const newTag =
+              card.tags.length > 1
+                ? card.tags[
+                    card.tags.findIndex((tag) => {
+                      return tag !== card.tags[removedIndex];
+                    })
+                  ]
+                : "untagged";
+            const removedTag = draft[typeIndex].cards[cardIndex].tags.splice(
+              removedIndex,
+              1
+            );
+            if (card.mainTag === removedTag[0]) {
+              draft[typeIndex].cards[cardIndex].mainTag =
+                newTag === "untagged" ? undefined : newTag;
+              if (propertyType === currentCategory) {
+                const removedCard = draft[typeIndex].cards.splice(cardIndex, 1);
+                var newTypeIndex = draft.findIndex((type) => {
+                  return type.name === newTag;
+                });
+                if (newTypeIndex === -1) {
+                  draft.push({
+                    name: newTag,
+                    open: true,
+                    cards: [removedCard[0]],
+                  });
+                } else {
+                  const newCardIndex = draft[newTypeIndex].length;
+                  draft[newTypeIndex].cards.splice(
+                    newCardIndex,
+                    0,
+                    removedCard[0]
+                  );
+                  draft[newTypeIndex].open = true;
+                }
+              }
+            }
+            break;
+          default:
+            break;
+        }
       }
     });
     setTypes(newTypes);
+  }
+
+  function changeMainProperty(propertyType, property, typeIndex, cardIndex) {
+    if (propertyType === currentCategory) {
+      moveCard(typeIndex, cardIndex, property);
+    } else {
+      const newTypes = produce(types, (draft) => {
+        switch (propertyType) {
+          case "Types":
+            draft[typeIndex].cards[cardIndex].mainType = property;
+            break;
+          case "Cost":
+            draft[typeIndex].cards[cardIndex].mainCMC = property;
+            break;
+          case "Tags":
+            draft[typeIndex].cards[cardIndex].mainTag = property;
+            break;
+          default:
+            break;
+        }
+      });
+      setTypes(newTypes);
+    }
   }
 
   return (
@@ -57,13 +178,17 @@ const DeckContainer = ({
       <SearchBarContainer
         types={types}
         setTypes={setTypes}
-        tokens={tokens}
-        setTokens={setTokens}
         changeQuantity={changeQuantity}
         deckImage={deckImage}
         changeDeckArt={changeDeckArt}
+        currentCategory={currentCategory}
       />
-      <DeckToolsContainer tools={tools} setTools={setTools} types={types} />
+      <DeckToolsContainer
+        tools={tools}
+        setTools={setTools}
+        types={boards[0].boardTypes}
+        currentCategory={currentCategory}
+      />
       {types.length === 0 && <div className="emptyDeck">Hi</div>}
       <AnimatePresence>
         <Masonry
@@ -91,7 +216,9 @@ const DeckContainer = ({
                 ghostCards={ghostCards.find(
                   (ghostType) => ghostType.name === type.name
                 )}
-                modifyType={modifyType}
+                modifyProperty={modifyProperty}
+                changeMainProperty={changeMainProperty}
+                currentCategory={currentCategory}
               />
             );
           })}

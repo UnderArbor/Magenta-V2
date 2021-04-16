@@ -23,7 +23,9 @@ const TypeContainer = ({
   moveBoards,
   moveType,
   ghostCards,
-  modifyType,
+  modifyProperty,
+  changeMainProperty,
+  currentCategory,
 }) => {
   const typeRef = useRef(null);
   const typeHeaderRef = useRef(null);
@@ -142,6 +144,7 @@ const TypeContainer = ({
         ghostQuantity={ghostQuantity}
         typeHeaderRef={typeHeaderRef}
         isDragging={isDragging}
+        currentCategory={currentCategory}
       />
       <motion.div
         ref={typeRef}
@@ -172,7 +175,8 @@ const TypeContainer = ({
                   boards={boards}
                   currentBoard={currentBoard}
                   moveBoards={moveBoards}
-                  modifyType={modifyType}
+                  modifyProperty={modifyProperty}
+                  changeMainProperty={changeMainProperty}
                 />
               );
             }

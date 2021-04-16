@@ -20,6 +20,8 @@ const Card = ({
   movePopup,
   displaySettings,
   cloakSettings,
+  typeIndex,
+  cardIndex,
 }) => {
   useEffect(() => {
     const cardArt = document.querySelectorAll(".cardArtContainer");
@@ -78,7 +80,9 @@ const Card = ({
         id={card.name}
         className="cardArtContainer"
         onMouseEnter={(e) => {
-          movePopup(e, cardImageRef);
+          if (!openSettings) {
+            movePopup(e, cardImageRef);
+          }
         }}
       >
         <div className="manaContainer">
@@ -169,7 +173,7 @@ const Card = ({
                     : "quantButton"
                 }
                 style={{ marginTop: "-2px" }}
-                onClick={() => changeQuantity(card.name, card.mainType, -1)}
+                onClick={() => changeQuantity(typeIndex, cardIndex, -1)}
               >
                 -
               </button>
@@ -195,8 +199,8 @@ const Card = ({
                   }}
                   onBlur={(e) => {
                     changeQuantity(
-                      card.name,
-                      card.mainType,
+                      typeIndex,
+                      cardIndex,
                       Number(e.target.innerHTML) - card.quantity
                     );
                   }}
@@ -212,7 +216,7 @@ const Card = ({
                     : "quantButton"
                 }
                 style={{ marginTop: "1px" }}
-                onClick={() => changeQuantity(card.name, card.mainType, 1)}
+                onClick={() => changeQuantity(typeIndex, cardIndex, 1)}
               >
                 +
               </button>

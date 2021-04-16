@@ -8,6 +8,7 @@ import {
   DECK_ERROR,
   SETTINGS_CLOAK,
   TOGGLE_TOOLS,
+  ADJUST_SETTING_PROPERTIES,
 } from "./types";
 
 import axios from "axios";
@@ -102,9 +103,31 @@ export const loadTools = (toolBooleans, displaySettings) => (dispatch) => {
       dispatch({ type: TOGGLE_TOOLS, payload: { name: key, toggle: value } });
     }
     for (const [key, value] of Object.entries(displaySettings)) {
-      // console.log(`${key}: ${value}`);
       dispatch({ type: TOGGLE_DISPLAY, payload: { checked: value, id: key } });
+      if (key === "sortCategory") {
+        dispatch({ type: ADJUST_SETTING_PROPERTIES, payload: value });
+      }
     }
+  } catch (error) {
+    dispatch({ type: DECK_ERROR });
+  }
+};
+
+export const adjustSettingProperties = (newModifier) => (dispatch) => {
+  try {
+    dispatch({ type: ADJUST_SETTING_PROPERTIES, payload: newModifier });
+  } catch (error) {
+    dispatch({ type: DECK_ERROR });
+  }
+};
+
+export const setSortCategory = (newCategory) => (dispatch) => {
+  try {
+    dispatch({
+      type: TOGGLE_DISPLAY,
+      payload: { checked: newCategory, id: "sortCategory" },
+    });
+    dispatch({ type: ADJUST_SETTING_PROPERTIES, payload: newCategory });
   } catch (error) {
     dispatch({ type: DECK_ERROR });
   }

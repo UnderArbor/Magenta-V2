@@ -595,7 +595,7 @@ const GhostCardContainer = ({ ghostCard, displaySettings }) => {
           onMouseOver: ({ e, setIsHovering, unsetIsHovering }) => {
             if (
               e.target.classList.contains("bigCardImage") ||
-              e.target.className === "cardName" ||
+              e.target.className.includes("cardName") ||
               e.target.className === "settings"
             ) {
               unsetIsHovering();

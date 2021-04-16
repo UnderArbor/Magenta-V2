@@ -11,7 +11,10 @@ import { motion } from "framer-motion";
 
 import { ItemTypes } from "../../../../Constants";
 import Card from "./Card";
-import { cloakSettings } from "../../../../../actions/deck";
+import {
+  cloakSettings,
+  adjustSettingProperties,
+} from "../../../../../actions/deck";
 
 const CardContainer = ({
   typeIndex,
@@ -28,7 +31,10 @@ const CardContainer = ({
   currentBoard,
   moveBoards,
   cloakSettings,
-  modifyType,
+  adjustSettingProperties,
+  modifyProperty,
+  changeMainProperty,
+  settingBooleans,
 }) => {
   const cardRef = useRef(null);
   const cardImageRef = useRef(null);
@@ -597,6 +603,7 @@ const CardContainer = ({
 
     const windowWidth =
       window.innerWidth || document.documentElement.clientWidth;
+    const correctedWidth = windowWidth / 2;
 
     const bounding = cardImageRef.current.getBoundingClientRect();
 
@@ -610,12 +617,12 @@ const CardContainer = ({
     ) {
       case true:
         switch (
-          bounding.right > windowWidth ||
+          bounding.left > correctedWidth ||
           (flipX &&
-            bounding.right +
+            bounding.left +
               e.currentTarget.offsetWidth +
               cardImageRef.current.offsetWidth >
-              windowWidth)
+              correctedWidth)
         ) {
           case true:
             return setFlips({ flipY: true, flipX: true });
@@ -624,12 +631,12 @@ const CardContainer = ({
         }
       case false:
         switch (
-          bounding.right > windowWidth ||
+          bounding.left > correctedWidth ||
           (flipX &&
-            bounding.right +
+            bounding.left +
               e.currentTarget.offsetWidth +
               cardImageRef.current.offsetWidth >
-              windowWidth)
+              correctedWidth)
         ) {
           case true:
             return setFlips({ flipY: false, flipX: true });
@@ -655,7 +662,7 @@ const CardContainer = ({
           onMouseOver: ({ e, setIsHovering, unsetIsHovering }) => {
             if (
               e.target.classList.contains("bigCardImage") ||
-              e.target.className === "cardName" ||
+              e.target.className.includes("cardName") ||
               e.target.className === "settings"
             ) {
               unsetIsHovering();
@@ -688,6 +695,8 @@ const CardContainer = ({
               movePopup={movePopup}
               displaySettings={displaySettings}
               cloakSettings={cloakSettings}
+              cardIndex={cardIndex}
+              typeIndex={typeIndex}
             />
             {openSettings ? (
               <SettingsContainer
@@ -703,8 +712,11 @@ const CardContainer = ({
                 currentBoard={currentBoard}
                 moveBoards={moveBoards}
                 cloakSettings={cloakSettings}
-                modifyType={modifyType}
+                adjustSettingProperties={adjustSettingProperties}
+                modifyProperty={modifyProperty}
                 moveCard={moveCard}
+                changeMainProperty={changeMainProperty}
+                settingBooleans={settingBooleans}
               />
             ) : isHovering && !cardDrag ? (
               <motion.img
@@ -747,11 +759,17 @@ const CardContainer = ({
 
 CardContainer.propTypes = {
   displaySettings: PropTypes.object.isRequired,
+  settingBooleans: PropTypes.object.isRequired,
   cloakSettings: PropTypes.func.isRequired,
+  adjustSettingProperties: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   displaySettings: state.deck.displaySettings,
+  settingBooleans: state.deck.settingBooleans,
 });
 
-export default connect(mapStateToProps, { cloakSettings })(CardContainer);
+export default connect(mapStateToProps, {
+  cloakSettings,
+  adjustSettingProperties,
+})(CardContainer);

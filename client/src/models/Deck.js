@@ -40,19 +40,19 @@ const DeckSchema = new Schema({
               cardImage: {
                 type: String,
               },
-              cmc: {
-                type: Number,
-              },
-              modifiedCMC: [{ type: Number }],
-              manaCost: [
+              cmc: [
                 {
-                  type: String,
+                  type: Number,
                 },
               ],
-              secondManaCost: [
-                {
-                  type: String,
-                },
+              mainCMC: { type: Number },
+              modifiedCMC: [{ type: Number }],
+              manaCost: [
+                [
+                  {
+                    type: String,
+                  },
+                ],
               ],
               mainType: {
                 type: String,
@@ -68,6 +68,10 @@ const DeckSchema = new Schema({
                   type: String,
                 },
               ],
+              mainTag: {
+                type: String,
+              },
+              tags: [{ type: String }],
               colors: [
                 {
                   type: String,
@@ -85,7 +89,8 @@ const DeckSchema = new Schema({
                 name: { type: String },
                 cardArt: { type: String },
                 cardImage: { type: String },
-                cmc: { type: Number },
+                cmc: [{ type: Number }],
+                modifiedCMC: [{ type: Number }],
                 manaCost: [
                   {
                     type: String,
@@ -150,12 +155,18 @@ const DeckSchema = new Schema({
     cardSize: {
       type: Number,
     },
+    sortCategory: {
+      type: String,
+    },
   },
   toolBooleans: {
     manaCurve: {
       type: Boolean,
     },
     displaySettings: {
+      type: Boolean,
+    },
+    cardSorting: {
       type: Boolean,
     },
   },

@@ -53,8 +53,8 @@ const Token = ({
           onMouseOver: ({ e, setIsHovering, unsetIsHovering }) => {
             console.log("e: ", e.target.className);
             if (
-              e.target.className.includes("bigCardImage") ||
-              e.target.className === "cardName"
+              e.target.classList.contains("bigCardImage") ||
+              e.target.className.includes("cardName")
             ) {
               unsetIsHovering();
             } else {
