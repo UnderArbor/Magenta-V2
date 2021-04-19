@@ -9,11 +9,34 @@ import SearchBarContainer from "../SearchBar/SearchBarContainer";
 import DeckToolsContainer from "../DeckTools/DeckToolsContainer";
 import TokenContainer from "./Types/TokenContainer";
 
+const emptyVariant = {
+  hidden: {
+    opacity: 0,
+    x: -50,
+  },
+  visible: {
+    opacity: 0.2,
+    x: 0,
+    transition: {
+      delay: 10,
+      duration: 2,
+      ease: "easeIn",
+    },
+  },
+  exit: {
+    opacity: 0,
+    x: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
+
 const DeckContainer = ({
   types,
   setTypes,
   tokens,
-  setTokens,
   tools,
   setTools,
   changeQuantity,
@@ -189,7 +212,19 @@ const DeckContainer = ({
         types={boards[0].boardTypes}
         currentCategory={currentCategory}
       />
-      {types.length === 0 && <div className="emptyDeck">Hi</div>}
+      <AnimatePresence>
+        {types.length === 0 && (
+          <motion.div
+            className="emptyDeck"
+            variants={emptyVariant}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            Hey...you should add a card
+          </motion.div>
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         <Masonry
           breakpointCols={breakpointColumnsObj}

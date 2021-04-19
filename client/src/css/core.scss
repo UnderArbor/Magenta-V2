@@ -825,8 +825,12 @@ $header-font: "Cinzel";
 }
 
 .emptyDeck {
-  color: white;
+  color: grey;
   font-size: 44px;
+  font-family: $header-font;
+  position: absolute;
+  width: 100%;
+  margin-top: 20vh;
 }
 
 .settingsCloak {
