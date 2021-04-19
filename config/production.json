@@ -1,4 +1,5 @@
 {
+	"MongoURI": "mongodb+srv",
 	"ScryFallAPI": "https://api.scryfall.com",
 	"jwtSecret": "mysecrettoken"
 }
