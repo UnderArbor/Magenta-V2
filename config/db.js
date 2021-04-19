@@ -1,17 +1,14 @@
 const mongoose = require("mongoose");
 const config = require("config");
+const db = config.get("MongoURI");
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(
-      process.env.MONGODB_URL ||
-        `mongodb+srv://UnderArbor:${process.env.DB_PW}@magenta.uluah.mongodb.net/Magenta?retryWrites=true&w=majority`,
-      {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useUnifiedTopology: true,
-      }
-    );
+    await mongoose.connect(process.env.MONGODB_URL || db, {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useUnifiedTopology: true,
+    });
 
     console.log("MongoDB Connected...");
   } catch (err) {
