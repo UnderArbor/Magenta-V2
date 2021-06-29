@@ -1,0 +1,179 @@
+@import "./reset.scss";
+@import "./core.scss";
+@import "./modal.scss";
+
+$result-height: 400px;
+$result-width: calc(#{$result-height} * 5 / 7);
+
+#asContainer {
+  --result-width: #{$result-width};
+  --result-height: #{$result-height};
+}
+
+.advancedLink {
+  text-decoration: underline;
+  text-decoration-color: $accent-color;
+  text-underline-offset: 8px;
+  color: $light-text;
+  font-size: 24px;
+  font-family: $secondary-font;
+  margin-left: 10%;
+}
+
+.advancedSearchContainer {
+  height: calc(100% - 5vh);
+  width: 90%;
+  margin: 0 auto;
+  background-color: $dark-background-color;
+  border: 3px solid $modal-border;
+  overflow-y: scroll;
+  position: absolute;
+  top: 5vh;
+  pointer-events: auto;
+  z-index: 9999;
+}
+
+.asHeader {
+  font-family: $header-font;
+  font-size: 48px;
+  margin: 24px 0;
+  color: white;
+}
+
+.asSearchGroup {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.asSearchItem {
+  display: flex;
+  flex-direction: row;
+  margin: 18px 24px;
+}
+
+.asLabel {
+  font-family: $body-font;
+  color: $light-text;
+  font-size: 24px;
+}
+
+.asQueryLabel {
+  font-family: $body-font;
+  color: $light-text;
+  font-size: 36px;
+}
+
+.asInput {
+  margin: 0 8px;
+}
+
+.asCheck {
+  width: 25px;
+  height: 25px;
+  margin: 0 8px;
+  border: 2px solid $accent-color;
+}
+
+.asStickySettings {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: $dark-background-color;
+  z-index: 2;
+  align-items: center;
+}
+
+.asBoardContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 6px;
+  padding: 3px;
+}
+
+.asBoardButton {
+  padding: 12px;
+  margin: 6px;
+  color: $primary-color;
+  background-color: $secondary-color;
+  border: 2px solid $primary-color;
+  font-size: 20px;
+}
+
+.asActiveButton {
+  color: $secondary-color;
+  background-color: $primary-color;
+  border: 2px solid $secondary-color;
+}
+
+.asSettingLabel {
+  color: $light-text;
+  font-size: 28px;
+  font-family: $header-font;
+  margin: 0 16px;
+}
+
+.asSliderContainer {
+  width: 30%;
+  margin-right: 4%;
+}
+
+.asResultContainer {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--result-width), 1fr));
+  column-gap: 2px;
+  row-gap: 2px;
+  padding: 8px;
+  z-index: 1;
+}
+
+.resultContainer {
+  position: relative;
+}
+
+.asResult {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  width: var(--result-width);
+  height: var(--result-height);
+}
+
+.asBigResult {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: auto;
+  z-index: 99;
+}
+
+.asResultImage {
+  width: var(--result-width);
+  height: var(--result-height);
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.advancedNextPage {
+  color: white;
+  border: 1px solid black;
+  background-color: grey;
+  cursor: pointer;
+  height: 100px;
+  margin: auto 0;
+}
+
+.nullNextPage {
+  color: black;
+  border: 1px solid white;
+  background-color: grey;
+  pointer-events: none;
+  height: 100px;
+  margin: auto 0;
+}

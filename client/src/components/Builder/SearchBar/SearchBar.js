@@ -1,10 +1,18 @@
 import React from "react";
 import LoadingIcon from "./LoadingIcon";
-import SearchIcon from "../../../utils/icons/search-icon.svg";
+import SearchIcon from "../../../utils/icons/search.svg";
 import SearchOptions from "./SearchOptions";
 import { motion, AnimatePresence } from "framer-motion";
 
-const SearchBar = ({ searchCard, query, queryChange, results, setResults }) => {
+const SearchBar = ({
+  searchCard,
+  query,
+  queryChange,
+  results,
+  setResults,
+  searchRef,
+  searchFocused,
+}) => {
   const searchVariants = {
     hidden: {
       x: -15,
@@ -44,66 +52,69 @@ const SearchBar = ({ searchCard, query, queryChange, results, setResults }) => {
   return (
     <AnimatePresence>
       <motion.div
-        className="searchArea"
+        ref={searchRef}
+        className={`searchArea ${searchFocused ? "focusedSearch" : null}`}
         variants={searchVariants}
         initial="hidden"
         animate="visible"
         exit="exit"
       >
-        <motion.input
-          className="search searchBar"
-          variants={searchVariants}
-          initial="hidden"
-          animate="kindaVisible"
-          value={query.userQuery}
-          style={{
-            color:
-              results.cards.length === 0 && query.userQuery !== ""
-                ? "red"
-                : null,
-          }}
-          onChange={(e) => {
-            queryChange(e);
-          }}
-          onKeyDown={(e) => {
-            switch (e.key) {
-              case "Enter":
-                return searchCard(results.cards[results.resultIndex]);
-              case "ArrowDown":
-                if (results.resultIndex + 1 < results.cards.length) {
-                  setResults({
-                    ...results,
-                    resultIndex: results.resultIndex + 1,
-                  });
-                }
-                return;
-              case "ArrowUp":
-                if (results.resultIndex > 0) {
-                  return setResults({
-                    ...results,
-                    resultIndex: results.resultIndex - 1,
-                  });
-                }
-                return;
-            }
-          }}
-        ></motion.input>
-        <motion.input
-          className="search ghostBar"
-          variants={searchVariants}
-          placeholder={
-            query.userQuery === ""
-              ? "Search Card Name"
-              : results.cards.length === 0
-              ? ""
-              : query.userQuery.concat(
-                  results.cards[results.resultIndex].slice(
-                    query.userQuery.length
+        <div className="searchContainer">
+          <motion.input
+            className="search searchBar"
+            variants={searchVariants}
+            initial="hidden"
+            animate="kindaVisible"
+            value={query.userQuery}
+            style={{
+              color:
+                results.cards.length === 0 && query.userQuery !== ""
+                  ? "red"
+                  : null,
+            }}
+            onChange={(e) => {
+              queryChange(e);
+            }}
+            onKeyDown={(e) => {
+              switch (e.key) {
+                case "Enter":
+                  return searchCard(results.cards[results.resultIndex]);
+                case "ArrowDown":
+                  if (results.resultIndex + 1 < results.cards.length) {
+                    setResults({
+                      ...results,
+                      resultIndex: results.resultIndex + 1,
+                    });
+                  }
+                  return;
+                case "ArrowUp":
+                  if (results.resultIndex > 0) {
+                    return setResults({
+                      ...results,
+                      resultIndex: results.resultIndex - 1,
+                    });
+                  }
+                  return;
+              }
+            }}
+          ></motion.input>
+          <motion.input
+            className="search ghostBar"
+            variants={searchVariants}
+            placeholder={
+              query.userQuery === ""
+                ? "Search Card Name"
+                : results.cards.length === 0
+                ? ""
+                : query.userQuery.concat(
+                    results.cards[results.resultIndex].slice(
+                      query.userQuery.length
+                    )
                   )
-                )
-          }
-          disabled
-        ></motion.input>
+            }
+            disabled
+          ></motion.input>
+        </div>
         {query.loading ? (
           <LoadingIcon right={"9px"} top={"24px"} size={"10px"} />
         ) : (

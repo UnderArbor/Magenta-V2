@@ -1,6 +1,6 @@
 @import "./core.scss";
 
-$modal-border: #fff56b;
+$modal-border: #c0b50c;
 
 .ReactModal__Overlay {
   opacity: 0;
@@ -20,7 +20,6 @@ $modal-border: #fff56b;
   height: 100%;
   width: 100%;
   text-align: center;
-  background-color: rgba(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
   pointer-events: none;
@@ -43,6 +42,7 @@ $modal-border: #fff56b;
   color: $light-text;
   pointer-events: auto;
   z-index: 9999;
+  border-radius: 6px;
 }
 
 .register-form {
@@ -181,7 +181,7 @@ $modal-border: #fff56b;
   width: calc(50% - 4px);
   margin: 0 10px;
   border: 2px solid darken(red, 20%);
-  color: $dark-text;
+  color: $dark-background-color;
   background-color: darken(red, 20%);
   font-size: 26px;
   padding: 7px;

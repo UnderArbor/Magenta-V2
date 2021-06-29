@@ -9,20 +9,19 @@ const RegisterButton = ({
   errorVariant,
   undoError,
   setErrors,
+  registerIsOpen,
+  setRegisterOpen,
+  openRegister,
+  openLogin,
 }) => {
-  const [modalIsOpen, setIsOpen] = useState(false);
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  function closeModal() {
+  function closeRegister() {
     setErrors({
       userName: "",
       email: "",
       password: "",
       matchingPassword: "",
     });
-    setIsOpen(false);
+    setRegisterOpen(false);
   }
 
   const [formData, setFormData] = useState({
@@ -56,21 +55,21 @@ const RegisterButton = ({
   };
 
   const customStyles = {
-    overlay: { zIndex: 1000 },
+    overlay: { zIndex: 1000, backgroundColor: "rgba(0, 0, 0, 0.6)" },
   };
 
   return (
     <Fragment>
-      <button onClick={() => openModal()} className="authLink">
+      <button onClick={() => openRegister()} className="registerLink">
         Register
       </button>
       <Modal
         closeTimeoutMS={300}
-        isOpen={modalIsOpen}
+        isOpen={registerIsOpen}
         style={customStyles}
-        onRequestClose={closeModal}
+        onRequestClose={closeRegister}
+        ariaHideApp={false}
         contentLabel="exampleModal"
-        appElement={document.getElementById("root")}
         className="modal"
       >
         <form
@@ -194,7 +193,15 @@ const RegisterButton = ({
             <button className="authButton" onClick={(e) => onRegister(e)}>
               Register
             </button>
-            <p className="otherAuthText notAllowed">Already registered?</p>
+            <p
+              className="otherAuthText"
+              onClick={() => {
+                openLogin();
+                closeRegister();
+              }}
+            >
+              Already registered?
+            </p>
           </div>
         </form>
       </Modal>

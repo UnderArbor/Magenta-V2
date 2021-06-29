@@ -22,7 +22,7 @@ const BuilderPage = ({ openDeckList, toggleDeckList }) => {
         toggleDeckList={toggleDeckList}
         mainPage={false}
       />
-      {openDeckList && <DeckScrollList />}
+      {/* {openDeckList && <DeckScrollList />} */}
       <Route exact path={path} component={NewDeckContainer} />
       <Route path={`${path}/:deckId`} component={BuilderContainer} />
     </div>

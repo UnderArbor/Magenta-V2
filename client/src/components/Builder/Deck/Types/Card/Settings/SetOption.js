@@ -6,7 +6,9 @@ const SetOption = ({
   set,
   index,
   setImage,
+  cardImage,
   changeCardSet,
+  setOpenSetDropDown,
 }) => {
   return (
     <div>
@@ -15,10 +17,12 @@ const SetOption = ({
         key={set.setName.concat(index)}
         onMouseOver={() => {
           setImage.current.src = set.cardImage;
-          setImage.current.classList.remove("hidden");
         }}
-        onMouseLeave={() => setImage.current.classList.add("hidden")}
-        onClick={() => changeCardSet(set, typeIndex, cardIndex)}
+        onMouseLeave={() => (setImage.current.src = cardImage)}
+        onClick={() => {
+          changeCardSet(set, typeIndex, cardIndex);
+          setOpenSetDropDown(false);
+        }}
       >
         {set.setName}
       </div>

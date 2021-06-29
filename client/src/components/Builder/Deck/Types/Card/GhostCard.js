@@ -56,6 +56,7 @@ const GhostCard = ({
       },
     },
   };
+
   return (
     <div className="">
       <div
@@ -78,6 +79,29 @@ const GhostCard = ({
               }
             >
               {currentManaCost}
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {displaySettings.displayQuantity && (
+            <motion.div
+              variants={toggleVariant}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="ghostQuantContainer"
+            >
+              <div className="ghostCardQuantity">
+                <span
+                  className="quantInput"
+                  contentEditable="false"
+                  suppressContentEditableWarning="true"
+                  type="text"
+                >
+                  {ghostCard.quantity}
+                </span>
+                <p className="quantityX">x</p>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

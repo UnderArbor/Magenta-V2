@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Dotdotdot from "react-dotdotdot";
 
 import settingsIcon from "../../../../../utils/images/Settings_Cog.png";
-import { current } from "immer";
 
 const Card = ({
   dragRef,
@@ -19,9 +18,9 @@ const Card = ({
   cardImageRef,
   movePopup,
   displaySettings,
-  cloakSettings,
   typeIndex,
   cardIndex,
+  format,
 }) => {
   useEffect(() => {
     const cardArt = document.querySelectorAll(".cardArtContainer");
@@ -57,7 +56,7 @@ const Card = ({
     },
     visible: {
       opacity: 1,
-      height: 50,
+      height: "100%",
       transition: {
         duration: 0.3,
         ease: "easeOut",
@@ -74,11 +73,10 @@ const Card = ({
   };
 
   return (
-    <div className={isDragging ? "dragCard" : null}>
+    <div id={card.name}>
       <div
         ref={dragRef}
-        id={card.name}
-        className="cardArtContainer"
+        className={`cardArtContainer ${isDragging && "dragCard"}`}
         onMouseEnter={(e) => {
           if (!openSettings) {
             movePopup(e, cardImageRef);
@@ -106,37 +104,26 @@ const Card = ({
         </div>
         <div className="quantCover" />
         <AnimatePresence>
-          {displaySettings.displayIndicator && (
-            <motion.div
-              variants={toggleVariant}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className={
-                Number(card.quantity) === 1
-                  ? "shadowBox shadow1"
-                  : Number(card.quantity) === 2
-                  ? "shadowBox shadow2"
-                  : Number(card.quantity) === 3
-                  ? "shadowBox shadow3"
-                  : Number(card.quantity) >= 4
-                  ? "shadowBox shadow4"
-                  : "shadowBox"
-              }
-            />
-          )}
+          {displaySettings.displayLegalities &&
+            format !== "Brew" &&
+            !card.legalities.includes(format) && (
+              <motion.div
+                variants={toggleVariant}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="shadowBox illegalShadow"
+              />
+            )}
         </AnimatePresence>
         <img className="cardArt" src={card.cardArt} alt="Whoopsie"></img>
         <div
-          className={`settingsCover quantCover ${
+          className={`settingsCover ${
             isHovering && !openSettings && !cardDrag && "settingsHover"
           }`}
           onClick={(e) => {
             if (!openSettings) {
               setOpenSettings(true);
-              const currentCard = document.getElementById(card.name);
-              currentCard.style.zIndex = 100;
-              cloakSettings(true);
             }
           }}
         >
@@ -150,9 +137,6 @@ const Card = ({
             onClick={(e) => {
               if (!openSettings) {
                 setOpenSettings(true);
-                const currentCard = document.getElementById(card.name);
-                currentCard.style.zIndex = 100;
-                cloakSettings(true);
               }
             }}
           ></div>

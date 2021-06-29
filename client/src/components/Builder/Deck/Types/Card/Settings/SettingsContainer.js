@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
 
 import Settings from "./Settings";
+import Modal from "react-modal";
 
 import getSets from "../../../../../../utils/functions/getSets";
-import cardTypes from "../../../../../../utils/json/cardTypes.json";
 
 const SettingsContainer = ({
   typeIndex,
@@ -12,8 +12,6 @@ const SettingsContainer = ({
   card,
   changeCardSet,
   changeDeckArt,
-  flipX,
-  flipY,
   boards,
   currentBoard,
   moveBoards,
@@ -22,6 +20,8 @@ const SettingsContainer = ({
   changeMainProperty,
   adjustSettingProperties,
   settingBooleans,
+  propertyList,
+  openSettings,
 }) => {
   const settingWindow = useRef(null);
   const setImage = useRef(null);
@@ -33,6 +33,15 @@ const SettingsContainer = ({
   const [boardQuantity, setBoardQuantity] = useState(card.quantity);
   const [newPropertyValue, setNewPropertyValue] = useState("");
   const [inputPlaceholder, setInputPlaceholder] = useState(false);
+
+  const customStyles = {
+    overlay: { zIndex: 1000, backgroundColor: "rgba(0, 0, 0, 0.6)" },
+  };
+
+  function closeSettings() {
+    setOpenSettings(false);
+  }
+
   const [propertySpecs, setPropertySpecs] = useState(
     settingBooleans.property === "Types"
       ? {
@@ -40,16 +49,7 @@ const SettingsContainer = ({
           mainProp: card.mainType,
           currentProps: card.modifiedTypes,
           otherProps: card.types,
-          existingProps: cardTypes.filter((cardType) => {
-            return (
-              cardType !== "Hero" &&
-              cardType !== "Vanguard" &&
-              cardType !== "Conspiracy" &&
-              cardType !== "Scheme" &&
-              cardType !== "Plane" &&
-              cardType !== "Phenomenon"
-            );
-          }),
+          existingProps: propertyList.types,
         }
       : settingBooleans.property === "Cost"
       ? {
@@ -57,14 +57,14 @@ const SettingsContainer = ({
           mainProp: card.mainCMC,
           currentProps: card.modifiedCMC,
           otherProps: card.cmc,
-          existingProps: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+          existingProps: propertyList.cost,
         }
       : {
           name: "Tags",
           mainProp: card.mainTag,
           currentProps: card.tags,
           otherProps: [],
-          existingProps: [],
+          existingProps: propertyList.tags,
         }
   );
 
@@ -76,16 +76,7 @@ const SettingsContainer = ({
           mainProp: card.mainType,
           currentProps: card.modifiedTypes,
           otherProps: card.types,
-          existingProps: cardTypes.filter((cardType) => {
-            return (
-              cardType !== "Hero" &&
-              cardType !== "Vanguard" &&
-              cardType !== "Conspiracy" &&
-              cardType !== "Scheme" &&
-              cardType !== "Plane" &&
-              cardType !== "Phenomenon"
-            );
-          }),
+          existingProps: propertyList.types,
         });
       case "Cost":
         return setPropertySpecs({
@@ -93,7 +84,7 @@ const SettingsContainer = ({
           mainProp: card.mainCMC,
           currentProps: card.modifiedCMC,
           otherProps: card.cmc,
-          existingProps: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+          existingProps: propertyList.cost,
         });
       case "Tags":
         return setPropertySpecs({
@@ -101,7 +92,7 @@ const SettingsContainer = ({
           mainProp: card.mainTag,
           currentProps: card.tags,
           otherProps: [],
-          existingProps: [],
+          existingProps: propertyList.tags,
         });
       default:
         return setPropertySpecs({
@@ -109,16 +100,7 @@ const SettingsContainer = ({
           mainProp: card.mainType,
           currentProps: card.modifiedTypes,
           otherProps: card.types,
-          existingProps: cardTypes.filter((cardType) => {
-            return (
-              cardType !== "Hero" &&
-              cardType !== "Vanguard" &&
-              cardType !== "Conspiracy" &&
-              cardType !== "Scheme" &&
-              cardType !== "Plane" &&
-              cardType !== "Phenomenon"
-            );
-          }),
+          existingProps: propertyList.types,
         });
     }
   }, [settingBooleans.property, card]);
@@ -131,31 +113,13 @@ const SettingsContainer = ({
       setFilterSets(newSets);
     }
 
-    function handleClickOutside(event) {
-      if (
-        settingWindow.current &&
-        !settingWindow.current.contains(event.target)
-      ) {
-        cloakSettings(false);
-        const currentCard = document.getElementById(card.name);
-        currentCard.style.zIndex = null;
-        setOpenSettings(false);
-      }
-    }
-
-    // Bind the event listener
-    document.addEventListener("mousedown", handleClickOutside);
-
     getData();
-
-    return () => {
-      // Unbind the event listener on clean up
-      cloakSettings(false);
-      const currentCard = document.getElementById(card.name);
-      currentCard.style.zIndex = null;
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, []);
+
+  useEffect(() => {
+    if (openSettings) document.body.style.overflowY = "hidden";
+    else document.body.style.overflowY = "scroll";
+  }, [openSettings]);
 
   useEffect(() => {
     if (userQuery !== "" && sets.loading === false) {
@@ -177,37 +141,46 @@ const SettingsContainer = ({
   }, [userQuery, sets.loading]);
 
   return (
-    <Settings
-      typeIndex={typeIndex}
-      cardIndex={cardIndex}
-      settingWindow={settingWindow}
-      setImage={setImage}
-      card={card}
-      sets={sets}
-      filterSets={filterSets}
-      userQuery={userQuery}
-      setUserQuery={setUserQuery}
-      openSetDropDown={openSetDropDown}
-      setOpenSetDropDown={setOpenSetDropDown}
-      changeCardSet={changeCardSet}
-      changeDeckArt={changeDeckArt}
-      flipX={flipX}
-      flipY={flipY}
-      boardQuantity={boardQuantity}
-      setBoardQuantity={setBoardQuantity}
-      boards={boards}
-      currentBoard={currentBoard}
-      moveBoards={moveBoards}
-      modifyProperty={modifyProperty}
-      changeMainProperty={changeMainProperty}
-      adjustSettingProperties={adjustSettingProperties}
-      settingBooleans={settingBooleans}
-      propertySpecs={propertySpecs}
-      newPropertyValue={newPropertyValue}
-      setNewPropertyValue={setNewPropertyValue}
-      inputPlaceholder={inputPlaceholder}
-      setInputPlaceholder={setInputPlaceholder}
-    />
+    <Modal
+      closeTimeoutMS={300}
+      isOpen={openSettings}
+      ariaHideApp={false}
+      style={customStyles}
+      onRequestClose={closeSettings}
+      contentLabel="exampleModal"
+      className="modal"
+    >
+      <Settings
+        typeIndex={typeIndex}
+        cardIndex={cardIndex}
+        settingWindow={settingWindow}
+        setImage={setImage}
+        card={card}
+        sets={sets}
+        filterSets={filterSets}
+        userQuery={userQuery}
+        setUserQuery={setUserQuery}
+        openSetDropDown={openSetDropDown}
+        setOpenSetDropDown={setOpenSetDropDown}
+        changeCardSet={changeCardSet}
+        changeDeckArt={changeDeckArt}
+        boardQuantity={boardQuantity}
+        setBoardQuantity={setBoardQuantity}
+        boards={boards}
+        currentBoard={currentBoard}
+        moveBoards={moveBoards}
+        modifyProperty={modifyProperty}
+        changeMainProperty={changeMainProperty}
+        adjustSettingProperties={adjustSettingProperties}
+        settingBooleans={settingBooleans}
+        propertySpecs={propertySpecs}
+        newPropertyValue={newPropertyValue}
+        setNewPropertyValue={setNewPropertyValue}
+        inputPlaceholder={inputPlaceholder}
+        setInputPlaceholder={setInputPlaceholder}
+        propertyList={propertyList}
+      />
+    </Modal>
   );
 };
 

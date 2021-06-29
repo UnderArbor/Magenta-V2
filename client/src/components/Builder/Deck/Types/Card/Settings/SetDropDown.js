@@ -8,6 +8,7 @@ const SetDropDown = ({
   setImage,
   setOpenSetDropDown,
   changeCardSet,
+  cardImage,
 }) => {
   const setDropDown = useRef(null);
 
@@ -36,6 +37,8 @@ const SetDropDown = ({
           index={index}
           setImage={setImage}
           changeCardSet={changeCardSet}
+          cardImage={cardImage}
+          setOpenSetDropDown={setOpenSetDropDown}
         />
       ))}
     </div>

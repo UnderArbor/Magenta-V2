@@ -12,13 +12,13 @@ const DisplayContainer = ({
     overrides: {
       MuiSlider: {
         root: {
-          color: "#dbd599",
+          color: "#ab85ad",
           height: 8,
         },
         thumb: {
           height: 24,
           width: 24,
-          backgroundColor: "#fff340",
+          backgroundColor: "#691070",
           marginTop: -10,
           marginLeft: -12,
           boxShadow: "0 0 0 0 #000",
@@ -62,10 +62,10 @@ const DisplayContainer = ({
           checked={displaySettings.displayMana}
           checkedIcon={false}
           uncheckedIcon={false}
-          onColor={"#dbd599"}
-          onHandleColor={"#fff340"}
-          offColor={"#707070"}
-          offHandleColor={"#a0a0a0"}
+          onColor={"#ab85ad"}
+          onHandleColor={"#691070"}
+          offColor={"#c4c4c4"}
+          offHandleColor={"#3f3f3f"}
           handleDiameter={36}
         />
       </div>
@@ -77,25 +77,25 @@ const DisplayContainer = ({
           checked={displaySettings.displayQuantity}
           checkedIcon={false}
           uncheckedIcon={false}
-          onColor={"#dbd599"}
-          onHandleColor={"#fff340"}
-          offColor={"#707070"}
-          offHandleColor={"#a0a0a0"}
+          onColor={"#ab85ad"}
+          onHandleColor={"#691070"}
+          offColor={"#c4c4c4"}
+          offHandleColor={"#3f3f3f"}
           handleDiameter={36}
         />
       </div>
       <div className="displaySetting">
-        <p className="displaySettingName">Quantity Indicator</p>
+        <p className="displaySettingName">Card Legalities</p>
         <Switch
-          id="displayIndicator"
+          id="displayLegalities"
           onChange={(checked, e, id) => toggleDisplaySetting(checked, id)}
-          checked={displaySettings.displayIndicator}
+          checked={displaySettings.displayLegalities}
           checkedIcon={false}
           uncheckedIcon={false}
-          onColor={"#dbd599"}
-          onHandleColor={"#fff340"}
-          offColor={"#707070"}
-          offHandleColor={"#a0a0a0"}
+          onColor={"#ab85ad"}
+          onHandleColor={"#691070"}
+          offColor={"#c4c4c4"}
+          offHandleColor={"#3f3f3f"}
           handleDiameter={36}
         />
       </div>
@@ -107,10 +107,25 @@ const DisplayContainer = ({
           checked={displaySettings.displayName}
           checkedIcon={false}
           uncheckedIcon={false}
-          onColor={"#dbd599"}
-          onHandleColor={"#fff340"}
-          offColor={"#707070"}
-          offHandleColor={"#a0a0a0"}
+          onColor={"#ab85ad"}
+          onHandleColor={"#691070"}
+          offColor={"#c4c4c4"}
+          offHandleColor={"#3f3f3f"}
+          handleDiameter={36}
+        />
+      </div>
+      <div className="displaySetting">
+        <p className="displaySettingName">Display Ghosts</p>
+        <Switch
+          id="displayGhosts"
+          onChange={(checked, e, id) => toggleDisplaySetting(checked, id)}
+          checked={displaySettings.displayGhosts}
+          checkedIcon={false}
+          uncheckedIcon={false}
+          onColor={"#ab85ad"}
+          onHandleColor={"#691070"}
+          offColor={"#c4c4c4"}
+          offHandleColor={"#3f3f3f"}
           handleDiameter={36}
         />
       </div>

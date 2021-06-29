@@ -1,6 +1,6 @@
 import React from "react";
 import FormatOptions from "../Builder/Deck/FormatOptions";
-import DownArrow from "../../utils/icons/format-down.svg";
+import DownArrow from "../../utils/icons/down-arrow-dark.svg";
 
 const NewDeckZone = ({
   createDeck,
@@ -8,18 +8,24 @@ const NewDeckZone = ({
   currentFormat,
   openFormat,
   setOpenFormat,
+  deckCommander,
   setDeckInfo,
+  showCommanders,
+  setShowCommanders,
+  commanderList,
+  commanderRef,
+  showCommander,
 }) => {
   return (
     <div className="createNewDeckZone">
       <p className="newDeckTitle">New Deck</p>
       <div className="fieldGroup">
-        <p className="fieldTitle">Name</p>
+        <p className="fieldTitle">Deck Name</p>
         <input
           className="newDeckField"
           placeholder="New Deck"
           onChange={(e) => {
-            queryChange(e, "name");
+            queryChange(e.target.value, "name");
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -30,9 +36,9 @@ const NewDeckZone = ({
       </div>
       <div className="fieldGroup">
         <p className="fieldTitle">Format</p>
-        <div className="deckFormatContainer">
+        <div className="newFormatContainer">
           <button
-            className="newDeckFormatField formatInput"
+            className="newDeckFormatField"
             onClick={() => setOpenFormat(true)}
           >
             {currentFormat}
@@ -43,27 +49,55 @@ const NewDeckZone = ({
               currentFormat={currentFormat}
               setDeckInfo={setDeckInfo}
               setOpenFormat={setOpenFormat}
+              banner={false}
             />
           )}
         </div>
+        <div className="fieldGroup" ref={commanderRef}>
+          <p className={`fieldTitle ${!showCommander && "nullFieldTitle"}`}>
+            Commander:
+          </p>
+          <input
+            className={`newDeckField ${!showCommander && "nullNewDeckField"}`}
+            value={deckCommander}
+            onChange={(e) => {
+              queryChange(e.target.value, "commander");
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                createDeck();
+              }
+            }}
+            onFocus={(e) => {
+              if (showCommander) setShowCommanders(true);
+              else e.target.blur();
+            }}
+          />
+          {showCommanders && (
+            <div className="commanderAutofillContainer">
+              {commanderList.map((commander) => {
+                return (
+                  <div
+                    className="commanderAutofill"
+                    key={commander.name}
+                    onClick={(e) => {
+                      queryChange(e.target.innerHTML, "commander");
+                      setShowCommanders(false);
+                    }}
+                  >
+                    {commander.name}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
-      <div className="fieldGroup">
-        <p className="fieldTitle notAllowed">Commander:</p>
-        <input
-          className="newDeckField notAllowed"
-          style={{ backgroundColor: "grey" }}
-          onChange={(e) => {
-            queryChange(e, "commander");
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              createDeck();
-            }
-          }}
-          disabled
-        />
-      </div>
-      <button onClick={async () => createDeck()} className="createDeckButton">
+
+      <button
+        onClick={async () => createDeck()}
+        className="headerButton builderEnter createDeckButton"
+      >
         Create Deck
       </button>
     </div>

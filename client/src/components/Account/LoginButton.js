@@ -9,20 +9,19 @@ const LoginButton = ({
   errorVariant,
   undoError,
   setErrors,
+  loginIsOpen,
+  setLoginOpen,
+  openLogin,
+  openRegister,
 }) => {
-  const [modalIsOpen, setIsOpen] = useState(false);
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  function closeModal() {
+  function closeLogin() {
     setErrors({
       userName: "",
       email: "",
       password: "",
       matchingPassword: "",
     });
-    setIsOpen(false);
+    setLoginOpen(false);
   }
 
   const [formData, setFormData] = useState({
@@ -40,27 +39,26 @@ const LoginButton = ({
     e.preventDefault();
     const success = loginUser(loginEmail, loginPassword);
     if (await success) {
-      closeModal();
+      closeLogin();
     }
   };
 
   const customStyles = {
-    overlay: { zIndex: 1000 },
+    overlay: { zIndex: 1000, backgroundColor: "rgba(0, 0, 0, 0.6)" },
   };
 
   return (
     <Fragment>
-      <button onClick={() => openModal()} className="authLink">
+      <button onClick={() => openLogin()} className="loginLink">
         Login
       </button>
       <Modal
         closeTimeoutMS={300}
-        isOpen={modalIsOpen}
+        isOpen={loginIsOpen}
+        ariaHideApp={false}
         style={customStyles}
-        onRequestClose={closeModal}
+        onRequestClose={closeLogin}
         contentLabel="exampleModal"
-        appElement={document.getElementById("modal-root")}
-        disabled="disabled"
         className="modal"
       >
         <form
@@ -128,7 +126,15 @@ const LoginButton = ({
             <button className="authButton" onClick={(e) => onLogin(e)}>
               Log In
             </button>
-            <p className="otherAuthText notAllowed">Need to register?</p>
+            <p
+              className="otherAuthText"
+              onClick={() => {
+                openRegister();
+                closeLogin();
+              }}
+            >
+              Need to register?
+            </p>
           </div>
         </form>
       </Modal>

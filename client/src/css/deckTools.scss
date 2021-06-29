@@ -1,0 +1,164 @@
+@import "./core";
+
+// Deck Tools
+
+.decktoolsContainer {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.decktoolsSubContainer {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.decktoolsButtonContainer {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  right: 0;
+  top: 0;
+  z-index: 10;
+  margin-right: 40px;
+  margin-top: 32px;
+  height: 100%;
+}
+
+.decktoolsButton {
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  border: 4px solid $accent-color;
+  background-color: $primary-color;
+  margin-bottom: 32px;
+  pointer-events: all;
+  position: relative;
+  box-shadow: 0 0 16px 0 rgba(105, 16, 112, 0.8);
+  display: grid;
+  justify-content: center;
+  align-content: center;
+}
+
+.toolsIcon {
+  width: 60px;
+  height: auto;
+}
+
+.toolCover {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 100px;
+  height: 100px;
+  border-radius: inherit;
+  z-index: 3;
+  background-color: black;
+  opacity: 0.4;
+}
+
+.extraToolCover {
+  opacity: 0.7;
+}
+
+.toolsMenu {
+  background-color: $tools-color;
+  height: 100vh;
+  position: relative;
+  z-index: 2;
+  padding: 45px;
+  pointer-events: all;
+  border: 8px solid $primary-color;
+  border-right: none;
+}
+
+.toolsCategory {
+  display: flex;
+  flex-direction: column;
+}
+
+.toolsName {
+  color: $dark-background-color;
+  font-family: $body-font;
+  font-size: 28px;
+  font-weight: 500;
+  text-align: left;
+  margin-top: 80px;
+}
+
+.manaCurveContainer {
+  height: 500px;
+  width: calc(100% - 24px);
+  margin: 24px 0 24px 24px;
+  font-family: $header-font;
+  font-size: 24px;
+}
+
+.manaCurveText {
+  margin: 0 auto;
+}
+
+.displayToggleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 40px 0;
+  padding-left: 44px;
+}
+
+.displaySetting {
+  display: flex;
+  flex-direction: row;
+  margin: 20px 0;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.displaySlider {
+  width: 50%;
+}
+
+.displaySettingName {
+  font-family: $body-font;
+  font-size: 22px;
+  font-weight: 300;
+  color: $dark-background-color;
+}
+
+.toolsTitle {
+  color: $dark-background-color;
+  font-size: 48px;
+  font-family: $header-font;
+  text-align: center;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: $primary-color;
+}
+
+.toolSlider {
+  width: 10%;
+}
+
+.cardSortingContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 40px 0;
+  padding-left: 44px;
+}
+
+.cardSortButton {
+  font-size: 20px;
+  color: $dark-background-color;
+  padding: 12px 24px;
+}
+
+.activeSortButton {
+  background-color: $primary-color;
+  color: $light-text;
+  border-radius: 3px;
+}

@@ -1,19 +1,18 @@
 @import "./reset";
 
 $primary-color: #601466;
-$secondary-color: #dbd599;
-$accent-color: #fff340;
-
-$null-color: #707070;
-
-$light-background-color: #f4e1f7;
+$secondary-color: #d9d68c;
+$accent-color: #eee22b;
+$input-color: #f9f8ec;
 $dark-background-color: #220f26;
 
-$light-text: #f1e6f2;
-$dark-text: #380d40;
+$null-color: #c4c4c4;
+$null-accent-color: #3f3f3f;
 
-$banner-height: 320px;
-$tools-color: #331036;
+$light-text: #f1e6f2;
+
+$banner-height: 240px;
+$tools-color: #f2f1d9;
 
 $card-width: 120px;
 $card-height: 168px;
@@ -30,8 +29,7 @@ $tools-width: 300px;
 $header-height: 12vh;
 $footer-height: 15vh;
 
-$builder-height: 250vh;
-$deck-height: calc(#{$builder-height} - #{$banner-height});
+$builder-height: 200vh;
 
 $ghost-opacity: 0.5;
 
@@ -46,7 +44,7 @@ $header-font: "Cinzel";
 
 #root {
   position: relative;
-  background-color: $light-background-color;
+  background-color: transparent;
   --card-width: #{$card-width};
   --card-height: #{$card-height};
   --card-name-size: 18px;
@@ -128,10 +126,44 @@ $header-font: "Cinzel";
   height: 100%;
 }
 
-.authLink {
+.loginLink {
+  font-size: 20px;
+  @include respond-to("small") {
+    font-size: 24px;
+  }
+  @include respond-to("medium") {
+    font-size: 28px;
+  }
+  @include respond-to("large") {
+    font-size: 32px;
+  }
+  color: $light-text;
+  font-family: $secondary-font;
+}
+
+.registerLink {
   font-size: 18px;
   @include respond-to("small") {
-    font-size: 21px;
+    font-size: 20px;
+  }
+  @include respond-to("medium") {
+    font-size: 22px;
+  }
+  @include respond-to("large") {
+    font-size: 28px;
+  }
+  color: $dark-background-color;
+  font-family: $secondary-font;
+  border-radius: 6px;
+  background-color: $accent-color;
+  padding: 16px 28px;
+  margin-left: 20px;
+}
+
+.logoutLink {
+  font-size: 18px;
+  @include respond-to("small") {
+    font-size: 20px;
   }
   @include respond-to("medium") {
     font-size: 24px;
@@ -139,13 +171,20 @@ $header-font: "Cinzel";
   @include respond-to("large") {
     font-size: 28px;
   }
-  color: $light-background-color;
+  color: $light-text;
   font-family: $secondary-font;
 }
 
 .userButton {
-  font-size: 24px;
-  font-family: $header-font;
+  display: flex;
+  flex-direction: row;
+}
+
+.userGreeting {
+  font-size: 32px;
+  font-family: $secondary-font;
+  color: $light-text;
+  opacity: 0.6;
 }
 
 .mainPage {
@@ -206,108 +245,48 @@ $header-font: "Cinzel";
   flex-direction: column;
   margin: 0 auto;
   margin-top: 10vh;
-  width: 80%;
+  width: 90%;
   @include respond-to("small") {
     flex-direction: row;
     margin-top: 18vh;
-    width: 70%;
+    width: 80%;
   }
   justify-content: space-evenly;
 }
 
 .headerButton {
   position: relative;
-  height: 54px;
-  border-radius: 13px;
-  width: 230px;
-  @include respond-to("small") {
-    width: 272px;
-  }
   font-size: 24px;
   margin: 12px 0;
+  text-decoration: none;
+  height: 40px;
+  border-radius: 8px;
+  height: 67px;
+  line-height: 67px;
+  width: 300px;
+  text-align: center;
+  font-size: 30px;
+  font-family: $body-font;
 }
 
 .builderEnter {
   color: $dark-background-color;
   background-color: $accent-color;
-  font-weight: bold;
   opacity: 1;
   visibility: visible;
+  box-shadow: 0px 0px 4px 0px rgba(235, 0, 255, 0.8),
+    0px 0px 20px 0px rgba(235, 0, 255, 0.4),
+    0px 0px 40px 0 rgba(235, 0, 255, 0.2);
 }
 
-.mainBuilderEnter {
-  box-shadow: 0px 0px 9px 4px $primary-color;
-}
-
-.salesPitchDiv {
-  height: 100vh - $header-height - $footer-height;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.salesPitchImage {
-  object-fit: cover;
-  width: 100%;
-  height: inherit;
-  position: absolute;
-  bottom: 0;
-  object-position: 50% 50%;
-  filter: saturate(110%) contrast(110%);
-  background-color: rgba(0, 0, 0, 0.75);
-}
-
-.salesPitchCover {
-  width: 100%;
-  height: inherit;
-  position: absolute;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75);
-}
-
-.salesPitchCTA {
-  margin: auto;
-  text-align: center;
-}
-
-.salesPitchTitle {
-  position: relative;
-  text-align: center;
-  font-family: $header-font;
-  font-size: 50px;
-  @include respond-to("small") {
-    font-size: 58px;
-  }
-  @include respond-to("medium") {
-    font-size: 68px;
-  }
-  color: $light-text;
-  margin-bottom: 84px;
-}
-
-.salesPitchButton {
-  position: relative;
-  margin-top: 84px;
+.createDeckButton {
+  width: 240px;
+  height: 55px;
+  line-height: 50px;
+  font-size: 28px;
 }
 
 .deckButtonContainer {
-  display: flex;
-  align-items: center;
-}
-
-.deckListLink {
-  font-size: 22px;
-  font-family: $header-font;
-  font-weight: 400;
-  border: 1px solid desaturate($accent-color, 5%);
-  color: desaturate($accent-color, 5%);
-  background-color: $dark-background-color;
-  text-decoration: none;
-  border-radius: 13px;
-  z-index: 2;
-  height: 40px;
-  padding: 20px;
   display: flex;
   align-items: center;
 }
@@ -435,15 +414,15 @@ $header-font: "Cinzel";
 }
 
 .decklistEnter {
-  color: $accent-color;
+  color: $secondary-color;
   background-color: transparent;
-  border: 2px solid $accent-color;
+  border: 1px solid $secondary-color;
 }
 
 .contentContainer {
   width: 100%;
-  background-color: $light-background-color;
-  color: $dark-text;
+  background-color: $light-text;
+  color: $dark-background-color;
 }
 
 .featureHeader {
@@ -602,76 +581,6 @@ $header-font: "Cinzel";
   min-height: $builder-height;
 }
 
-.deckBanner {
-  position: relative;
-  height: $banner-height;
-  width: 100%;
-  background-color: $primary-color;
-}
-
-.deckInfo {
-  width: 65vw;
-  padding-left: 84px;
-  padding-top: 16px;
-  display: flex;
-  flex-direction: column;
-}
-
-.deckNameDisplay {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.deckNameField {
-  border: none;
-  background-color: transparent;
-  font-size: 56px;
-  font-family: $header-font;
-  color: $light-background-color;
-  width: 100%;
-}
-
-.deckNameField::placeholder {
-  color: $light-background-color;
-  opacity: 1;
-}
-
-.deckFormatContainer {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  color: $dark-background-color;
-  font-family: $header-font;
-  color: $light-background-color;
-  width: 50%;
-}
-
-.formatHeader {
-  font-family: $header-font;
-  font-size: 24px;
-}
-
-.formatInput {
-  border: none;
-  background-color: transparent;
-  font-size: 24px;
-  font-family: $header-font;
-  color: $light-text;
-  background-color: $primary-color;
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-  text-overflow: ellipsis;
-}
-
-.menuDownArrow {
-  margin: auto 8px;
-  width: 18px;
-  height: auto;
-}
-
 .deckListArrow {
   width: 30px;
   margin-top: 12px;
@@ -687,9 +596,6 @@ $header-font: "Cinzel";
 .setArrow {
   width: 24px;
   height: auto;
-  position: absolute;
-  right: 8px;
-  top: 58px;
   cursor: pointer;
 }
 
@@ -697,28 +603,42 @@ $header-font: "Cinzel";
   position: absolute;
   display: flex;
   flex-direction: column;
-  top: 46px;
   left: 0;
   background-color: $dark-background-color;
-  border: 1px solid grey;
+  border: 2px solid $secondary-color;
   z-index: 10;
   text-align: left;
-  padding: 6px;
-  padding-right: 16px;
+  padding: 6px 16px;
+  width: 100%;
+  box-shadow: 0 0 4px 2px $primary-color;
+  border-radius: 2px;
+  overflow-y: auto;
+}
+
+.bannerFormat {
+  top: 41px;
+  max-height: 500px;
+}
+
+.newDeckFormat {
+  top: 50px;
+  max-height: 250px;
 }
 
 .formatOption {
-  padding: 6px 4px;
+  padding: 10px 8px;
   margin: 2px 0;
   color: $light-text;
   text-align: left;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 22px;
   border-radius: 4px;
+  font-family: $body-font;
 }
 
 .formatOption:hover {
-  background-color: grey;
+  background-color: $accent-color;
+  color: $dark-background-color;
 }
 
 .customFormatOption {
@@ -727,101 +647,25 @@ $header-font: "Cinzel";
 
 .selectedFormat {
   color: $dark-background-color;
-  background-color: $light-background-color;
-}
-
-.cardCount {
-  color: $light-background-color;
-  text-align: left;
-  margin: auto 0;
-  font-size: 28px;
-  text-indent: 40px;
-  font-family: $header-font;
-}
-
-.deckArtCover {
-  background-color: rgba(0, 0, 0, 1);
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 500px;
-}
-
-.deckArt {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-  object-position: 50% 50%;
-  filter: saturate(110%) contrast(110%);
-  opacity: 0.6;
-}
-
-.deckColorContainer {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}
-
-.hoverArt {
-  border: 2px dotted $light-background-color;
-  opacity: 0.8;
-}
-
-.builderExit {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  height: 48px;
-  width: auto;
-  cursor: pointer;
-  fill: purple;
-  color: purple;
-  border: purple;
+  background-color: $light-text;
 }
 
 .boardSelector {
-  position: absolute;
-  left: 84px;
-  bottom: 0px;
+  position: relative;
   display: flex;
   flex-direction: row;
-}
-
-.boardTab {
-  background-color: hsla(58, 50, 70, 1);
-  color: $primary-color;
-  font-size: 22px;
-  font-weight: bold;
-  font-family: $header-font;
-  border-radius: 8px 8px 0 0;
-  padding: 12px 20px;
-  margin-right: -12px;
-  position: relative;
-  text-decoration: none;
-  display: inline-block;
-  border: 2px solid $dark-background-color;
-  border-bottom: none;
-  text-indent: 8px;
-  box-shadow: 0px 0px 4px 1px $dark-background-color;
-}
-
-.unselectedTab:hover {
-  background-color: $accent-color;
-  color: $dark-background-color;
-}
-
-.selectedTab {
-  background-color: $dark-background-color;
-  color: $accent-color;
-  z-index: 9;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .deckContainer {
   position: relative;
-  min-height: $deck-height;
-  box-shadow: 0px 4px 12px -4px $primary-color;
-  padding: 0 4%;
+  min-height: $builder-height;
+}
+
+.deckCategoryContainer {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
 }
 
 .emptyDeck {
@@ -845,18 +689,35 @@ $header-font: "Cinzel";
 
 //TYPES
 
+.cardArea {
+  width: 100%;
+  min-height: $builder-height;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 0.5%;
+}
+
+.categoryGrid {
+  width: 100%;
+  float: left;
+  position: relative;
+  padding: 0 1%;
+  display: flex;
+  flex-direction: row;
+}
+/* 3 columns by default */
+.gridSizer {
+  width: 33.33333333333333333333333333333333333333333%;
+}
+
 .typeGrid {
   display: flex;
   width: 100%;
   -webkit-transition: all 0.25s;
   transition: all 0.25s;
   transition-delay: 0.5s;
-}
-
-.skinnyGrid {
-  width: calc(100% - 500px);
-  -webkit-transition: all 0.35s;
-  transition: all 0.35s;
 }
 
 .typeGridColumn {
@@ -867,8 +728,12 @@ $header-font: "Cinzel";
 .typeContainer {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr));
-  column-gap: 8px;
+  grid-auto-rows: calc(var(--card-height) + calc(var(--card-height) * 0.45));
+  justify-items: center;
+  column-gap: 4px;
   min-height: var(--card-height) / 2;
+  border-left: 1px solid rgba(217, 214, 140, 0.2);
+  padding: 0 4px;
 }
 
 .typeHeader {
@@ -962,17 +827,25 @@ $header-font: "Cinzel";
 .typeTitle {
   text-align: left;
   text-indent: 12px;
-  font-size: 24px;
+  font-size: 28px;
   margin-top: 8px;
   font-family: $header-font;
   font-weight: 300;
-  color: $light-background-color;
+  color: $light-text;
+  white-space: nowrap;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .typeDivider {
   width: 100%;
-  height: 0%;
+  height: 1px;
   margin: 0 auto;
+  border: none;
+  background-color: rgba(217, 214, 140, 0.2);
+  border-radius: 100px;
 }
 
 .dragDivider {
@@ -981,8 +854,7 @@ $header-font: "Cinzel";
 }
 
 .typeContent {
-  width: 100%;
-  margin-bottom: 40px;
+  width: 32%;
 }
 
 .tokenContent {
@@ -993,7 +865,6 @@ $header-font: "Cinzel";
 //CARDS
 
 .cardNameContainer {
-  height: 50px;
   margin-top: 4px;
 }
 
@@ -1001,7 +872,7 @@ $header-font: "Cinzel";
   font-size: var(--card-name-size);
   line-height: var(--line-height);
   font-family: $body-font;
-  color: $light-background-color;
+  color: $light-text;
   word-wrap: break-word;
   hyphens: auto;
 }
@@ -1010,11 +881,52 @@ $header-font: "Cinzel";
   opacity: $ghost-opacity;
 }
 
+.commanderContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.emptyCommander {
+  height: 240px;
+}
+
+.commanderCardContainer {
+  width: 100%;
+}
+
+.commander {
+  margin: 14px 0;
+  height: auto;
+  border-radius: 24px;
+  position: relative;
+}
+
+.singleCommander {
+  width: calc(var(--card-width) * 3);
+  max-width: 100%;
+}
+
+.doubleCommander {
+  width: calc(var(--card-width) * 3);
+  max-width: 100%;
+}
+
+.commanderFragment {
+  width: 100%;
+}
+
+.commanderImg {
+  border-radius: 22px;
+  width: 100%;
+  height: auto;
+}
+
 .cardContainer {
   position: relative;
   width: var(--card-width);
-  // margin: 20px auto;
-  margin: calc(var(--card-height) / 15) auto;
+  margin: calc(var(--card-height) / 30) 8px;
   border-radius: $card-border-radius;
   text-align: center;
   background-color: transparent;
@@ -1035,26 +947,8 @@ $header-font: "Cinzel";
   border-radius: $card-border-radius;
 }
 
-.shadow1 {
-  box-shadow: 0px -9px 15px 3px hsla(56, 80, 70, 0.3);
-}
-
-.shadow2 {
-  box-shadow: 0px -11px 18px 4px hsla(56, 70, 60, 0.3),
-    0px -11px 20px 8px hsla(56, 80, 70, 0.3);
-}
-
-.shadow3 {
-  box-shadow: 0px -13px 18px 4px hsla(56, 70, 50, 0.3),
-    0px -13px 24px 7px hsla(56, 80, 60, 0.3),
-    0px -13px 30px 10px hsla(56, 90, 70, 0.3);
-}
-
-.shadow4 {
-  box-shadow: 0px -15px 18px 8px hsla(56, 70, 50, 0.3),
-    0px -15px 24px 12px hsla(56, 80, 60, 0.3),
-    0px -15px 30px 15px hsla(56, 90, 70, 0.3),
-    0px -15px 40px 20px hsla(56, 100, 70, 0.3);
+.illegalShadow {
+  box-shadow: 0px 0px 16px 3px rgba(255, 0, 0, 0.6);
 }
 
 .cardArt {
@@ -1148,13 +1042,18 @@ $header-font: "Cinzel";
 }
 
 .settingsCover {
-  background-color: hsla(0, 0%, 9%, 0.35);
+  background-color: hsla(0, 0%, 9%, 0.5);
   opacity: 0;
   z-index: 7;
-  transition: 0.45s;
+  transition: 1s;
   display: flex;
   cursor: pointer;
   border-radius: $card-border-radius;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .settingsHover {
@@ -1164,6 +1063,16 @@ $header-font: "Cinzel";
 
 .settingsIcon {
   opacity: 0.75;
+  width: 70%;
+  height: auto;
+  margin: auto;
+  z-index: 6;
+  transform: translateY(-20%);
+  pointer-events: none;
+}
+
+.commanderSettingsIcon {
+  opacity: 0.9;
   width: 70%;
   height: auto;
   margin: auto;
@@ -1185,6 +1094,19 @@ $header-font: "Cinzel";
   z-index: 8;
 }
 
+.ghostQuantContainer {
+  position: absolute;
+  height: 20%;
+  width: calc(100% - 2 * #{$card-border});
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: end;
+  justify-items: center;
+  bottom: 4px;
+  left: $card-border;
+  z-index: 8;
+}
+
 .quantButton {
   font-weight: bold;
   font-size: var(--quant-button-size);
@@ -1195,6 +1117,7 @@ $header-font: "Cinzel";
   display: inline-flex;
   align-items: center;
   padding: 0;
+  transition: 0.45s;
 }
 
 .decrementCard {
@@ -1236,6 +1159,21 @@ $header-font: "Cinzel";
   letter-spacing: 2px;
 }
 
+.ghostCardQuantity {
+  display: flex;
+  flex-direction: row;
+  font-size: var(--quant-size);
+  align-items: flex-end;
+  justify-content: center;
+  color: rgb(100, 100, 100);
+  text-shadow: -0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000,
+    0.5px 0.5px 0 #000;
+  z-index: 3;
+  font-family: $header-font;
+  letter-spacing: 2px;
+  width: 100%;
+}
+
 .quantityX {
   height: 100%;
   margin-bottom: 2px;
@@ -1258,6 +1196,8 @@ $header-font: "Cinzel";
   z-index: 20;
   filter: saturate(120%) contrast(110%);
   background-color: transparent;
+  // box-shadow: 0px 0px 40px 30px $dark-background-color;
+  box-shadow: 0px 0px 20px 10px $dark-background-color;
 }
 
 .bigGhostImage {
@@ -1305,38 +1245,69 @@ $header-font: "Cinzel";
   position: relative;
 }
 
-.dragCard > * {
+.dragCard * {
   opacity: 0;
 }
 
 //Settings
 
 .settingsContainer {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  background-color: #fffde2;
+  max-width: 90vw;
+  height: 80vh;
+  margin: auto;
+  display: grid;
+  grid-template-rows: 1fr 4fr;
+
+  background-color: $input-color;
   color: $dark-background-color;
-  width: $popup-width;
-  height: $popup-height;
-  border: 8px solid darken($dark-background-color, 20%);
-  z-index: 100;
-  border-radius: $card-border-radius;
+  border: 8px solid $dark-background-color;
+  box-shadow: 0 0 16px 8px rgba(238, 226, 43, 0.2);
+  border-radius: 6px;
   font-size: 24px;
   pointer-events: auto;
-  padding: 20% 30%;
-  box-shadow: 0px 0px 4px 1px lighten($primary-color, 5%);
-  overflow-y: auto;
-  overflow-x: visible;
+  padding: 2% 0;
+}
+
+.settingOptions {
+  display: grid;
+  grid-template-columns: 1fr 0fr 1fr 0fr 1fr;
+  height: 100%;
+  justify-content: center;
+}
+
+.settingColumn {
+  height: 100%;
+  max-width: 100%;
+  justify-content: center;
+}
+
+.column1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.column2 {
+  padding: 0 4%;
+}
+
+.column3 {
+  padding: 0 4%;
 }
 
 .settingsTitle {
   width: 95%;
   text-align: center;
-  margin: 32px auto 40px auto;
-  font-size: 36px;
-  font-family: Cinzel;
-  font-weight: bold;
+  font-size: 52px;
+  font-family: $header-font;
+  margin-bottom: 1%;
+}
+
+.settingsVR {
+  width: 1px;
+  background-color: rgba(105, 16, 112, 0.15);
+  height: 100%;
 }
 
 .settingSelector {
@@ -1345,25 +1316,53 @@ $header-font: "Cinzel";
   text-align: left;
   position: relative;
   align-items: center;
+  margin-bottom: 10%;
+}
+
+.moveBoardHeader {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 .settingName {
-  margin: 4px auto 8px 0;
+  width: 100%;
   text-align: left;
   font-family: $body-font;
-  font-size: 24px;
+  font-size: 32px;
+}
+
+.setButtonText {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  padding: 4px 8px 4px 0px;
+  font-family: $body-font;
   font-weight: 600;
-  padding: 4px 0;
+  font-size: 24px;
+  font-weight: bolder;
+  width: 92%;
+  background-color: $primary-color;
+  height: 44px;
+  border: none;
+  border-radius: 2px;
+  box-shadow: 0 0 2px 1px $dark-background-color;
+  margin: 20px 0 20px 8%;
 }
 
 .setInput {
   width: 100%;
   color: $light-text;
-  background-color: $primary-color;
-  text-indent: 4px;
+  background-color: transparent;
   font-size: 24px;
-  height: 32px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   border: none;
+  text-indent: 12px;
 }
 
 .setInput::placeholder {
@@ -1386,8 +1385,8 @@ $header-font: "Cinzel";
 
 .setDropDown {
   position: absolute;
-  top: 78px;
-  width: 100%;
+  top: 95px;
+  width: 92%;
   z-index: 11;
   white-space: nowrap;
   overflow-y: auto;
@@ -1411,23 +1410,35 @@ $header-font: "Cinzel";
 }
 
 .setOption:hover {
-  color: $dark-text;
+  color: $dark-background-color;
   background-color: $accent-color;
   font-weight: 700;
 }
 
-.settingButton {
-  font-family: $body-font;
-  font-size: 20px;
-  color: $light-text;
-  background-color: $primary-color;
-  margin: 72px auto;
-  width: 80%;
+.imageButtonContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 2%;
 }
 
-.smallCardImage {
-  width: 240px;
-  position: absolute;
+.imageButton {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.settingDeckImage {
+  font-family: $body-font;
+  font-size: 20px;
+  color: $primary-color;
+  background-color: transparent;
+}
+
+.settingCardImage {
+  width: 85%;
+  height: auto;
+  margin: 0 auto;
   border-radius: 20px;
   filter: saturate(120%) contrast(110%);
   opacity: 1;
@@ -1437,12 +1448,13 @@ $header-font: "Cinzel";
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .moveBoardInput {
   background-color: $dark-background-color;
   color: $light-text;
-  width: 36px;
+  width: 24px;
   font-size: 20px;
   font-family: $body-font;
 }
@@ -1453,16 +1465,33 @@ $header-font: "Cinzel";
 }
 
 .boardButton {
-  padding: 4px 8px;
+  padding: 8px 8px 8px 0;
   margin: 8px 0;
-  background-color: $primary-color;
+  background-color: transparent;
   font-family: $body-font;
-  font-size: 16px;
-  color: $light-text;
+  font-size: 20px;
+  color: $primary-color;
+  border-radius: 2px;
+  width: 100%;
+  text-align: left;
+  text-indent: 12px;
+  border: 2px solid $primary-color;
+  box-shadow: 0 0 2px 1px rgba(34, 15, 38, 0.5);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.boardIcon {
+  height: 25px;
+  width: auto;
 }
 
 .invalidBoardButton {
   background-color: $null-color;
+  color: $null-accent-color;
+  border: 1px solid $null-accent-color;
+  box-shadow: none;
 }
 
 .typeSettingContainer {
@@ -1473,7 +1502,7 @@ $header-font: "Cinzel";
 .typeSettingDiv {
   width: 100%;
   margin: 0 0 -2px auto;
-  padding: 5px 0;
+  padding-left: 12px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -1482,14 +1511,14 @@ $header-font: "Cinzel";
   font-weight: 600;
   font-size: 20px;
   text-align: left;
-  text-indent: 8px;
   border: 2px solid $dark-background-color;
+  height: 50px;
 }
 
 .typeInputDiv {
   width: 100%;
   margin: 0 0 -2px auto;
-  padding: 5px;
+  padding-left: 12px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -1499,6 +1528,7 @@ $header-font: "Cinzel";
   font-size: 20px;
   border: 2px solid $dark-background-color;
   background-color: black;
+  height: 50px;
 }
 
 .typeSettingInput {
@@ -1508,11 +1538,7 @@ $header-font: "Cinzel";
   margin-right: 10px;
   width: 100%;
   font-weight: 600;
-  font-size: 20px;
-}
-
-.typeSettingInput {
-  text-indent: 4px;
+  font-size: 22px;
 }
 
 .settingInputError::placeholder {
@@ -1547,7 +1573,7 @@ $header-font: "Cinzel";
 .toggleProperty {
   padding: 8px;
   background-color: transparent;
-  color: $dark-text;
+  color: $dark-background-color;
   font-size: 20px;
 }
 
@@ -1566,12 +1592,12 @@ $header-font: "Cinzel";
 }
 
 .currentTypeButton {
-  color: $dark-text;
+  color: $dark-background-color;
   background-color: $secondary-color;
 }
 
 .currentTypeButton > .typeSettingButton {
-  color: $dark-text;
+  color: $dark-background-color;
 }
 
 .nullTypeButton {
@@ -1586,37 +1612,36 @@ $header-font: "Cinzel";
 .selectorGroup {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .typeSelector {
-  height: 20px;
-  width: 20px;
-  border: 1px solid white;
-  margin: 0 4px;
+  height: 24px;
+  width: 24px;
+  margin-right: 8px;
 }
 
-.mainTypeSelector {
-  background-color: white;
-}
-
-.currentTypeSelector {
-  background-color: transparent;
+.propertyOptionText {
+  font-size: 22px;
+  font-family: $secondary-font;
 }
 
 .nullTypeSelector {
   opacity: 0;
+  display: none;
 }
 
-.flexGroup {
+.boardButtons {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
-  width: 85%;
-  margin-left: 15%;
+  width: 92%;
+  margin: 20px 0 20px 8%;
 }
 
 .ofText {
-  text-indent: 6px;
+  text-indent: 12px;
+  white-space: nowrap;
 }
 
 //Footer
@@ -1666,29 +1691,25 @@ $header-font: "Cinzel";
 .newDeckContainer {
   height: $builder-height;
 }
-
-.createDeckTitle {
-  font-family: $header-font;
-  font-size: 64px;
-  margin: 60px 0;
-  color: $light-text;
-}
-
 .createDeckOptions {
   width: 80%;
-  margin: 20px auto;
-  display: flex;
-  flex-direction: row;
+  margin: 7% auto;
+  display: grid;
+  grid-template-columns: 3fr 1fr 3fr;
   align-items: center;
-  justify-content: center;
+  justify-items: center;
 }
 
 .createNewDeckZone {
-  border: 6px solid darken($primary-color, 7%);
-  padding: 40px;
+  border: 2px solid rgba(105, 16, 112, 0.8);
+  border-radius: 6px;
+  padding: 0 40px;
   display: flex;
   flex-direction: column;
-  width: 25vw;
+  align-items: center;
+  justify-content: space-around;
+  width: 460px;
+  height: 690px;
   position: relative;
 }
 
@@ -1696,74 +1717,120 @@ $header-font: "Cinzel";
   font-family: $header-font;
   font-size: 48px;
   color: $light-text;
-  margin-bottom: 80px;
 }
 
 .fieldGroup {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
 }
 
 .fieldTitle {
   font-family: $body-font;
   color: $light-text;
-  font-size: 20px;
+  font-size: 26px;
+}
+
+.nullFieldTitle {
+  color: $null-color;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .newDeckField {
-  height: 32px;
-  width: 50%;
-  font-size: 18px;
-  margin: 14px 0;
-  background-color: $light-text;
+  height: 44px;
+  width: 100%;
+  font-size: 28px;
+  margin-top: 4px;
+  background-color: $input-color;
+  text-indent: 12px;
+  border-radius: 6px;
+  border: none;
+}
+
+.nullNewDeckField {
+  background-color: $null-color;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.newFormatContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  position: relative;
 }
 
 .newDeckFormatField {
   display: flex;
   align-items: center;
-  height: 32px;
-  font-size: 17px;
+  justify-content: space-between;
+  padding: 0 12px;
+  height: 44px;
+  font-size: 26px;
   font-family: $body-font;
-  margin: 14px 0;
+  margin: 4px 0 14px 0;
+  background-color: $input-color;
   word-wrap: break-word;
   width: 100%;
+  border-radius: 6px;
 }
 
-.createDeckButton {
-  background-color: $accent-color;
-  font-family: $header-font;
-  font-size: 24px;
-  font-weight: 500;
-  color: $dark-background-color;
-  width: 240px;
-  border-radius: 4px;
+.commanderAutofillContainer {
+  position: absolute;
+  top: 76px;
+  right: 0;
+  background-color: lightgrey;
+  border: 2px solid $secondary-color;
+  display: flex;
+  flex-direction: column;
+  min-width: 50%;
   text-align: center;
-  display: inline-block;
-  margin: 80px auto 20px auto;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.commanderAutofill {
+  font-size: 20px;
+  font-family: $body-font;
 }
 
 .biglyOR {
   font-family: $header-font;
-  font-size: 36px;
+  font-size: 48px;
   color: $light-text;
-  padding: 140px;
 }
 
 .importDeckZone {
-  width: 25vw;
+  width: 100%;
+  position: relative;
 }
 
 .inputFileLabel {
   padding-bottom: 0px;
-  border-bottom: solid 4px darken($primary-color, 5%);
-  border-bottom-width: 3.1px;
+  border-bottom: solid 2px rgba(105, 16, 112, 0.8);
   width: fit-content;
   font-family: $header-font;
-  font-size: 48px;
+  font-size: 60px;
   color: $light-text;
   cursor: pointer;
+}
+
+.infoIcon {
+  position: absolute;
+  top: -10px;
+  right: 50;
+  width: 24px;
+  height: 24px;
+  opacity: 1;
+}
+
+.tooltip {
+  opacity: 1;
 }
 
 // Search Classes
@@ -1772,89 +1839,154 @@ $header-font: "Cinzel";
   flex-direction: row;
   width: 100%;
   justify-content: space-between;
-  padding: 64px 0;
+  padding: 15px 1%;
+  border-bottom: 2px solid rgba(238, 163, 245, 0.07);
+  height: 88px;
+}
+
+.searchGroup {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.listAddContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 10%;
+}
+
+.listAdd {
+  font-family: $body-font;
+  font-size: 24px;
+  color: $light-text;
+}
+
+.listAddIcon {
+  width: 22px;
+  height: 22px;
+}
+
+.searchVR {
+  width: 1px;
+  background-color: rgba(238, 163, 245, 0.07);
+  height: 100%;
+  margin: 0 8px;
+}
+
+.boardGroup {
+  width: 40%;
+  height: 85%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
 .searchArea {
   position: relative;
-  width: calc(50% - 24px);
+  width: 50%;
   display: flex;
   flex-direction: row;
+  align-items: center;
   opacity: 1;
+  background-color: #f0ecf9;
+  border: 3px solid $primary-color;
+  border-radius: 100px;
+  padding: 0 12px 0 4px;
+  box-shadow: 0 0 16px -2px rgba(238, 226, 43, 0.5);
+  transition: all 0.1s;
+}
+
+.focusedSearch {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  transition: all 0.05s;
+}
+
+.searchContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
 }
 
 .search {
   outline: none;
   width: 100%;
-  background-color: $light-background-color;
-  font-size: 32px;
+  height: 100%;
+  font-size: 28px;
   text-align: left;
-  height: 48px;
-  border-radius: 8px;
-  text-indent: 4px;
+  text-indent: 12px;
+  height: 50px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-radius: 100px;
+  border: none;
 }
 
 .searchBar {
-  color: $dark-text;
+  color: $dark-background-color;
   z-index: 2;
   opacity: 0.7;
   position: relative;
+  background-color: transparent;
 }
 
 .ghostBar {
-  color: grey;
+  color: $null-color;
   position: absolute;
   left: 0px;
   top: 0px;
   z-index: 1;
+  background-color: transparent;
 }
 
 .searchIcon {
-  height: 44px;
+  height: 40px;
   width: auto;
-  position: absolute;
-  top: 2px;
-  right: 2px;
   z-index: 2;
-  fill: grey;
   cursor: pointer;
-  padding: 6px 6px;
-  border-top-right-radius: 10px;
-  border-top-right-radius: 10px;
 }
 
 .searchOptions {
   position: absolute;
-  top: 48px;
+  top: 52px;
   left: 0;
   width: 100%;
   max-height: 50vh;
-  border: 1px solid $dark-text;
-  background-color: $light-background-color;
+  border: 3px solid $primary-color;
+  padding: 4px 6px;
+  background-color: $light-text;
   z-index: 10;
   overflow-y: auto;
   overflow-x: hidden;
-  color: $light-background-color;
+  color: $light-text;
   background-color: $dark-background-color;
-  box-shadow: 0px 0px 8px 2px $dark-background-color;
+  box-shadow: 0 0 16px -2px rgba(238, 226, 43, 0.5);
 }
 
 .searchResultItem {
-  font-size: 32px;
+  font-size: 22px;
   text-align: left;
-  text-indent: 4px;
+  text-indent: 2px;
   font-family: $body-font;
-  padding: 4px;
+  padding: 8px 4px;
   margin: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-radius: 6px;
+  border-radius: 2px;
 }
 
 .currentResultItem {
-  background-color: $primary-color;
-  color: $accent-color;
+  background-color: $secondary-color;
+  color: $dark-background-color;
 }
 
 .loadingContainer {
@@ -1871,141 +2003,6 @@ $header-font: "Cinzel";
   background-color: $dark-background-color;
   border-radius: 50%;
   margin: 0 2px;
-}
-
-// Deck Tools
-.decktoolsContainer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: auto;
-  height: 100%;
-  z-index: 2;
-}
-
-.decktoolsSubContainer {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-  border-left: 4px solid lighten($accent-color, 15%);
-}
-
-.decktoolsButton {
-  text-align: center;
-  position: relative;
-  right: 0;
-  top: 0;
-  z-index: 10;
-  background-color: lighten($accent-color, 15%);
-  padding: 0 8px;
-  height: 100vh;
-  transition: background-color 0.35s, padding 0.35s;
-}
-
-.inactiveToolsButton {
-  background-color: $primary-color;
-  padding: 0 12px;
-  transition: background-color 0.35s, padding 0.35s;
-}
-
-.toolsMenu {
-  background-color: $tools-color;
-  height: 100vh;
-  position: relative;
-  z-index: 2;
-  padding: 20px;
-  overflow-y: auto;
-  border-top: 4px solid lighten($accent-color, 15%);
-  border-bottom: 4px solid lighten($accent-color, 15%);
-}
-
-.toolsCategory {
-  display: flex;
-  flex-direction: column;
-}
-
-.toolsName {
-  color: $light-text;
-  font-family: $body-font;
-  font-size: 28px;
-  font-weight: 500;
-  text-align: left;
-  text-indent: 20px;
-  margin-top: 80px;
-}
-
-.manaCurveContainer {
-  height: 500px;
-  width: 100%;
-  margin: 28px auto;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  font-family: $header-font;
-  font-size: 24px;
-}
-
-.manaCurveText {
-  margin: 0 auto;
-}
-
-.displayToggleContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin: 40px 0;
-  padding-left: 44px;
-}
-
-.displaySetting {
-  display: flex;
-  flex-direction: row;
-  margin: 20px 0;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.displaySlider {
-  width: 50%;
-}
-
-.displaySettingName {
-  font-family: $body-font;
-  font-size: 22px;
-  font-weight: 300;
-  color: $light-text;
-}
-
-.toolsTitle {
-  color: $light-text;
-  font-size: 48px;
-  font-family: $header-font;
-  text-align: left;
-  margin-top: 40px;
-  font-weight: 600;
-}
-
-.toolSlider {
-  width: 10%;
-}
-
-.cardSortingContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin: 40px 0;
-  padding-left: 44px;
-}
-
-.cardSortButton {
-  font-size: 20px;
-  color: white;
-  padding: 8px 8px;
-}
-
-.activeSortButton {
-  background-color: $primary-color;
 }
 
 // Utility

@@ -1,5 +1,8 @@
 import React from "react";
 
+import star from "../../../../../../utils/icons/star.svg";
+import hollowStar from "../../../../../../utils/icons/hollow-star.svg";
+
 const PropertySetting = ({
   property,
   propertyType,
@@ -24,19 +27,24 @@ const PropertySetting = ({
         }`}
       >
         <div className="selectorGroup">
-          <div
-            className={`
-          typeSelector
-            ${
+          <img
+            className={`typeSelector ${
+              !mainType &&
+              !(currentType || property === "Commander") &&
+              "nullTypeSelector"
+            }`}
+            src={
               mainType
-                ? "mainTypeSelector"
-                : currentType
-                ? "currentTypeSelector"
-                : "nullTypeSelector"
+                ? star
+                : currentType || property === "Commander"
+                ? hollowStar
+                : null
             }
-          `}
             onClick={() => {
-              if (currentType && !mainType)
+              if (
+                (property === "Commander" && !currentType) ||
+                (currentType && !mainType)
+              )
                 changeMainProperty(
                   propertyType,
                   property,
@@ -45,9 +53,14 @@ const PropertySetting = ({
                 );
             }}
           />
-          {property}
+          <p className="propertyOptionText">
+            {propertyType === "Cost" && property === -1
+              ? "Commander"
+              : property}
+          </p>
         </div>
-        {(!mainType || (mainType && propertyType === "Tags")) && (
+        {((!mainType && property !== "Commander") ||
+          (mainType && propertyType === "Tags")) && (
           <button
             className="typeSettingButton"
             onClick={() => {

@@ -11,10 +11,7 @@ import { motion } from "framer-motion";
 
 import { ItemTypes } from "../../../../Constants";
 import Card from "./Card";
-import {
-  cloakSettings,
-  adjustSettingProperties,
-} from "../../../../../actions/deck";
+import { adjustSettingProperties } from "../../../../../actions/deck";
 
 const CardContainer = ({
   typeIndex,
@@ -30,11 +27,12 @@ const CardContainer = ({
   boards,
   currentBoard,
   moveBoards,
-  cloakSettings,
   adjustSettingProperties,
   modifyProperty,
   changeMainProperty,
   settingBooleans,
+  propertyList,
+  format,
 }) => {
   const cardRef = useRef(null);
   const cardImageRef = useRef(null);
@@ -677,6 +675,9 @@ const CardContainer = ({
               }
             }
           },
+          onMouseOut: ({ unsetIsHovering }) => {
+            unsetIsHovering();
+          },
         }}
       >
         {({ isHovering }) => (
@@ -694,31 +695,29 @@ const CardContainer = ({
               cardImageRef={cardImageRef}
               movePopup={movePopup}
               displaySettings={displaySettings}
-              cloakSettings={cloakSettings}
               cardIndex={cardIndex}
               typeIndex={typeIndex}
+              format={format}
             />
-            {openSettings ? (
-              <SettingsContainer
-                typeIndex={typeIndex}
-                cardIndex={cardIndex}
-                setOpenSettings={setOpenSettings}
-                card={card}
-                changeCardSet={changeCardSet}
-                changeDeckArt={changeDeckArt}
-                flipX={flipX}
-                flipY={flipY}
-                boards={boards}
-                currentBoard={currentBoard}
-                moveBoards={moveBoards}
-                cloakSettings={cloakSettings}
-                adjustSettingProperties={adjustSettingProperties}
-                modifyProperty={modifyProperty}
-                moveCard={moveCard}
-                changeMainProperty={changeMainProperty}
-                settingBooleans={settingBooleans}
-              />
-            ) : isHovering && !cardDrag ? (
+            <SettingsContainer
+              typeIndex={typeIndex}
+              cardIndex={cardIndex}
+              setOpenSettings={setOpenSettings}
+              card={card}
+              changeCardSet={changeCardSet}
+              changeDeckArt={changeDeckArt}
+              boards={boards}
+              currentBoard={currentBoard}
+              moveBoards={moveBoards}
+              adjustSettingProperties={adjustSettingProperties}
+              modifyProperty={modifyProperty}
+              moveCard={moveCard}
+              changeMainProperty={changeMainProperty}
+              settingBooleans={settingBooleans}
+              propertyList={propertyList}
+              openSettings={openSettings}
+            />
+            {isHovering && !cardDrag ? (
               <motion.img
                 className={`bigCardImage ${
                   !flipX && !flipY
@@ -738,6 +737,7 @@ const CardContainer = ({
               ></motion.img>
             ) : (
               <div
+                id={`cardImage${card.name}`}
                 className={`bigCardImage hiddenCard ${
                   !flipX && !flipY
                     ? "popupBR"
@@ -760,7 +760,6 @@ const CardContainer = ({
 CardContainer.propTypes = {
   displaySettings: PropTypes.object.isRequired,
   settingBooleans: PropTypes.object.isRequired,
-  cloakSettings: PropTypes.func.isRequired,
   adjustSettingProperties: PropTypes.func.isRequired,
 };
 
@@ -770,6 +769,5 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-  cloakSettings,
   adjustSettingProperties,
 })(CardContainer);

@@ -19,15 +19,16 @@ export const loadUser = (newAuth) => async (dispatch) => {
     setAuthToken(localStorage.token);
   }
   try {
-    const res = await axios.get("/api/auth");
-    dispatch({
-      type: USER_LOADED,
-      payload: res.data,
+    await axios.get("/api/auth").then((res) => {
+      dispatch({
+        type: USER_LOADED,
+        payload: res.data,
+      });
+      if (newAuth) {
+        // dispatch({ type: OPEN_DECK_LIST, payload: true });
+        dispatch(savingDeck(true));
+      }
     });
-    if (newAuth) {
-      dispatch({ type: OPEN_DECK_LIST, payload: true });
-      dispatch(savingDeck(true));
-    }
   } catch (error) {
     dispatch({
       type: AUTH_ERROR,

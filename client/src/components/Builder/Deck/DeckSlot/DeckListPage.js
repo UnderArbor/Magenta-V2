@@ -6,7 +6,7 @@ import Navigation from "../../../General/Navigation";
 import DeckSlotContainer from "./DeckSlotContainer";
 
 const DeckListPage = ({ user, isAuthenticated, deckId }) => {
-  const title = user !== null ? `${user.name}'s Decks` : "Your Decks";
+  const title = user !== null ? `${user.userName}'s Decks` : "Your Decks";
 
   return (
     <div className="deckListPage">

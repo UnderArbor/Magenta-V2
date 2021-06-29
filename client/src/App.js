@@ -6,6 +6,9 @@ import store from "./store";
 import "./css/core.scss";
 import "./css/mana.scss";
 import "./css/modal.scss";
+import "./css/advancedsearch.scss";
+import "./css/deckBanner.scss";
+import "./css/deckTools.scss";
 
 import BuilderPage from "./components/Builder/BuilderPage";
 import DeckListPage from "./components/Builder/Deck/DeckSlot/DeckListPage";

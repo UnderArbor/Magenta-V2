@@ -1,5 +1,4 @@
 import React from "react";
-//https://reactchartjs.github.io/react-chartjs-2/#/
 import { Bar } from "@reactchartjs/react-chart.js";
 
 const ManaCurveContainer = ({
@@ -14,22 +13,21 @@ const ManaCurveContainer = ({
         label: "Amount",
         data: manaCurveData,
         yAxisID: "amount",
-        backgroundColor: "black",
-        borderColor: "white",
-        hoverBackgroundColor: "grey",
-        borderWidth: 2,
+        backgroundColor: "#872f8e",
+        borderColor: "transparent",
+        hoverBackgroundColor: "#b740bf",
       },
       {
         data: ghostCurveData,
-        borderColor: "rgba(255, 255, 255, .2)",
-        backgroundColor: "rgba(150, 150, 150, .2)",
-        borderWidth: 2,
+        yAxisId: "amount",
+        borderColor: "transparent",
+        backgroundColor: "rgba(20, 20, 20, .4)",
+        hoverBackgroundColor: "rgba(100, 100, 100, .4)",
       },
     ],
   };
 
   const options = {
-    // title: { display: true, text: "Mana Curve", fontSize: 20 },
     legend: { display: false },
     scales: {
       yAxes: [
@@ -45,8 +43,8 @@ const ManaCurveContainer = ({
           scaleLabel: {
             display: true,
             labelString: "Converted Mana Cost",
-            color: "white",
           },
+          gridLines: { display: false, borderWidth: 100 },
         },
       ],
     },

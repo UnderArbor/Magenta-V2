@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TypeContainer from "./Types/TypeContainer";
 import { motion, AnimatePresence } from "framer-motion";
 import produce from "immer";
-
-import Masonry from "react-masonry-css";
+import Masonry from "masonry-layout";
 
 import SearchBarContainer from "../SearchBar/SearchBarContainer";
 import DeckToolsContainer from "../DeckTools/DeckToolsContainer";
@@ -18,17 +17,43 @@ const emptyVariant = {
     opacity: 0.2,
     x: 0,
     transition: {
-      delay: 10,
+      delay: 3,
       duration: 2,
       ease: "easeIn",
     },
   },
   exit: {
     opacity: 0,
-    x: 0,
+    x: 50,
     transition: {
       duration: 0.5,
       ease: "easeOut",
+    },
+  },
+};
+
+const headerVariant = {
+  hidden: {
+    x: -8,
+    opacity: 0,
+  },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      ease: "easeIn",
+      when: "beforeChildren",
+      duration: 0.4,
+      delayChildren: 0.8,
+      delay: 0.0,
+    },
+  },
+  exit: {
+    x: -8,
+    opacity: 0,
+    transition: {
+      ease: "easeIn",
+      duration: 0.4,
     },
   },
 };
@@ -37,8 +62,6 @@ const DeckContainer = ({
   types,
   setTypes,
   tokens,
-  tools,
-  setTools,
   changeQuantity,
   changeCardSet,
   changeDeckArt,
@@ -48,17 +71,31 @@ const DeckContainer = ({
   toggleType,
   deckImage,
   boards,
+  setBoardState,
   currentBoard,
   moveBoards,
   moveType,
   ghostCards,
   currentCategory,
+  propertyList,
+  deckInfo,
+  addCard,
+  setCardCount,
+  displaySettings,
 }) => {
-  const breakpointColumnsObj = {
-    default: 3,
-    1380: 2,
-    920: 1,
-  };
+  var masonry = null;
+
+  useEffect(() => {
+    masonry = new Masonry(".categoryGrid", {
+      columnWidth: ".gridSizer",
+      itemSelector: ".typeContent",
+      percentPosition: true,
+    });
+
+    return () => {
+      masonry.destroy();
+    };
+  }, [types]);
 
   function modifyProperty(propertyType, property, typeIndex, cardIndex, add) {
     const card = types[typeIndex].cards[cardIndex];
@@ -203,14 +240,13 @@ const DeckContainer = ({
         setTypes={setTypes}
         changeQuantity={changeQuantity}
         deckImage={deckImage}
-        changeDeckArt={changeDeckArt}
         currentCategory={currentCategory}
-      />
-      <DeckToolsContainer
-        tools={tools}
-        setTools={setTools}
-        types={boards[0].boardTypes}
-        currentCategory={currentCategory}
+        deckInfo={deckInfo}
+        addCard={addCard}
+        boards={boards}
+        setBoardState={setBoardState}
+        currentBoard={currentBoard}
+        setCardCount={setCardCount}
       />
       <AnimatePresence>
         {types.length === 0 && (
@@ -221,44 +257,87 @@ const DeckContainer = ({
             animate="visible"
             exit="exit"
           >
-            Hey...you should add a card
+            What to add first...
           </motion.div>
         )}
       </AnimatePresence>
-      <AnimatePresence>
-        <Masonry
-          breakpointCols={breakpointColumnsObj}
-          className="typeGrid"
-          columnClassName="typeGridColumn"
+      <div className="cardArea">
+        <div className="categoryGrid">
+          <div className="gridSizer"></div>
+          {/* <div
+            className="gridCategory"
+            style={{ border: "1px solid red", height: 50, width: 50 }}
+          ></div>
+          <div
+            className="gridCategory"
+            style={{ border: "1px solid red", height: 50, width: 50 }}
+          ></div>
+          <div
+            className="gridCategory"
+            style={{ border: "1px solid red", height: 50, width: 50 }}
+          ></div>
+          <div
+            className="gridCategory"
+            style={{ border: "1px solid red", height: 50, width: 50 }}
+          ></div>
+          <div
+            className="gridCategory"
+            style={{ border: "1px solid red", height: 50, width: 50 }}
+          ></div> */}
+          <AnimatePresence>
+            {types.map((type, typeIndex) => {
+              return (
+                <TypeContainer
+                  type={type}
+                  key={type.name}
+                  typeIndex={typeIndex}
+                  changeQuantity={changeQuantity}
+                  changeCardSet={changeCardSet}
+                  changeDeckArt={changeDeckArt}
+                  moveCard={moveCard}
+                  cardDrag={cardDrag}
+                  setCardDrag={setCardDrag}
+                  toggleType={toggleType}
+                  boards={boards}
+                  currentBoard={currentBoard}
+                  moveBoards={moveBoards}
+                  moveType={moveType}
+                  ghostCards={ghostCards.find(
+                    (ghostType) => ghostType.name === type.name
+                  )}
+                  modifyProperty={modifyProperty}
+                  changeMainProperty={changeMainProperty}
+                  currentCategory={currentCategory}
+                  propertyList={propertyList}
+                  displaySettings={displaySettings}
+                  format={deckInfo.deckFormat}
+                />
+              );
+            })}
+          </AnimatePresence>
+        </div>
+        <div
+          style={{
+            position: "relative",
+            height: "100vh",
+            visibility: "hidden",
+          }}
+        />
+        <div
+          id="stickyContainer"
+          style={{
+            position: "sticky",
+            top: 0,
+            height: "100vh",
+            width: "140px",
+          }}
         >
-          {types.map((type, typeIndex) => {
-            return (
-              <TypeContainer
-                type={type}
-                key={type.name}
-                typeIndex={typeIndex}
-                changeQuantity={changeQuantity}
-                changeCardSet={changeCardSet}
-                changeDeckArt={changeDeckArt}
-                moveCard={moveCard}
-                cardDrag={cardDrag}
-                setCardDrag={setCardDrag}
-                toggleType={toggleType}
-                boards={boards}
-                currentBoard={currentBoard}
-                moveBoards={moveBoards}
-                moveType={moveType}
-                ghostCards={ghostCards.find(
-                  (ghostType) => ghostType.name === type.name
-                )}
-                modifyProperty={modifyProperty}
-                changeMainProperty={changeMainProperty}
-                currentCategory={currentCategory}
-              />
-            );
-          })}
-        </Masonry>
-      </AnimatePresence>
+          <DeckToolsContainer
+            mainCards={boards[0].cards}
+            currentCategory={currentCategory}
+          />
+        </div>
+      </div>
 
       {Object.keys(tokens).length > 0 && <TokenContainer tokens={tokens} />}
     </div>

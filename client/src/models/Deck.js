@@ -15,106 +15,97 @@ const DeckSchema = new Schema({
   boards: [
     {
       name: { type: String },
-      boardTypes: [
+      cards: [
         {
           name: {
             type: String,
           },
-          open: {
-            type: Boolean,
+          quantity: {
+            type: Number,
           },
-          cards: [
+          setName: {
+            type: String,
+          },
+          cardArt: {
+            type: String,
+          },
+          cardImage: {
+            type: String,
+          },
+          cmc: [
             {
-              name: {
-                type: String,
-              },
-              quantity: {
-                type: Number,
-              },
-              setName: {
-                type: String,
-              },
-              cardArt: {
-                type: String,
-              },
-              cardImage: {
-                type: String,
-              },
-              cmc: [
-                {
-                  type: Number,
-                },
-              ],
-              mainCMC: { type: Number },
-              modifiedCMC: [{ type: Number }],
-              manaCost: [
-                [
-                  {
-                    type: String,
-                  },
-                ],
-              ],
-              mainType: {
-                type: String,
-              },
-              types: [
-                {
-                  type: String,
-                },
-              ],
-              modifiedTypes: [{ type: String }],
-              subtypes: [
-                {
-                  type: String,
-                },
-              ],
-              mainTag: {
-                type: String,
-              },
-              tags: [{ type: String }],
-              colors: [
-                {
-                  type: String,
-                },
-              ],
-              tokens: [
-                {
-                  name: { type: String },
-                  image: { type: String },
-                  cardImage: { type: String },
-                  parentName: { type: String },
-                },
-              ],
-              secondCard: {
-                name: { type: String },
-                cardArt: { type: String },
-                cardImage: { type: String },
-                cmc: [{ type: Number }],
-                modifiedCMC: [{ type: Number }],
-                manaCost: [
-                  {
-                    type: String,
-                  },
-                ],
-                types: [
-                  {
-                    type: String,
-                  },
-                ],
-                modifiedTypes: [{ type: String }],
-                subtypes: [
-                  {
-                    type: String,
-                  },
-                ],
-                colors: [
-                  {
-                    type: String,
-                  },
-                ],
-              },
+              type: Number,
             },
           ],
+          mainCMC: { type: Number },
+          modifiedCMC: [{ type: Number }],
+          manaCost: [
+            [
+              {
+                type: String,
+              },
+            ],
+          ],
+          mainType: {
+            type: String,
+          },
+          types: [
+            {
+              type: String,
+            },
+          ],
+          modifiedTypes: [{ type: String }],
+          subtypes: [
+            {
+              type: String,
+            },
+          ],
+          mainTag: {
+            type: String,
+          },
+          tags: [{ type: String }],
+          colors: [
+            {
+              type: String,
+            },
+          ],
+          tokens: [
+            {
+              name: { type: String },
+              image: { type: String },
+              cardImage: { type: String },
+              parentName: { type: String },
+            },
+          ],
+          legalities: [{ type: String }],
+          secondCard: {
+            name: { type: String },
+            cardArt: { type: String },
+            cardImage: { type: String },
+            cmc: [{ type: Number }],
+            modifiedCMC: [{ type: Number }],
+            manaCost: [
+              {
+                type: String,
+              },
+            ],
+            types: [
+              {
+                type: String,
+              },
+            ],
+            modifiedTypes: [{ type: String }],
+            subtypes: [
+              {
+                type: String,
+              },
+            ],
+            colors: [
+              {
+                type: String,
+              },
+            ],
+          },
         },
       ],
     },
@@ -149,25 +140,20 @@ const DeckSchema = new Schema({
     displayName: {
       type: Boolean,
     },
-    displayIndicator: {
+    displayLegalities: {
+      type: Boolean,
+    },
+    displayGhosts: {
       type: Boolean,
     },
     cardSize: {
       type: Number,
     },
+    asSize: {
+      type: Number,
+    },
     sortCategory: {
       type: String,
-    },
-  },
-  toolBooleans: {
-    manaCurve: {
-      type: Boolean,
-    },
-    displaySettings: {
-      type: Boolean,
-    },
-    cardSorting: {
-      type: Boolean,
     },
   },
 });

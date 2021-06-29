@@ -1,5 +1,7 @@
 import React from "react";
-import axios from "axios";
+import info from "../../utils/icons/information-button.svg";
+
+import ReactTooltip from "react-tooltip";
 
 const ImportDeckZone = ({ createDeck, uploadPacket }) => {
   return (
@@ -18,6 +20,15 @@ const ImportDeckZone = ({ createDeck, uploadPacket }) => {
       <label className="inputFileLabel" htmlFor="file">
         Import deck
       </label>
+      <img src={info} className="infoIcon" data-tip data-for="info" />
+      <ReactTooltip id="info">
+        <p>You can import a .txt file in these formats:</p>
+        <ul>
+          <li>Word</li>
+          <li>Chart</li>
+          <li>Else</li>
+        </ul>
+      </ReactTooltip>
     </div>
   );
 };

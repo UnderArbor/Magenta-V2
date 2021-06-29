@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 
 import cardTypes from "../json/cardTypes.json";
+import formats from "../json/formats.json";
 
 const SCRYFALL_API = "https://api.scryfall.com";
 
@@ -19,6 +20,7 @@ const getCardInfo = async (name, quantity) => {
     let colors = "";
     let set = "";
     let tokens = [];
+    let legalities = [];
     let secondCard = {
       name: "",
       cardArt: "",
@@ -51,6 +53,17 @@ const getCardInfo = async (name, quantity) => {
           cmc = [json.cmc];
         }
         manaCost = [json.mana_cost];
+        for (const [key, value] of Object.entries(json.legalities)) {
+          if (key === "commander") {
+            key = "Commander/EDH";
+          }
+          if (
+            value === "legal" &&
+            formats.includes(key.charAt(0).toUpperCase() + key.slice(1))
+          ) {
+            legalities.push(key.charAt(0).toUpperCase() + key.slice(1));
+          }
+        }
 
         //Parse CMC
         if (json.mana_cost.includes("//") || cmc.length === 0) {
@@ -197,6 +210,9 @@ const getCardInfo = async (name, quantity) => {
         break;
       }
     }
+    if (mainType === "") {
+      mainType = types[0][0];
+    }
     for (var i = 0; i < manaCost.length; ++i) {
       manaCost[i] = manaCost[i]
         .replace(/\{/g, "")
@@ -232,6 +248,7 @@ const getCardInfo = async (name, quantity) => {
       colors,
       tokens,
       secondCard,
+      legalities,
     };
 
     return card;

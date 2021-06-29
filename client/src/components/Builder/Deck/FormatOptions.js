@@ -2,7 +2,12 @@ import React, { useEffect, useRef } from "react";
 
 import formatList from "../../../utils/json/formats.json";
 
-const FormatOptions = ({ currentFormat, setDeckInfo, setOpenFormat }) => {
+const FormatOptions = ({
+  currentFormat,
+  setDeckInfo,
+  setOpenFormat,
+  banner,
+}) => {
   const formatWindow = useRef(null);
 
   useEffect(() => {
@@ -25,7 +30,12 @@ const FormatOptions = ({ currentFormat, setDeckInfo, setOpenFormat }) => {
   }, []);
 
   return (
-    <div className="formatOptionContainer" ref={formatWindow}>
+    <div
+      className={`formatOptionContainer ${
+        banner ? "bannerFormat" : "newDeckFormat"
+      }`}
+      ref={formatWindow}
+    >
       {formatList.map((format) => {
         return (
           <div

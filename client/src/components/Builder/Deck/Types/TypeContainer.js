@@ -7,6 +7,7 @@ import TypeHeader from "./TypeHeader";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { ItemTypes } from "../../../Constants";
+import CommanderContainer from "./CommanderContainer";
 
 const TypeContainer = ({
   type,
@@ -26,10 +27,12 @@ const TypeContainer = ({
   modifyProperty,
   changeMainProperty,
   currentCategory,
+  propertyList,
+  displaySettings,
+  format,
 }) => {
   const typeRef = useRef(null);
   const typeHeaderRef = useRef(null);
-  const typeContainerRef = useRef(null);
 
   var quantity = 0;
   for (var i = 0; i < type.cards.length; ++i) {
@@ -69,8 +72,7 @@ const TypeContainer = ({
     },
   });
 
-  drag(typeHeaderRef);
-  typeDrop(typeContainerRef);
+  typeDrop(drag(typeHeaderRef));
 
   const headerVariant = {
     hidden: {
@@ -129,18 +131,32 @@ const TypeContainer = ({
 
   return (
     <motion.div
-      className="typeContent"
+      className={`typeContent ${type.name}`}
       variants={headerVariant}
       initial="hidden"
       animate="visible"
       exit="exit"
-      ref={typeContainerRef}
+      // style={{ width: "500px" }}
     >
       <TypeHeader
-        type={type}
+        name={
+          currentCategory === "Cost" && type.name === -1
+            ? "Commander"
+            : type.name
+        }
+        open={type.open}
         toggleType={toggleType}
         typeIndex={typeIndex}
-        quantity={quantity}
+        quantity={
+          type.name !== "Commander" &&
+          !(type.name === -1 && currentCategory === "Cost")
+            ? quantity
+            : type.cards.length === 1
+            ? type.cards[0].name
+            : type.cards.length === 2
+            ? `${type.cards[0].name} & ${type.cards[1].name}`
+            : false
+        }
         ghostQuantity={ghostQuantity}
         typeHeaderRef={typeHeaderRef}
         isDragging={isDragging}
@@ -148,40 +164,69 @@ const TypeContainer = ({
       />
       <motion.div
         ref={typeRef}
-        className={`typeContainer ${isDragging && "dragType"}`}
+        className={`${type.name !== "Commander" && "typeContainer"} ${
+          isDragging && "dragType"
+        }`}
         variants={containerVariant}
         id={`type${typeIndex}`}
         style={
           isOver && canDrop
-            ? { opacity: 0.4, backgroundColor: "rgba(0, 0, 0, 0.4" }
+            ? {
+                opacity: 0.4,
+                backgroundColor: "rgba(0, 0, 0, 0.4",
+                border: "3px dotted grey",
+                borderTop: "none",
+                borderBottomLeftRadius: "6px",
+                borderBottomRightRadius: "6px",
+              }
             : { opacity: 1, backgroundColor: "transparent" }
         }
       >
         <AnimatePresence>
-          {type.cards.map((card, cardIndex) => {
-            if (type.open) {
-              return (
-                <CardContainer
-                  typeIndex={typeIndex}
-                  cardIndex={cardIndex}
-                  card={card}
-                  key={card.name}
-                  changeQuantity={changeQuantity}
-                  changeCardSet={changeCardSet}
-                  changeDeckArt={changeDeckArt}
-                  moveCard={moveCard}
-                  cardDrag={cardDrag}
-                  setCardDrag={setCardDrag}
-                  boards={boards}
-                  currentBoard={currentBoard}
-                  moveBoards={moveBoards}
-                  modifyProperty={modifyProperty}
-                  changeMainProperty={changeMainProperty}
-                />
-              );
-            }
-          })}
-          {typeof ghostCards !== "undefined"
+          {type.name !== "Commander" ? (
+            type.cards.map((card, cardIndex) => {
+              if (type.open) {
+                return (
+                  <CardContainer
+                    typeIndex={typeIndex}
+                    cardIndex={cardIndex}
+                    card={card}
+                    key={card.name}
+                    changeQuantity={changeQuantity}
+                    changeCardSet={changeCardSet}
+                    changeDeckArt={changeDeckArt}
+                    moveCard={moveCard}
+                    cardDrag={cardDrag}
+                    setCardDrag={setCardDrag}
+                    boards={boards}
+                    currentBoard={currentBoard}
+                    moveBoards={moveBoards}
+                    modifyProperty={modifyProperty}
+                    changeMainProperty={changeMainProperty}
+                    propertyList={propertyList}
+                    format={format}
+                  />
+                );
+              }
+            })
+          ) : type.name === "Commander" && type.open ? (
+            <CommanderContainer
+              commanders={type.cards}
+              typeIndex={typeIndex}
+              boards={boards}
+              currentBoard={currentBoard}
+              moveBoards={moveBoards}
+              changeCardSet={changeCardSet}
+              changeDeckArt={changeDeckArt}
+              modifyProperty={modifyProperty}
+              moveCard={moveCard}
+              changeMainProperty={changeMainProperty}
+              propertyList={propertyList}
+            />
+          ) : null}
+          {typeof ghostCards !== "undefined" &&
+          type.open &&
+          displaySettings.displayGhosts
             ? ghostCards.cards.map((ghostCard) => {
                 if (type.open) {
                   return (

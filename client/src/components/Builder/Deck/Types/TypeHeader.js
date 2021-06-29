@@ -1,7 +1,9 @@
+import { current } from "immer";
 import React, { Fragment } from "react";
 
 const TypeHeader = ({
-  type,
+  name,
+  open,
   toggleType,
   typeIndex,
   quantity,
@@ -14,13 +16,18 @@ const TypeHeader = ({
     <Fragment>
       <div className="typeHeader" ref={typeHeaderRef}>
         <div className="typeTitle">
-          {currentCategory !== "Cost" ? type.name : `${type.name}-Cost`}:{" "}
-          {quantity} {ghostQuantity > 0 ? `(+${ghostQuantity})` : null}
-          {type.open ? null : "..."}
+          {currentCategory !== "Cost" || name === "Commander"
+            ? name
+            : `${name}-Cost`}
+          :{" "}
+          {name !== "Commander"
+            ? quantity !== false && quantity + ghostQuantity
+            : quantity}
+          {open ? null : "..."}
         </div>
         <button
-          className={type.open ? "arrow-down active" : "arrow-down"}
-          onClick={() => toggleType(typeIndex, type.open)}
+          className={open ? "arrow-down active" : "arrow-down"}
+          onClick={() => toggleType(typeIndex, open)}
         />
       </div>
       <hr className={`typeDivider ${isDragging && "dragDivider"}`} />

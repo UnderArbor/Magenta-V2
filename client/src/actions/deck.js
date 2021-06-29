@@ -7,8 +7,8 @@ import {
   TOGGLE_DISPLAY,
   DECK_ERROR,
   SETTINGS_CLOAK,
-  TOGGLE_TOOLS,
   ADJUST_SETTING_PROPERTIES,
+  DELETE_DECK,
 } from "./types";
 
 import axios from "axios";
@@ -89,19 +89,8 @@ export const toggleDisplaySetting = (checked, id) => (dispatch) => {
   }
 };
 
-export const toggleToolBooleans = (name, toggle) => (dispatch) => {
+export const loadTools = (displaySettings) => (dispatch) => {
   try {
-    dispatch({ type: TOGGLE_TOOLS, payload: { name, toggle } });
-  } catch (error) {
-    dispatch({ type: DECK_ERROR });
-  }
-};
-
-export const loadTools = (toolBooleans, displaySettings) => (dispatch) => {
-  try {
-    for (const [key, value] of Object.entries(toolBooleans)) {
-      dispatch({ type: TOGGLE_TOOLS, payload: { name: key, toggle: value } });
-    }
     for (const [key, value] of Object.entries(displaySettings)) {
       dispatch({ type: TOGGLE_DISPLAY, payload: { checked: value, id: key } });
       if (key === "sortCategory") {
@@ -128,6 +117,15 @@ export const setSortCategory = (newCategory) => (dispatch) => {
       payload: { checked: newCategory, id: "sortCategory" },
     });
     dispatch({ type: ADJUST_SETTING_PROPERTIES, payload: newCategory });
+  } catch (error) {
+    dispatch({ type: DECK_ERROR });
+  }
+};
+
+export const deleteDeck = (deckId) => async (dispatch) => {
+  try {
+    dispatch({ type: DELETE_DECK, payload: deckId });
+    await axios.delete(`api/deck/${deckId}`);
   } catch (error) {
     dispatch({ type: DECK_ERROR });
   }

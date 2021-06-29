@@ -1,0 +1,361 @@
+@import "./core";
+
+.builderExit {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  height: 32px;
+  width: auto;
+  cursor: pointer;
+  fill: $secondary-color;
+  color: $secondary-color;
+  border: $secondary-color;
+}
+
+.deckBanner {
+  position: relative;
+  height: $banner-height;
+  width: 100%;
+  background-color: $primary-color;
+  display: flex;
+  flex-direction: row;
+}
+
+.deckInfoContainer {
+  width: calc(100% - 350px);
+  height: 100%;
+  position: relative;
+  padding: 8px 16px 16px 80px;
+}
+
+.deckInfo {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainDeckInfo {
+  height: 100%;
+  padding: 10px 0 0 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.leftDeckInfo {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: right;
+}
+
+.rightDeckInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.deckNameDisplay {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  border-bottom: 1px solid rgba(217, 214, 140, 0.4);
+  line-height: 1pt;
+  vertical-align: end;
+}
+
+.deckNameField {
+  border: none;
+  background-color: transparent;
+  font-size: 56px;
+  font-family: $header-font;
+  color: $light-text;
+  width: 100%;
+}
+
+.deckNameField::placeholder {
+  color: $light-text;
+  opacity: 1;
+}
+
+.deckFormatContainer {
+  position: relative;
+  font-family: $body-font;
+  border: 2px solid $secondary-color;
+  border-radius: 6px;
+  width: 20vw;
+  padding: 4px 8px;
+}
+
+.formatButton {
+  border: none;
+  background-color: $primary-color;
+  width: 100%;
+}
+
+.formatButtonText {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  width: 100%;
+}
+
+.formatDisplay {
+  white-space: nowrap;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 24px;
+  font-family: $body-font;
+  color: $secondary-color;
+}
+
+.menuDownArrow {
+  margin: auto 8px;
+  width: 22px;
+  height: auto;
+}
+
+.commanderDisplay {
+  color: $light-text;
+  text-align: left;
+  font-size: 22px;
+  font-family: $body-font;
+  white-space: nowrap;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+  margin-top: 6px;
+}
+
+.cardCount {
+  color: $light-text;
+  text-align: left;
+  font-size: 28px;
+  font-family: $body-font;
+}
+
+.deckAuthor {
+  text-align: right;
+  font-family: $body-font;
+  font-size: 24px;
+  color: $light-text;
+}
+
+.deckActionContainer {
+  position: relative;
+  padding: 8px;
+  background-color: transparent;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid $secondary-color;
+  font-family: $body-font;
+  font-size: 22px;
+  min-width: 50%;
+}
+
+.actionGroup {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  margin: 0 4px;
+}
+
+.downloadGroup {
+  margin: 4px 0 0 0;
+}
+
+.actionIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.actionLabel {
+  font-size: 22px;
+  font-family: $body-font;
+  padding: 0 0 0 4px;
+}
+
+.nullLabel {
+  color: $null-color;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.exportDeck {
+  text-align: right;
+  color: $secondary-color;
+}
+
+.shareDeck {
+  color: #788cf7;
+}
+
+.buyDeck {
+  color: #b2f76e;
+  padding: 0;
+}
+
+.deleteDeck {
+  color: #f7796e;
+}
+
+.actionBox {
+  position: absolute;
+  top: 37px;
+  right: 0;
+  border: 2px solid $primary-color;
+  box-shadow: 0 0 8px rgba(34, 15, 38, 0.8);
+  z-index: 10;
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.actionRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.downloadActionBox {
+  background-color: #f9f9ec;
+}
+
+.shareActionBox {
+  background-color: #eceef9;
+}
+
+.buyActionBox {
+  background-color: #f2f9ec;
+}
+
+.trashActionBox {
+  background-color: #f9ecec;
+}
+
+.actionSubLabel {
+  font-size: 22px;
+  font-family: $body-font;
+  margin-right: 20px;
+  color: $dark-background-color;
+  white-space: nowrap;
+}
+
+.urlBox {
+  display: flex;
+  flex-direction: row;
+  height: 28px;
+  border-radius: 6px;
+  border: 2px solid $primary-color;
+  width: 240px;
+  background-color: #f0ecf9;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.urlInput {
+  border: none;
+  height: 100%;
+  text-indent: 8px;
+  font-size: 18px;
+  font-family: $body-font;
+  color: $null-color;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.urlCopyButton {
+  width: 20px;
+  height: calc(100% - 6px);
+  margin: 3px;
+  cursor: pointer;
+}
+
+.urlVR {
+  width: 1px;
+  background-color: rgba(105, 16, 112, 0.15);
+  height: 90%;
+}
+
+.actionVR {
+  width: 1px;
+  background-color: rgba(217, 214, 140, 0.5);
+  height: 90%;
+  margin: 0 8px;
+}
+
+.trashBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trashButton {
+  font-size: 20px;
+  font-family: $body-font;
+  line-height: 33px;
+  text-align: center;
+  width: 67px;
+  border-radius: 6px;
+  padding: 2px 4px;
+}
+
+.confirmTrash {
+  background-color: #ff1500;
+  color: #f9ecec;
+  margin-right: 12px;
+}
+
+.declineTrash {
+  background-color: transparent;
+  color: #ff1500;
+  border: 2px solid #ff1500;
+}
+
+.deckImageCover {
+  position: relative;
+  height: 100%;
+  width: 350px;
+}
+
+.deckImage {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  filter: saturate(110%) contrast(110%);
+  opacity: 1;
+}
+
+.deckImagePlaceholder {
+  box-shadow: inset 0px 0px 4px 1px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+}
+
+.deckColorContainer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.hoverImage {
+  border: 2px dotted $light-text;
+  opacity: 0.8;
+}

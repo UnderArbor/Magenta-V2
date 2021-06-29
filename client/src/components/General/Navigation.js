@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment } from "react";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { produce } from "immer";
@@ -8,14 +9,12 @@ import HomeLogo from "./HomeLogo";
 import RegisterButton from "../Account/RegisterButton";
 import LoginButton from "../Account/LoginButton";
 import LogoutButton from "../Account/LogoutButton";
-import DeckListButton from "../Buttons/DeckListButton";
 import BuilderButton from "./BuilderButton";
 
 import { registerUser, loginUser, logoutUser } from "../../actions/auth";
 
 const Navigation = ({
   openDeckList,
-  toggleDeckList,
   isAuthenticated,
   user,
   authErrors,
@@ -26,6 +25,17 @@ const Navigation = ({
   navSticky,
   buildSticky,
 }) => {
+  const [registerIsOpen, setRegisterOpen] = useState(false);
+  const [loginIsOpen, setLoginOpen] = useState(false);
+
+  function openRegister() {
+    setRegisterOpen(true);
+  }
+
+  function openLogin() {
+    setLoginOpen(true);
+  }
+
   const [errors, setErrors] = useState({
     userName: "",
     email: "",
@@ -122,10 +132,9 @@ const Navigation = ({
       </button> */}
       <AnimatePresence exitBeforeEnter>
         {openDeckList !== undefined ? (
-          <DeckListButton
-            toggleDeckList={toggleDeckList}
-            openDeckList={openDeckList}
-          />
+          <Link to="/decks" className="headerButton decklistEnter">
+            Deck List
+          </Link>
         ) : buildSticky === true || buildSticky === undefined ? (
           <BuilderButton navVariant={navVariant} buildSticky={buildSticky} />
         ) : null}
@@ -139,24 +148,29 @@ const Navigation = ({
               errorVariant={errorVariant}
               undoError={undoError}
               setErrors={setErrors}
+              loginIsOpen={loginIsOpen}
+              setLoginOpen={setLoginOpen}
+              openLogin={openLogin}
+              openRegister={openRegister}
             />
-            <p style={{ margin: "0 4px" }} className="authLink">
-              |
-            </p>
             <RegisterButton
               registerUser={registerUser}
               errors={errors}
               errorVariant={errorVariant}
               undoError={undoError}
               setErrors={setErrors}
+              registerIsOpen={registerIsOpen}
+              setRegisterOpen={setRegisterOpen}
+              openRegister={openRegister}
+              openLogin={openLogin}
             />
           </Fragment>
         ) : (
           <Fragment>
-            <div className="userButton notAllowed">
-              <p>Welcome, {user.userName}</p>
+            <div className="userButton">
+              <p className="userGreeting">Welcome, {user.userName}</p>
+              <LogoutButton logoutUser={logoutUser} />
             </div>
-            <LogoutButton logoutUser={logoutUser} />
           </Fragment>
         )}
       </div>

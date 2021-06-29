@@ -20,25 +20,8 @@ connectDB();
 
 // Init Middleware
 app.use(express.json({ extended: false }));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
-// Add Cron Scheduler For Database Updates
-
-// Define Routes
-app.use("/api/auth", require("./server/api/auth"));
-app.use("/api/user", require("./server/api/user"));
-app.use("/api/deck", require("./server/api/deck"));
-
-if (process.env.NODE_ENV === "production") {
-  //Set static folder
-  app.use(express.static(DIST_DIR));
-
-  app.get("*", (req, res) => {
-    res.sendFile(HTML_FILE);
-  });
-}
-
+//UPDATE CARD LIST
 // cron.schedule("* * * * *", async () => {
 //   await fetch("https://api.scryfall.com/catalog/card-names")
 //     .then((response) => {
@@ -55,6 +38,70 @@ if (process.env.NODE_ENV === "production") {
 //       });
 //     });
 // });
+
+//UPDATE COMMANDER LIST
+// cron.schedule("* * * * *", async () => {
+//   var commanderArray = [];
+//   var next_page = undefined;
+//   await fetch("https://api.scryfall.com/cards/search?q=is:commander")
+//     .then((response) => {
+//       return response.json();
+//     })
+//     .then((json) => {
+//       next_page = json.next_page;
+//       for (var i = 0; i < json.data.length; ++i) {
+//         commanderArray.push({
+//           name: json.data[i].name,
+//           partner:
+//             json.data[i].oracle_text !== undefined &&
+//             json.data[i].oracle_text.includes("Partner"),
+//         });
+//       }
+//     });
+
+//   while (next_page !== undefined) {
+//     await fetch(next_page)
+//       .then((response) => {
+//         return response.json();
+//       })
+//       .then((json) => {
+//         next_page = json.next_page;
+//         for (var i = 0; i < json.data.length; ++i) {
+//           commanderArray.push({
+//             name: json.data[i].name,
+//             partner:
+//               json.data[i].oracle_text !== undefined &&
+//               json.data[i].oracle_text.includes("Partner"),
+//           });
+//         }
+//       });
+//   }
+//   fs.writeFile(
+//     "./client/src/utils/json/commanders.json",
+//     JSON.stringify(commanderArray),
+//     (err) => {
+//       if (err) {
+//         console.log("Error writing file", err);
+//       } else {
+//         console.log("Successfully wrote file");
+//       }
+//     }
+//   );
+// });
+
+// Define Routes
+app.use("/api/auth", require("./server/api/auth"));
+app.use("/api/user", require("./server/api/user"));
+app.use("/api/deck", require("./server/api/deck"));
+
+if (process.env.NODE_ENV === "production") {
+  //Set static folder
+  app.use(express.static(DIST_DIR));
+
+  app.get("*", (req, res) => {
+    res.sendFile(HTML_FILE);
+  });
+}
 
 app.listen(port, function (error) {
   if (error) {

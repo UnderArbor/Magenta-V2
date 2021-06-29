@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import produce, { current } from "immer";
+import produce from "immer";
 import { motion, AnimatePresence } from "framer-motion";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
@@ -23,8 +23,10 @@ import {
   savingDeck,
   setDeckId,
   loadTools,
+  deleteDeck,
 } from "../../actions/deck";
 
+import commanders from "../../utils/json/commanders.json";
 import getCardInfo from "../../utils/functions/getCardInfo";
 
 const cloakVariant = {
@@ -58,26 +60,26 @@ const BuilderContainer = ({
   settingsCloak,
   loadTools,
   displaySettings,
+  deleteDeck,
 }) => {
   let history = useHistory();
   const location = useLocation();
   const [modalIsOpen, setIsOpen] = useState(false);
   const [currentBoard, setBoardState] = useState("Mainboard");
   const [boards, setBoards] = useState([
-    { name: "Mainboard", boardTypes: [] },
-    { name: "Sideboard", boardTypes: [] },
-    { name: "Maybepile", boardTypes: [] },
+    { name: "Mainboard", cards: [] },
+    { name: "Sideboard", cards: [] },
+    { name: "Maybepile", cards: [] },
   ]);
-  const [boardTypes, setTypes] = useState([]);
+  const [cardCategories, setCardCategories] = useState([]);
+
   const [ghostCards, setGhostCards] = useState([]);
   const [tokens, setTokens] = useState([]);
-  const [tools, setTools] = useState(false);
   const [deckInfo, setDeckInfo] = useState({
     deckId: "loading...",
     deckName: "loading...",
     deckFormat: "loading...",
-    deckImage:
-      "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    deckImage: "false",
   });
   const [cardDrag, setCardDrag] = useState(false);
   const [cardCount, setCardCount] = useState(0);
@@ -94,8 +96,15 @@ const BuilderContainer = ({
     black: 0,
     blue: 0,
   });
+  const [commanderDisplay, setCommanderDisplay] = useState(null);
 
-  const { deckImage } = deckInfo;
+  const [propertyList, setPropertyList] = useState({
+    types: [],
+    cost: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    tags: [],
+  });
+
+  const { deckName, deckImage } = deckInfo;
 
   function openModal() {
     setIsOpen(true);
@@ -105,82 +114,141 @@ const BuilderContainer = ({
     setIsOpen(false);
   }
 
+  //When Deck Format Changes, Either Add Or Subtract A Commander Category
   useEffect(() => {
-    for (var i = 0; i < boards.length; ++i) {
-      if (boards[i].name === currentBoard) {
-        const types = boards[i].boardTypes;
-        setTypes(types);
-        break;
+    if (
+      deckInfo.deckFormat === "Commander/EDH" ||
+      deckInfo.deckFormat === "Brawl"
+    ) {
+      //If Commander Cat Doesn't Exist, Add It
+      const commanderTypes = cardCategories.filter((cat) => {
+        return (
+          cat.name === "Commander" ||
+          (cat.name === -1 && displaySettings.sortCategory === "Cost")
+        );
+      });
+      if (commanderTypes.length === 0) {
+        const newCats = produce(cardCategories, (draft) => {
+          draft.splice(0, 0, {
+            name: displaySettings.sortCategory !== "Cost" ? "Commander" : -1,
+            open: true,
+            cards: [],
+          });
+        });
+        setCardCategories(newCats);
       }
+    } else {
+      //Find Commander Cat And Remove It
+      const newCats = cardCategories.filter((cat) => {
+        return (
+          cat.name !== "Commander" ||
+          (cat.name === -1 && displaySettings.sortCategory === "Cost")
+        );
+      });
+      setCardCategories(newCats);
     }
-  }, [currentBoard]);
+  }, [deckInfo.deckFormat]);
 
   useEffect(() => {
-    var newTypes = [];
-    for (var i = 0; i < boardTypes.length; ++i) {
-      for (var j = 0; j < boardTypes[i].cards.length; ++j) {
-        const card = boardTypes[i].cards[j];
-        const newIndex = -1;
-        switch (displaySettings.sortCategory) {
-          case "Types":
-            newIndex = newTypes.findIndex((type) => {
-              return type.name === card.mainType;
-            });
-            if (newIndex === -1) {
-              newTypes.push({ name: card.mainType, open: true, cards: [card] });
+    sortCards(
+      boards[
+        boards.findIndex((board) => {
+          return board.name === currentBoard;
+        })
+      ].cards,
+      displaySettings.sortCategory
+    );
+  }, [displaySettings.sortCategory, currentBoard]);
+
+  async function sortCards(cards, category) {
+    var newCats = [];
+    for (var i = 0; i < cards.length; ++i) {
+      const card = cards[i];
+      const newIndex = -1;
+      switch (category) {
+        case "Types":
+          newIndex = newCats.findIndex((cat) => {
+            return cat.name === card.mainType;
+          });
+          if (newIndex === -1) {
+            newCats.push({ name: card.mainType, open: true, cards: [card] });
+          } else {
+            newCats[newIndex].cards.push(card);
+          }
+          break;
+        case "Cost":
+          newIndex = newCats.findIndex((cat) => {
+            return cat.name === card.mainCMC;
+          });
+          if (newIndex === -1) {
+            newCats.push({ name: card.mainCMC, open: true, cards: [card] });
+          } else {
+            newCats[newIndex].cards.push(card);
+          }
+          break;
+        case "Tags":
+          newIndex = newCats.findIndex((cat) => {
+            if (card.mainTag === undefined) {
+              return cat.name === "untagged";
             } else {
-              newTypes[newIndex].cards.push(card);
+              return cat.name === card.mainTag;
             }
-            break;
-          case "Cost":
-            newIndex = newTypes.findIndex((type) => {
-              return type.name === card.mainCMC;
+          });
+          if (newIndex === -1) {
+            newCats.push({
+              name: card.mainTag === undefined ? "untagged" : card.mainTag,
+              open: true,
+              cards: [card],
             });
-            if (newIndex === -1) {
-              newTypes.push({ name: card.mainCMC, open: true, cards: [card] });
-            } else {
-              newTypes[newIndex].cards.push(card);
-            }
-            break;
-          case "Tags":
-            newIndex = newTypes.findIndex((type) => {
-              if (card.mainTag === undefined) {
-                return type.name === "untagged";
-              } else {
-                return type.name === card.mainTag;
-              }
-            });
-            if (newIndex === -1) {
-              newTypes.push({
-                name: card.mainTag === undefined ? "untagged" : card.mainTag,
-                open: true,
-                cards: [card],
-              });
-            } else {
-              newTypes[newIndex].cards.push(card);
-            }
-            break;
-        }
+          } else {
+            newCats[newIndex].cards.push(card);
+          }
+          break;
       }
     }
-    setTypes(newTypes);
-  }, [displaySettings.sortCategory]);
+    if (
+      deckInfo.deckFormat === "Commander/EDH" ||
+      deckInfo.deckFormat === "Brawl"
+    ) {
+      const commanderIndex = newCats.findIndex((type) => {
+        return (
+          type.name === "Commander" || (type.name === -1 && category === "Cost")
+        );
+      });
+      if (commanderIndex === -1) {
+        newCats.unshift({
+          name: category !== "Cost" ? "Commander" : -1,
+          open: true,
+          cards: [],
+        });
+      }
+    }
+    setCardCategories(newCats);
+  }
 
   useEffect(async () => {
     const deckId = match.params.deckId;
     if (deckId !== "NewDeck")
       try {
         await axios.get(`api/deck/${deckId}`).then((res) => {
-          setDeckInfo({
-            deckId,
-            deckName: res.data.name,
-            deckFormat: res.data.format,
-            deckImage: res.data.picture,
-          });
-          setBoards(res.data.boards);
-          const mainboardTypes = res.data.boards[0].boardTypes;
-          setTypes(mainboardTypes);
-          loadTools(res.data.toolBooleans, res.data.displaySettings);
+          if (uploadCards.length === 0 && boards[0].cards.length === 0) {
+            setBoards(res.data.boards);
+            sortCards(res.data.boards[0].cards, "Types");
+            setDeckInfo({
+              deckId,
+              deckName: res.data.name,
+              deckFormat: res.data.format,
+              deckImage: res.data.picture,
+            });
+          } else {
+            setDeckInfo((deckInfo) => ({
+              ...deckInfo,
+              deckId,
+              deckName: res.data.name,
+              deckFormat: res.data.format,
+            }));
+          }
+          loadTools(res.data.displaySettings);
         });
         setDeckId(deckId);
       } catch (error) {
@@ -191,14 +259,27 @@ const BuilderContainer = ({
         location.state === undefined ? "New Deck" : location.state.name;
       const format =
         location.state === undefined ? "Brew" : location.state.format;
-      setDeckInfo({
+      const commander =
+        location.state === undefined ? "" : location.state.commander;
+      let commanderInfo = undefined;
+      if (commander !== "") {
+        commanderInfo = await getCardInfo(commander);
+        await setCardCategories([
+          {
+            name: "Commander",
+            open: true,
+            cards: [commanderInfo],
+          },
+        ]);
+      }
+      await setDeckInfo({
         deckId,
         deckName: name,
         deckFormat: format,
         deckImage:
-          "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+          commanderInfo !== undefined ? commanderInfo.cardArt : "false",
       });
-      loadTools(
+      await loadTools(
         { manaCurve: true, displaySettings: true },
         {
           displayMana: true,
@@ -216,8 +297,9 @@ const BuilderContainer = ({
 
   useEffect(() => {
     async function importCards(uploadCards) {
+      var deckImage = false;
       var sideboard = false;
-      await setTypes([]);
+      await setCardCategories([]);
       openModal();
       let newCardsArray = [];
       let sideboardArray = [];
@@ -237,61 +319,30 @@ const BuilderContainer = ({
         });
         const card = await getCardInfo(newCard[2]);
         if (card !== null) {
-          if (
-            deckInfo.deckImage ===
-            "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-          ) {
+          if (!deckImage) {
             setDeckInfo((prevState) => ({
               ...prevState,
               deckImage: card.cardArt,
             }));
+            deckImage = card.cardArt;
           }
           const cardQuant = newCard[1].split(/([\d]+)|$(x)/);
-          card.quantity = cardQuant[1];
-          var indexOfType = -1;
+          card.quantity = Number(cardQuant[1]);
           if (!sideboard) {
-            for (var j = 0; j < newCardsArray.length; ++j) {
-              if (card.mainType === newCardsArray[j].name) {
-                indexOfType = j;
-                break;
-              }
-            }
-            if (indexOfType === -1) {
-              newCardsArray.push({
-                name: card.mainType,
-                open: true,
-                cards: [card],
-              });
-            } else {
-              newCardsArray[indexOfType].cards.push(card);
-            }
+            newCardsArray.push(card);
           } else {
-            for (var j = 0; j < sideboardArray.length; ++j) {
-              if (card.mainType === sideboardArray[j].name) {
-                indexOfType = j;
-                break;
-              }
-            }
-            if (indexOfType === -1) {
-              sideboardArray.push({
-                name: card.mainType,
-                open: true,
-                cards: [card],
-              });
-            } else {
-              sideboardArray[indexOfType].cards.push(card);
-            }
+            sideboardArray.push(card);
           }
         }
       }
       closeModal();
       setImportDisplay({ name: "", index: -1, ratio: -1, length: -1 });
       const newBoards = produce(boards, (draft) => {
-        draft[1].boardTypes = sideboardArray;
-        draft[0].boardTypes = newCardsArray;
+        draft[1].cards = sideboardArray;
+        draft[0].cards = newCardsArray;
       });
       setBoards(newBoards);
-      setTypes(newCardsArray);
+      sortCards(newCardsArray, "Types");
       emptyPacket();
     }
 
@@ -300,37 +351,101 @@ const BuilderContainer = ({
     }
   }, [uploadCards]);
 
+  //CARD_CATEGORIES USE_EFFECT
   useEffect(async () => {
-    console.log("boardTypes: ", boardTypes);
-    compileTokens(boardTypes);
-    const newGhosts = compileGhosts(boardTypes);
+    let propertyArray = {
+      types: [
+        "Creature",
+        "Enchantment",
+        "Artifact",
+        "Planeswalker",
+        "Instant",
+        "Sorcery",
+        "Land",
+      ],
+      tags: [],
+    };
 
-    var quantity = 0;
+    compileTokens(cardCategories);
+    const newGhosts = compileGhosts(cardCategories);
     var emptyArray = [];
-    boardTypes.forEach((type, index) => {
+    let cardArray = [];
+    let cardListArray = [];
+
+    var commander = false;
+
+    //Go Through CardCategories To Populate Fields
+    cardCategories.forEach((cat, index) => {
+      //If Type Is Empty, Prepare for Elimination
       if (
-        type.cards.length === 0 &&
+        cat.cards.length === 0 &&
         typeof newGhosts.find((ghostType) => {
-          return ghostType.name === type.name;
-        }) === "undefined"
+          return ghostType.name === cat.name;
+        }) === "undefined" &&
+        (cat.name !== "Commander" || currentBoard !== "Mainboard")
       ) {
         emptyArray.push(index);
-      } else {
-        type.cards.forEach((card) => {
-          quantity += Number(card.quantity);
+      }
+
+      //If Type Is Filled, Add Cards To Export File, Add Card To Total Quant, And Add Card's Tags To Array
+      else {
+        cat.cards.forEach((card) => {
+          cardArray.push(
+            `${cardArray.length !== 0 ? "\n" : ""}${card.quantity} ${card.name}`
+          );
+          card.tags.forEach((tag) => {
+            if (
+              propertyArray.tags.filter((propertyTag) => {
+                return propertyTag === tag;
+              }).length === 0
+            ) {
+              propertyArray.tags.push(tag);
+            }
+          });
+          card.modifiedTypes.forEach((type) => {
+            if (
+              propertyArray.types.filter((propertyTag) => {
+                return propertyTag === type;
+              }).length === 0
+            ) {
+              propertyArray.types.push(type);
+            }
+          });
+          cardListArray.push(card);
         });
       }
-    });
-    setCardCount(quantity);
 
+      if (cat.name === "Commander") {
+        const commanderString =
+          cat.cards.length === 1
+            ? cat.cards[0].name
+            : cat.cards.length === 2
+            ? `${cat.cards[0].name} & ${cat.cards[1].name}`
+            : null;
+        setCommanderDisplay(commanderString);
+        commander = true;
+      }
+    });
+
+    //If EmptyArray Is Filled, Remove From Cats And Repeat Above
     if (emptyArray.length > 0) {
-      const newTypes = produce(boardTypes, (draft) => {
+      const newCats = produce(cardCategories, (draft) => {
         for (var i = emptyArray.length; i > 0; --i) {
           draft.splice(emptyArray[i - 1], 1);
         }
       });
-      setTypes(newTypes);
+      setCardCategories(newCats);
     } else {
+      if (!commander) {
+        setCommanderDisplay(null);
+      }
+      setPropertyList({
+        ...propertyList,
+        types: propertyArray.types,
+        tags: propertyArray.tags,
+      });
+
+      //If No Empty Cats, Get Color Ratios
       if (currentBoard === "Mainboard") {
         const newColors = produce(colors, (draft) => {
           draft.white = 0;
@@ -338,8 +453,8 @@ const BuilderContainer = ({
           draft.red = 0;
           draft.black = 0;
           draft.blue = 0;
-          boardTypes.forEach((type) => {
-            type.cards.forEach((card) => {
+          cardCategories.forEach((cat) => {
+            cat.cards.forEach((card) => {
               card.colors.forEach((color) => {
                 if (color.includes("W")) {
                   draft.white += Number(card.quantity);
@@ -363,26 +478,33 @@ const BuilderContainer = ({
         setColors(newColors);
       }
 
-      var index = -1;
-      index = boards.findIndex((board) => {
+      //Update Master Board State
+      const index = boards.findIndex((board) => {
         return board.name == currentBoard;
       });
-
       const newBoards = produce(boards, (draft) => {
-        draft[index].boardTypes = boardTypes;
+        draft[index].cards = cardListArray;
       });
-
       setBoards(newBoards);
+
+      //If Authed, Save Deck And Write To Export File
       if (isAuthenticated && deckInfo.deckId !== "loading...") {
         const body = {
-          boardTypes,
-          index,
+          cardArray,
         };
-        await axios.put(`api/deck/boardChange/${deckInfo.deckId}`, body);
+        await axios.post("/api/deck/writeFile", body);
       }
     }
-  }, [boardTypes]);
+  }, [cardCategories, displaySettings.displayGhosts]);
 
+  useEffect(async () => {
+    if (isAuthenticated && deckInfo.deckId !== "loading...") {
+      const body = { boards };
+      await axios.put(`api/deck/boardChange/${deckInfo.deckId}`, body);
+    }
+  }, [boards]);
+
+  //Saves Updated Deck Information (Picture, Name, Format)
   useEffect(async () => {
     if (isAuthenticated && deckInfo.deckId !== "loading...") {
       const body = deckInfo;
@@ -391,6 +513,7 @@ const BuilderContainer = ({
     updateDecks();
   }, [deckInfo]);
 
+  //Saves Deck
   useEffect(async () => {
     if (isAuthenticated && saveDeck && deckInfo.deckId !== "loading...") {
       const body = JSON.stringify({
@@ -414,67 +537,269 @@ const BuilderContainer = ({
     updateDecks();
   }, [saveDeck]);
 
+  //MOVE CARD FUNCTION
   async function moveCard(
-    dragTypeIndex,
+    dragCatIndex,
     dragCardIndex,
-    hoverTypeIndex, // Or Property Name and leave next blank
+    hoverCatIndex, // Or Property Name and leave next blank
     hoverCardIndex
   ) {
-    if (typeof hoverTypeIndex === "string") {
-      hoverTypeIndex = boardTypes.findIndex((type) => {
-        return type.name === hoverTypeIndex;
+    //If Provided Category Name, Find Index Of Category
+    if (typeof hoverCatIndex === "string") {
+      hoverCatIndex = cardCategories.findIndex((cat) => {
+        return cat.name === hoverCatIndex;
       });
-      hoverCardIndex = boardTypes[hoverTypeIndex].cards.length;
+      hoverCardIndex = cardCategories[hoverCatIndex].cards.length;
     }
 
-    const newTypes = produce(boardTypes, (draft) => {
-      switch (displaySettings.sortCategory) {
-        case "Types":
-          draft[dragTypeIndex].cards[dragCardIndex].mainType =
-            draft[hoverTypeIndex].name;
-          break;
-        case "Cost":
-          draft[dragTypeIndex].cards[dragCardIndex].mainCMC =
-            draft[hoverTypeIndex].name;
-          break;
-        case "Tags":
-          if (draft[dragTypeIndex].name !== "untagged") {
-            draft[dragTypeIndex].cards[dragCardIndex].mainTag =
-              draft[hoverTypeIndex].name;
-          } else {
-            draft[dragTypeIndex].cards[dragCardIndex].mainTag = undefined;
+    //
+    const newCats = produce(cardCategories, (draft) => {
+      if (cardCategories[hoverCatIndex].name === "Commander") {
+        if (
+          cardCategories[dragCatIndex].cards[dragCardIndex].types.filter(
+            (type) => {
+              return type === "Creature" || type === "Planeswalker";
+            }
+          ).length > 0
+        ) {
+          //Get Data For New Commander
+          const newCommander =
+            cardCategories[dragCatIndex].cards[dragCardIndex];
+
+          //If there are more than one commanders and the new commander isn't a partner, remove all and insert new commander
+          if (
+            cardCategories[hoverCatIndex].cards.length > 1 &&
+            (commanders.findIndex((commander) => {
+              return commander.name === newCommander.name;
+            }) === -1 ||
+              !commanders[
+                commanders.findIndex((commander) => {
+                  return commander.name === newCommander.name;
+                })
+              ].partner)
+          ) {
+            var removedCommanders = [];
+            cardCategories[hoverCatIndex].cards.forEach((card) => {
+              return removedCommanders.push(card);
+            });
+
+            removedCommanders.forEach((removedCommander) => {
+              const newCat = removedCommander.types.filter((type) => {
+                return (
+                  type !== "Legendary" &&
+                  type !== "Enchantment" &&
+                  type !== "Artifact" &&
+                  type !== "Basic"
+                );
+              });
+
+              //Turns old Commander's mainProp to first prop in original list
+              draft[hoverCatIndex].cards[0].mainType = newCat[0];
+              draft[hoverCatIndex].cards[0].mainCMC = removedCommander.cmc[0];
+              draft[hoverCatIndex].cards[0].mainTag = removedCommander.tags[0];
+
+              var newCatIndex = -1;
+
+              switch (displaySettings.sortCategory) {
+                case "Types":
+                  newCatIndex = cardCategories.findIndex((cat) => {
+                    return cat.name === newCat[0];
+                  });
+                  break;
+                case "Cost":
+                  newCatIndex = cardCategories.findIndex((cat) => {
+                    return cat.name === removedCommander.cmc[0];
+                  });
+                  break;
+                case "Tags":
+                  newCatIndex = cardCategories.findIndex((cat) => {
+                    return (
+                      cat.name === removedCommander.tags[0] ||
+                      (cat.name === "untagged" &&
+                        removedCommander.tags.length === 0)
+                    );
+                  });
+                  break;
+                default:
+                  newCatIndex = 0;
+              }
+
+              //Remove current Commander
+              const splicedCommander = draft[hoverCatIndex].cards.splice(0, 1);
+
+              //Add ex-Commander to end of mainType category
+              draft[newCatIndex].cards.push(splicedCommander[0]);
+            });
           }
-          break;
-        default:
-          draft[dragTypeIndex].cards[dragCardIndex].mainType =
-            draft[hoverTypeIndex].name;
-          break;
-      }
-      const removedCard = draft[dragTypeIndex].cards.splice(dragCardIndex, 1);
-      draft[hoverTypeIndex].cards.splice(hoverCardIndex, 0, removedCard[0]);
-      draft[hoverTypeIndex].open = true;
-      if (draft[dragTypeIndex].cards.length <= 0) {
-        draft.splice(dragTypeIndex, 1);
+
+          //Remove One Commander If:
+          //1. New Commander isn't a partner
+          //2. Old Commander isn't a partner
+          //3. There are already two commanders
+          else if (
+            cardCategories[hoverCatIndex].cards.length > 0 &&
+            (commanders.findIndex((commander) => {
+              return commander.name === newCommander.name;
+            }) === -1 ||
+              !commanders[
+                commanders.findIndex((commander) => {
+                  return commander.name === newCommander.name;
+                })
+              ].partner ||
+              commanders.findIndex((commander) => {
+                return (
+                  commander.name === cardCategories[hoverCatIndex].cards[0].name
+                );
+              }) === -1 ||
+              !commanders[
+                commanders.findIndex((commander) => {
+                  return (
+                    commander.name ===
+                    cardCategories[hoverCatIndex].cards[0].name
+                  );
+                })
+              ].partner ||
+              cardCategories[hoverCatIndex].cards.length > 1)
+          ) {
+            const removedCommander = cardCategories[hoverCatIndex].cards[0];
+
+            const newCat = removedCommander.types.filter((type) => {
+              return (
+                type !== "Legendary" &&
+                type !== "Enchantment" &&
+                type !== "Artifact" &&
+                type !== "Basic"
+              );
+            });
+
+            //Turns old Commander's mainProp to first prop in original list
+            draft[hoverCatIndex].cards[0].mainType = newCat[0];
+            draft[hoverCatIndex].cards[0].mainCMC = removedCommander.cmc[0];
+            draft[hoverCatIndex].cards[0].mainTag = removedCommander.tags[0];
+
+            //Remove current Commander
+            const splicedCommander = draft[hoverCatIndex].cards.splice(0, 1);
+
+            var newCatIndex = -1;
+
+            switch (displaySettings.sortCategory) {
+              case "Types":
+                newCatIndex = cardCategories.findIndex((cat) => {
+                  return cat.name === newCat[0];
+                });
+                break;
+              case "Cost":
+                newCatIndex = cardCategories.findIndex((cat) => {
+                  return cat.name === removedCommander.cmc[0];
+                });
+                break;
+              case "Tags":
+                newCatIndex = cardCategories.findIndex((cat) => {
+                  return (
+                    cat.name === removedCommander.tags[0] ||
+                    (cat.name === "untagged" &&
+                      removedCommander.tags.length === 0)
+                  );
+                });
+                break;
+              default:
+                newCatIndex = 0;
+            }
+
+            //Add ex-Commander to end of mainType category
+            draft[newCatIndex].cards.push(splicedCommander[0]);
+          }
+
+          //Set new Commander's mainType to Commander
+          draft[dragCatIndex].cards[dragCardIndex].mainType = "Commander";
+          draft[dragCatIndex].cards[dragCardIndex].mainCMC = -1;
+          draft[dragCatIndex].cards[dragCardIndex].mainTag = "Commander";
+
+          const removedCard = draft[dragCatIndex].cards.splice(
+            dragCardIndex,
+            1
+          );
+          draft[hoverCatIndex].cards.splice(hoverCardIndex, 0, removedCard[0]);
+          draft[hoverCatIndex].open = true;
+          if (draft[dragCatIndex].cards.length <= 0) {
+            draft.splice(dragCatIndex, 1);
+          }
+        }
+      } else {
+        console.log("Hi");
+        const categoryName = cardCategories[hoverCatIndex].name;
+        var typeIndex = -1;
+        switch (displaySettings.sortCategory) {
+          case "Types":
+            draft[dragCatIndex].cards[dragCardIndex].mainType = categoryName;
+            typeIndex = cardCategories[dragCatIndex].cards[
+              dragCardIndex
+            ].modifiedTypes.findIndex((type) => {
+              return type === categoryName;
+            });
+            if (typeIndex === -1) {
+              draft[dragCatIndex].cards[dragCardIndex].modifiedTypes.push(
+                categoryName
+              );
+            }
+            break;
+          case "Cost":
+            draft[dragCatIndex].cards[dragCardIndex].mainCMC = categoryName;
+            typeIndex = cardCategories[dragCatIndex].cards[
+              dragCardIndex
+            ].modifiedCMC.findIndex((cmc) => {
+              return cmc === categoryName;
+            });
+            if (typeIndex === -1) {
+              draft[dragCatIndex].cards[dragCardIndex].modifiedCMC.push(
+                categoryName
+              );
+            }
+            break;
+          case "Tags":
+            if (draft[hoverCatIndex].name !== "untagged") {
+              draft[dragCatIndex].cards[dragCardIndex].mainTag = categoryName;
+              typeIndex = cardCategories[dragCatIndex].cards[
+                dragCardIndex
+              ].tags.findIndex((tag) => {
+                return tag === categoryName;
+              });
+              if (typeIndex === -1) {
+                draft[dragCatIndex].cards[dragCardIndex].tags.push(
+                  categoryName
+                );
+              }
+            } else {
+              draft[dragCatIndex].cards[dragCardIndex].mainTag = undefined;
+            }
+            break;
+          default:
+            draft[dragCatIndex].cards[dragCardIndex].mainType =
+              draft[hoverCatIndex].name;
+            break;
+        }
+        const removedCard = draft[dragCatIndex].cards.splice(dragCardIndex, 1);
+        draft[hoverCatIndex].cards.splice(hoverCardIndex, 0, removedCard[0]);
+        draft[hoverCatIndex].open = true;
+        if (draft[dragCatIndex].cards.length <= 0) {
+          draft.splice(dragCatIndex, 1);
+        }
       }
     });
-    setTypes(newTypes);
+    setCardCategories(newCats);
   }
 
+  //MOVE TYPE FUNCTION
   async function moveType(dragTypeIndex, hoverTypeIndex) {
-    const newTypes = produce(boardTypes, (draft) => {
-      const movedType = draft.splice(dragTypeIndex, 1);
-      draft.splice(hoverTypeIndex, 0, movedType[0]);
+    const newCats = produce(cardCategories, (draft) => {
+      const movedCat = draft.splice(dragTypeIndex, 1);
+      draft.splice(hoverTypeIndex, 0, movedCat[0]);
     });
-    setTypes(newTypes);
+    setCardCategories(newCats);
   }
 
-  async function moveBoards(
-    typeIndex,
-    cardIndex,
-    card,
-    moveQuantity,
-    newBoard
-  ) {
+  //MOVE BOARD FUNCTION
+  async function moveBoards(catIndex, cardIndex, card, moveQuantity, newBoard) {
     var oldBoardIndex = boards.findIndex((board) => {
       return board.name == currentBoard;
     });
@@ -482,93 +807,190 @@ const BuilderContainer = ({
       return board.name == newBoard;
     });
 
-    var newCardIndex = -1;
-    var newTypeIndex = -1;
-    newTypeIndex = boards[newBoardIndex].boardTypes.findIndex((type) => {
-      return card.mainType === type.name;
-    });
-
-    if (newTypeIndex !== -1) {
-      newCardIndex = boards[newBoardIndex].boardTypes[
-        newTypeIndex
-      ].cards.findIndex((searchCard) => {
-        return searchCard.name === card.name;
-      });
-    }
-
     const newBoards = produce(boards, (draft) => {
-      //Remove appropriate quantity of card from old board
-      if (card.quantity > moveQuantity) {
-        draft[oldBoardIndex].boardTypes[typeIndex].cards[
-          cardIndex
-        ].quantity -= moveQuantity;
-      } else {
-        draft[oldBoardIndex].boardTypes[typeIndex].cards.splice(cardIndex, 1);
-        if (draft[oldBoardIndex].boardTypes[typeIndex].cards.length === 0) {
-          draft[oldBoardIndex].boardTypes.splice(typeIndex, 1);
+      const newCardIndex = boards[newBoardIndex].cards.findIndex(
+        (boardCard) => {
+          return boardCard.name === card.name;
         }
+      );
+      if (newCardIndex === -1)
+        draft[newBoardIndex].cards.push({
+          ...card,
+          quantity: Number(moveQuantity),
+        });
+      else {
+        const newQuant =
+          Number(boards[newBoardIndex].cards[newCardIndex].quantity) +
+          Number(moveQuantity);
+        draft[newBoardIndex].cards[newCardIndex].quantity = newQuant;
       }
 
-      //Check if card or type exists in new board, then move accordingly
-      if (newTypeIndex !== -1 && newCardIndex !== -1) {
-        draft[newBoardIndex].boardTypes[newTypeIndex].cards[
-          newCardIndex
-        ].quantity += moveQuantity;
-      } else if (newTypeIndex !== -1) {
-        draft[newBoardIndex].boardTypes[newTypeIndex].cards.push({
-          ...card,
-          quantity: moveQuantity,
-        });
-      } else {
-        draft[newBoardIndex].boardTypes.push({
-          name: card.mainType,
-          open: true,
-          cards: [{ ...card, quantity: moveQuantity }],
-        });
-      }
+      // const oldCardIndex = boards[oldBoardIndex].cards.findIndex(
+      //   (boardCard) => {
+      //     return boardCard.name === card.name;
+      //   }
+      // );
+      // if (boards[oldBoardIndex].cards[oldCardIndex].quantity > moveQuantity) {
+      //   const oldQuant =
+      //     Number(boards[oldBoardIndex].cards[oldCardIndex].quantity) -
+      //     Number(moveQuantity);
+      //   draft[oldBoardIndex].cards[oldCardIndex].quantity = oldQuant;
+      // } else draft[oldBoardIndex].cards.splice(oldCardIndex, 1);
     });
-    await setBoards(newBoards);
-    if (isAuthenticated && deckInfo.deckId !== "loading...") {
-      const boardTypes = newBoards[newBoardIndex].boardTypes;
-      const index = newBoardIndex;
-      const body = {
-        boardTypes,
-        index,
-      };
-      await axios.put(`api/deck/boardChange/${deckInfo.deckId}`, body);
-    }
-    await setTypes(newBoards[oldBoardIndex].boardTypes);
+    setBoards(newBoards);
+
+    const newCats = produce(cardCategories, (draft) => {
+      if (
+        Number(cardCategories[catIndex].cards[cardIndex].quantity) >
+        Number(moveQuantity)
+      )
+        draft[catIndex].cards[cardIndex].quantity -= Number(moveQuantity);
+      else draft[catIndex].cards.splice(cardIndex, 1);
+    });
+
+    setCardCategories(newCats);
   }
 
-  async function changeQuantity(typeIndex, cardIndex, quantChange) {
-    const newTypes = produce(boardTypes, (draft) => {
-      if (boardTypes[typeIndex].cards[cardIndex].quantity + quantChange === 0) {
-        draft[typeIndex].cards.splice(cardIndex, 1);
+  async function changeQuantity(catIndex, cardIndex, quantChange) {
+    const newQuant =
+      Number(cardCategories[catIndex].cards[cardIndex].quantity) +
+      Number(quantChange);
+    const newCats = produce(cardCategories, (draft) => {
+      if (newQuant === 0) {
+        draft[catIndex].cards.splice(cardIndex, 1);
       } else {
-        draft[typeIndex].cards[cardIndex].quantity += quantChange;
+        draft[catIndex].cards[cardIndex].quantity = newQuant;
       }
     });
+    setCardCategories(newCats);
+  }
 
-    setTypes(newTypes);
+  async function addCard(card, board) {
+    if (board === undefined) {
+      board = currentBoard;
+    }
+
+    //Set Deck Image To New Card If No Image Set
+    if (deckImage === "false") {
+      setDeckInfo((prevState) => ({
+        ...prevState,
+        deckImage: card.cardArt,
+      }));
+    }
+
+    //Get Main Prop According To Category
+    const mainProp =
+      displaySettings.sortCategory === "Types"
+        ? card.mainType
+        : displaySettings.sortCategory === "Cost"
+        ? card.mainCMC
+        : displaySettings.sortCategory === "Tags" && card.mainTag !== undefined
+        ? card.mainTag
+        : displaySettings.sortCategory === "Tags"
+        ? "untagged"
+        : null;
+
+    //Get Index Of Current Board
+    const boardIndex = boards.findIndex((indexBoard) => {
+      return indexBoard.name === board;
+    });
+
+    //If On Current Board, Add Normally
+    if (board === currentBoard) {
+      var cardIndex = -1;
+      var catIndex = cardCategories.findIndex((cat, index) => {
+        cardIndex = cardCategories[index].cards.findIndex((targetCard) => {
+          return targetCard.name === card.name;
+        });
+        return cardIndex > -1;
+      });
+      if (catIndex === -1) {
+        switch (displaySettings.sortCategory) {
+          case "Types":
+            catIndex = cardCategories.findIndex((cat) => {
+              return cat.name === card.mainType;
+            });
+            break;
+          case "Cost":
+            catIndex = cardCategories.findIndex((cat) => {
+              return cat.name === card.mainCMC;
+            });
+            break;
+          case "Tags":
+            catIndex = cardCategories.findIndex((cat) => {
+              if (card.mainTag === undefined) {
+                return cat.name === "untagged";
+              } else {
+                return cat.name === card.mainTag;
+              }
+            });
+        }
+      }
+      if (catIndex === -1) {
+        setCardCategories((cats) => [
+          ...cats,
+          { name: mainProp, open: true, cards: [card] },
+        ]);
+      } else {
+        const cardIndex = cardCategories[catIndex].cards.findIndex(
+          (targetCard) => {
+            return targetCard.name === card.name;
+          }
+        );
+        if (cardIndex === -1) {
+          setCardCategories((prevCats) => {
+            return prevCats.map((cat, index) => {
+              if (index === catIndex) {
+                return {
+                  ...prevCats[index],
+                  cards: [...prevCats[index].cards, card],
+                };
+              } else {
+                return cat;
+              }
+            });
+          });
+        } else {
+          changeQuantity(catIndex, cardIndex, 1);
+        }
+      }
+    }
+    //If On Other Board, Add To List
+    else {
+      const cardIndex = boards[boardIndex].cards.findIndex((targetCard) => {
+        return targetCard.name === card.name;
+      });
+      if (cardIndex === -1) {
+        const newBoards = produce(boards, (draft) => {
+          draft[boardIndex].cards.push(card);
+        });
+        setBoards(newBoards);
+      } else {
+        const newBoards = produce(boards, (draft) => {
+          draft[boardIndex].cards[cardIndex].quantity += 1;
+        });
+        setBoards(newBoards);
+      }
+    }
   }
 
   async function changeCardSet(set, typeIndex, cardIndex) {
-    await setTypes((prevTypes) => {
-      return prevTypes.map((type, index) => {
+    await setCardCategories((cats) => {
+      return cats.map((cat, index) => {
         if (index !== typeIndex) {
-          return type;
+          return cat;
         } else {
           return {
-            ...type,
+            ...cat,
             cards: [
-              ...type.cards.slice(0, cardIndex),
+              ...cat.cards.slice(0, cardIndex),
               {
-                ...type.cards[cardIndex],
+                ...cat.cards[cardIndex],
                 setName: set.setName,
                 cardArt: set.cardArt,
                 cardImage: set.cardImage,
               },
-              ...type.cards.slice(cardIndex + 1),
+              ...cat.cards.slice(cardIndex + 1),
             ],
           };
         }
@@ -593,126 +1015,144 @@ const BuilderContainer = ({
         }
       });
     });
+
     setTimeout(() => setTokens(tokenArray), 500);
   }
 
   function compileGhosts(types) {
     let ghostArray = [];
     setGhostCards(ghostArray);
-    types.forEach((type) => {
-      type.cards.forEach((card) => {
-        switch (displaySettings.sortCategory) {
-          case "Types":
-            card.modifiedTypes.forEach((type) => {
-              const index = ghostArray.findIndex((item) => {
-                return type === item.name;
-              });
-              if (card.mainType !== type) {
-                if (index === -1) {
-                  ghostArray.push({ name: type, cards: [card] });
-                } else {
-                  ghostArray[index].cards.push(card);
-                }
-              }
-            });
-            break;
-          case "Cost":
-            card.modifiedCMC.forEach((cmc) => {
-              const index = ghostArray.findIndex((item) => {
-                return cmc === item.name;
-              });
-              if (card.mainCMC !== cmc) {
-                if (index === -1) {
-                  ghostArray.push({ name: cmc, cards: [card] });
-                } else {
-                  ghostArray[index].cards.push(card);
-                }
-              }
-            });
-            break;
-          case "Tags":
-            card.tags.forEach((tag) => {
-              const index = ghostArray.findIndex((item) => {
-                return tag === item.name;
-              });
-              if (card.mainTag !== tag) {
-                if (index === -1) {
-                  ghostArray.push({ name: tag, cards: [card] });
-                } else {
-                  ghostArray[index].cards.push(card);
-                }
-              }
-            });
-            break;
-          default:
-            break;
-        }
 
-        if (card.secondCard.name !== "") {
-          const secondCard = card.secondCard;
+    if (displaySettings.displayGhosts) {
+      types.forEach((type) => {
+        type.cards.forEach((card) => {
           switch (displaySettings.sortCategory) {
             case "Types":
-              secondCard.modifiedTypes.forEach((type) => {
+              card.modifiedTypes.forEach((type) => {
                 const index = ghostArray.findIndex((item) => {
                   return type === item.name;
                 });
-                if (index === -1) {
-                  ghostArray.push({ name: type, cards: [secondCard] });
-                } else {
-                  ghostArray[index].cards.push(secondCard);
+                if (card.mainType !== type && type !== "Commander") {
+                  if (index === -1) {
+                    ghostArray.push({ name: type, cards: [card] });
+                  } else {
+                    ghostArray[index].cards.push(card);
+                  }
                 }
               });
               break;
             case "Cost":
-              secondCard.modifiedCMC.forEach((cmc) => {
+              card.modifiedCMC.forEach((cmc) => {
                 const index = ghostArray.findIndex((item) => {
                   return cmc === item.name;
                 });
-                if (index === -1) {
-                  ghostArray.push({ name: cmc, cards: [secondCard] });
-                } else {
-                  ghostArray[index].cards.push(secondCard);
+                if (card.mainCMC !== cmc && cmc !== -1) {
+                  if (index === -1) {
+                    ghostArray.push({ name: cmc, cards: [card] });
+                  } else {
+                    ghostArray[index].cards.push(card);
+                  }
                 }
               });
               break;
             case "Tags":
-              secondCard.tags.forEach((tag) => {
+              card.tags.forEach((tag) => {
                 const index = ghostArray.findIndex((item) => {
                   return tag === item.name;
                 });
-                if (index === -1) {
-                  ghostArray.push({ name: tag, cards: [secondCard] });
-                } else {
-                  ghostArray[index].cards.push(secondCard);
+                if (card.mainTag !== tag && tag !== "Commander") {
+                  if (index === -1) {
+                    ghostArray.push({ name: tag, cards: [card] });
+                  } else {
+                    ghostArray[index].cards.push(card);
+                  }
                 }
               });
               break;
             default:
               break;
           }
-        }
-      });
-    });
-    const newTypes = produce(boardTypes, (draft) => {
-      ghostArray.forEach((ghostType) => {
-        const exists = boardTypes.filter((type) => {
-          return ghostType.name === type.name;
+
+          if (card.secondCard.name !== "") {
+            const secondCard = card.secondCard;
+            switch (displaySettings.sortCategory) {
+              case "Types":
+                secondCard.modifiedTypes.forEach((type) => {
+                  const index = ghostArray.findIndex((item) => {
+                    return type === item.name;
+                  });
+                  if (index === -1) {
+                    ghostArray.push({ name: type, cards: [secondCard] });
+                  } else {
+                    ghostArray[index].cards.push(secondCard);
+                  }
+                });
+                break;
+              case "Cost":
+                secondCard.modifiedCMC.forEach((cmc) => {
+                  const index = ghostArray.findIndex((item) => {
+                    return cmc === item.name;
+                  });
+                  if (index === -1) {
+                    ghostArray.push({ name: cmc, cards: [secondCard] });
+                  } else {
+                    ghostArray[index].cards.push(secondCard);
+                  }
+                });
+                break;
+              case "Tags":
+                secondCard.tags.forEach((tag) => {
+                  const index = ghostArray.findIndex((item) => {
+                    return tag === item.name;
+                  });
+                  if (index === -1) {
+                    ghostArray.push({ name: tag, cards: [secondCard] });
+                  } else {
+                    ghostArray[index].cards.push(secondCard);
+                  }
+                });
+                break;
+              default:
+                break;
+            }
+          }
         });
-        if (exists.length === 0) {
-          draft.push({ name: ghostType.name, open: true, cards: [] });
-        }
       });
-    });
-    setTypes(newTypes);
-    setGhostCards(ghostArray);
+      const newCats = produce(cardCategories, (draft) => {
+        ghostArray.forEach((ghostType) => {
+          const exists = cardCategories.filter((type) => {
+            return ghostType.name === type.name;
+          });
+          if (exists.length === 0) {
+            draft.push({ name: ghostType.name, open: true, cards: [] });
+          }
+        });
+      });
+      setCardCategories(newCats);
+      setGhostCards(ghostArray);
+    }
     return ghostArray;
   }
 
-  async function toggleType(typeIndex, open) {
-    const newTypes = produce(boardTypes, (draft) => {
-      draft[typeIndex].open = !open;
+  async function toggleType(catIndex, open) {
+    const newCats = produce(cardCategories, (draft) => {
+      draft[catIndex].open = !open;
     });
-    setTypes(newTypes);
+    setCardCategories(newCats);
+  }
+
+  async function exportDeck() {
+    axios
+      .get(`/api/deck/download`, { responseType: "blob" })
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        const fileName = `${deckName}.txt`;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+      });
   }
 
   const HTML5toTouch = {
@@ -733,8 +1173,7 @@ const BuilderContainer = ({
   };
 
   const customStyles = {
-    content: {},
-    overlay: { zIndex: 1000 },
+    overlay: { zIndex: 1000, backgroundColor: "rgba(0, 0, 0, 0.6)" },
   };
 
   return (
@@ -757,18 +1196,17 @@ const BuilderContainer = ({
             setDeckInfo={setDeckInfo}
             cardCount={cardCount}
             setDeckId={setDeckId}
-            boards={boards}
-            setBoardState={setBoardState}
-            currentBoard={currentBoard}
             colors={colors}
+            isAuthenticated={isAuthenticated}
+            deleteDeck={deleteDeck}
+            exportDeck={exportDeck}
+            commanderDisplay={commanderDisplay}
           />
           <DeckContainer
-            types={boardTypes}
-            setTypes={setTypes}
+            types={cardCategories}
+            setTypes={setCardCategories}
             tokens={tokens}
             setTokens={setTokens}
-            tools={tools}
-            setTools={setTools}
             changeQuantity={changeQuantity}
             changeCardSet={changeCardSet}
             deckImage={deckImage}
@@ -778,11 +1216,18 @@ const BuilderContainer = ({
             setCardDrag={setCardDrag}
             toggleType={toggleType}
             boards={boards}
+            setBoardState={setBoardState}
             currentBoard={currentBoard}
             moveBoards={moveBoards}
             moveType={moveType}
             ghostCards={ghostCards}
             currentCategory={displaySettings.sortCategory}
+            propertyList={propertyList}
+            deckInfo={deckInfo}
+            addCard={addCard}
+            exportDeck={exportDeck}
+            setCardCount={setCardCount}
+            displaySettings={displaySettings}
           />
         </div>
       </DndProvider>
@@ -793,7 +1238,9 @@ const BuilderContainer = ({
         style={customStyles}
         onRequestClose={closeModal}
         contentLabel="exampleModal"
-        appElement={document.getElementById("root")}
+        // appElement={document.getElementById("root")}
+        ariaHideApp={false}
+        shouldCloseOnOverlayClick={false}
       >
         <ImportDisplay importInfo={importDisplay} />
       </Modal>
@@ -813,6 +1260,7 @@ BuilderContainer.propTypes = {
   savingDeck: PropTypes.func.isRequired,
   setDeckId: PropTypes.func.isRequired,
   loadTools: PropTypes.func.isRequired,
+  deleteDeck: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -830,4 +1278,5 @@ export default connect(mapStateToProps, {
   savingDeck,
   setDeckId,
   loadTools,
+  deleteDeck,
 })(BuilderContainer);

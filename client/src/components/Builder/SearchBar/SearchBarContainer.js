@@ -1,33 +1,90 @@
-import React, { useState } from "react";
-import produce, { current } from "immer";
+import React, { useState, useEffect, useRef } from "react";
+
+import Modal from "react-modal";
 
 import SearchBar from "./SearchBar";
+import BoardSelector from "./BoardSelector";
+
+import addIcon from "../../../utils/icons/plus.svg";
 
 import getCardInfo from "../../../utils/functions/getCardInfo";
 import jsonNames from "../../../utils/json/names.json";
+import AdvancedSearchContainer from "./AdvancedSearchContainer";
 
 const SearchBarContainer = ({
-  types,
-  setTypes,
-  changeQuantity,
-  deckImage,
-  changeDeckArt,
-  currentCategory,
+  deckInfo,
+  addCard,
+  boards,
+  setBoardState,
+  currentBoard,
+  setCardCount,
 }) => {
+  const searchRef = useRef(null);
   const [query, setQuery] = useState({
     userQuery: "",
     loading: false,
   });
+  const [searchFocused, setSearchFocused] = useState(false);
 
-  const [results, setResults] = useState({ cards: "", resultIndex: 0 });
+  const [modalIsOpen, setIsOpen] = useState(false);
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  const [results, setResults] = useState({ cards: [], resultIndex: 0 });
+
+  const [boardCount, setBoardCount] = useState([0, 0, 0]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (!searchRef.current.contains(event.target)) {
+        setQuery({ ...query, userQuery: "", loading: false });
+        setResults({ ...results, cards: [], resultIndex: 0 });
+        setSearchFocused(false);
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    var mainBoardSize = 0;
+    var sideBoardSize = 0;
+    var maybePileSize = 0;
+
+    for (var i = 0; i < boards[0].cards.length; ++i) {
+      mainBoardSize += boards[0].cards[i].quantity;
+    }
+
+    for (var i = 0; i < boards[1].cards.length; ++i) {
+      sideBoardSize += boards[1].cards[i].quantity;
+    }
+
+    for (var i = 0; i < boards[2].cards.length; ++i) {
+      maybePileSize += boards[2].cards[i].quantity;
+    }
+
+    setBoardCount([mainBoardSize, sideBoardSize, maybePileSize]);
+    setCardCount(mainBoardSize + sideBoardSize);
+  }, [boards]);
 
   //Query Change
-
   const queryChange = (e) => {
     setQuery({ ...query, userQuery: e.target.value });
     var recommendArray = [];
 
     if (e.target.value !== "") {
+      setSearchFocused(true);
       const cardQuery = e.target.value.toUpperCase();
       for (var index = 0; index < jsonNames.length; ++index) {
         if (jsonNames[index].toUpperCase().startsWith(cardQuery)) {
@@ -39,11 +96,12 @@ const SearchBarContainer = ({
         setResults({ ...results, cards: recommendArray, resultIndex: 0 });
       } else {
         setQuery({ ...query, userQuery: e.target.value });
-        setResults({ ...results, cards: "", resultIndex: 0 });
+        setResults({ ...results, cards: [], resultIndex: 0 });
       }
     } else {
       setQuery({ ...query, userQuery: "", loading: false });
-      setResults({ ...results, cards: "", resultIndex: 0 });
+      setResults({ ...results, cards: [], resultIndex: 0 });
+      setSearchFocused(false);
     }
   };
 
@@ -53,70 +111,60 @@ const SearchBarContainer = ({
     if (results.cards.length > 0) {
       setQuery({ ...query, loading: true });
       const card = await getCardInfo(cardName);
-      if (
-        deckImage ===
-        "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-      ) {
-        changeDeckArt((prevState) => ({
-          ...prevState,
-          deckImage: card.cardArt,
-        }));
-      }
-
-      const mainProp =
-        currentCategory === "Types"
-          ? card.mainType
-          : currentCategory === "Cost"
-          ? card.mainCMC
-          : currentCategory === "Tags" && card.mainTag !== undefined
-          ? card.mainTag
-          : currentCategory === "Tags"
-          ? "untagged"
-          : null;
-
-      const typeIndex = types.findIndex((type) => {
-        return type.name === mainProp;
-      });
-      if (typeIndex === -1) {
-        setTypes((types) => [
-          ...types,
-          { name: mainProp, open: true, cards: [card] },
-        ]);
-      } else {
-        const cardIndex = types[typeIndex].cards.findIndex((currentCard) => {
-          return currentCard.name === card.name;
-        });
-        if (cardIndex === -1) {
-          setTypes((prevTypes) => {
-            return prevTypes.map((type, index) => {
-              if (index === typeIndex) {
-                return {
-                  ...prevTypes[index],
-                  cards: [...prevTypes[index].cards, card],
-                };
-              } else {
-                return type;
-              }
-            });
-          });
-        } else {
-          changeQuantity(typeIndex, types[typeIndex].cards.length, 1);
-        }
-      }
+      addCard(card);
     }
     setQuery({ ...query, userQuery: "", loading: false });
-    setResults({ ...results, cards: "", resultIndex: 0 });
+    setResults({ ...results, cards: [], resultIndex: 0 });
+  };
+
+  const customStyles = {
+    overlay: { zIndex: 1000 },
   };
 
   return (
     <div className="searchbarContainer">
-      <SearchBar
-        query={query}
-        searchCard={searchCard}
-        queryChange={queryChange}
-        results={results}
-        setResults={setResults}
-      />
+      <div className="searchGroup">
+        <SearchBar
+          query={query}
+          searchCard={searchCard}
+          queryChange={queryChange}
+          results={results}
+          setResults={setResults}
+          searchRef={searchRef}
+          searchFocused={searchFocused}
+          setSearchFocused={setSearchFocused}
+        />
+        <div className="listAddContainer">
+          <button className="listAdd">List Add</button>
+          <img className="listAddIcon" src={addIcon} />
+        </div>
+        {/* <button onClick={() => openModal()} className="advancedLink"> */}
+        <button className="advancedLink">Advanced</button>
+      </div>
+      <vr className="searchVR" />
+      <div className="boardGroup">
+        <BoardSelector
+          boards={boards}
+          setBoardState={setBoardState}
+          currentBoard={currentBoard}
+          boardCount={boardCount}
+        />
+      </div>
+      <Modal
+        closeTimeoutMS={300}
+        isOpen={modalIsOpen}
+        style={customStyles}
+        onRequestClose={closeModal}
+        contentLabel="exampleModal"
+        appElement={document.getElementById("root")}
+        className="modal"
+      >
+        <AdvancedSearchContainer
+          deckInfo={deckInfo}
+          addCard={addCard}
+          currentBoard={currentBoard}
+        />
+      </Modal>
     </div>
   );
 };

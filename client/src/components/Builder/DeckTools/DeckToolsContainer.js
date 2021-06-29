@@ -1,61 +1,86 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
-import StickyBox from "react-sticky-box";
+
+import barChart from "../../../utils/icons/bar-chart.svg";
+import settings from "../../../utils/icons/setting.svg";
+import description from "../../../utils/icons/edit.svg";
 
 import {
   toggleDisplaySetting,
-  toggleToolBooleans,
   setSortCategory,
+  cloakSettings,
 } from "../../../actions/deck";
 
 import DeckToolsItems from "./DeckToolsItems";
 
-const buttonVariant = {
-  hidden: {
-    x: 15,
-    opacity: 0,
-  },
-  visible: {
-    x: 0,
-    opacity: 1,
-    transition: {
-      easing: "easeIn",
-      duration: 0.5,
-      delay: 0.8,
-    },
-  },
-};
-
 const DeckToolsContainer = ({
   isAuthenticated,
   deckId,
-  tools,
-  setTools,
   displaySettings,
-  toolBooleans,
   toggleDisplaySetting,
-  toggleToolBooleans,
-  types,
-  currentCategory,
+  mainCards,
   setSortCategory,
+  cloakSettings,
 }) => {
   const [manaCurveData, setCurveData] = useState([]);
   const [ghostCurveData, setGhostData] = useState([]);
   const [manaCurveLabels, setCurveLabels] = useState([]);
+  const [toolsOption, setToolsOption] = useState(false);
+  const toolsWindow = useRef(null);
+
+  const closeTools = () => {
+    setToolsOption(false);
+    cloakSettings(false);
+    const sticky = document.getElementById("stickyContainer");
+    sticky.style.zIndex = null;
+  };
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (toolsWindow.current && !toolsWindow.current.contains(event.target)) {
+        closeTools();
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      // Unbind the event listener on clean up
+      cloakSettings(false);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     var data = [];
     var ghostData = [];
     var labels = [];
+    mainCards.forEach((card) => {
+      if (card.mainType !== "Land") {
+        for (var i = 0; i < card.modifiedCMC.length; ++i) {
+          const currentCMC = card.modifiedCMC[i];
 
-    types.forEach((type) => {
-      if (type.name !== "Land") {
-        type.cards.forEach((card) => {
-          for (var i = 0; i < card.modifiedCMC.length; ++i) {
-            const currentCMC = card.modifiedCMC[i];
+          if (currentCMC === card.mainCMC) {
+            if (data[currentCMC] === undefined) {
+              data[currentCMC] = Number(card.quantity);
+            } else {
+              data[currentCMC] += Number(card.quantity);
+            }
+          } else {
+            if (ghostData[currentCMC] === undefined) {
+              ghostData[currentCMC] = Number(card.quantity);
+            } else {
+              ghostData[currentCMC] += Number(card.quantity);
+            }
+          }
+        }
+        if (card.secondCard.name !== "") {
+          for (var i = 0; i < card.secondCard.modifiedCMC.length; ++i) {
+            const currentCMC = card.secondCard.modifiedCMC[i];
 
             if (currentCMC === card.mainCMC) {
               if (data[currentCMC] === undefined) {
@@ -71,26 +96,7 @@ const DeckToolsContainer = ({
               }
             }
           }
-          if (card.secondCard.name !== "") {
-            for (var i = 0; i < card.secondCard.modifiedCMC.length; ++i) {
-              const currentCMC = card.secondCard.modifiedCMC[i];
-
-              if (currentCMC === card.mainCMC) {
-                if (data[currentCMC] === undefined) {
-                  data[currentCMC] = Number(card.quantity);
-                } else {
-                  data[currentCMC] += Number(card.quantity);
-                }
-              } else {
-                if (ghostData[currentCMC] === undefined) {
-                  ghostData[currentCMC] = Number(card.quantity);
-                } else {
-                  ghostData[currentCMC] += Number(card.quantity);
-                }
-              }
-            }
-          }
-        });
+        }
       }
     });
 
@@ -108,7 +114,7 @@ const DeckToolsContainer = ({
     setCurveData(data);
     setGhostData(ghostData);
     setCurveLabels(labels);
-  }, [types]);
+  }, [mainCards]);
 
   useEffect(async () => {
     const cardSize = displaySettings.cardSize;
@@ -118,57 +124,97 @@ const DeckToolsContainer = ({
     root.style.setProperty("--quant-button-size", (cardSize / 100) * 40 + "px");
     root.style.setProperty("--quant-size", (cardSize / 100) * 30 + "px");
     root.style.setProperty("--line-height", (cardSize / 100) * 20 + "px");
+  }, [displaySettings.cardSize]);
+
+  useEffect(async () => {
     if (isAuthenticated && deckId !== null) {
       const body = { displaySettings };
       await axios.put(`api/deck/toolChange/${deckId}`, body);
     }
   }, [displaySettings]);
 
-  useEffect(async () => {
-    if (isAuthenticated && deckId !== null) {
-      const body = { toolBooleans };
-      await axios.put(`api/deck/toolChange/${deckId}`, body);
-    }
-  }, [toolBooleans]);
-
   return (
-    <div className="decktoolsContainer">
-      <StickyBox>
-        <div className="decktoolsSubContainer">
-          <motion.button
-            variants={buttonVariant}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className={
-              tools ? "decktoolsButton" : "decktoolsButton inactiveToolsButton"
-            }
+    <div className="decktoolsContainer" ref={toolsWindow}>
+      <div className="decktoolsSubContainer">
+        <div className="decktoolsButtonContainer">
+          <button
+            className="decktoolsButton"
             onClick={() => {
-              let deckWindow = document.querySelectorAll(".typeGrid");
-              deckWindow.forEach((item) => {
-                if (!tools) {
-                  item.classList.add("skinnyGrid");
-                } else {
-                  item.classList.remove("skinnyGrid");
-                }
-              });
-              setTools(!tools);
+              if (toolsOption === "stats") {
+                closeTools();
+              } else {
+                setToolsOption("stats");
+                cloakSettings(true);
+                const sticky = document.getElementById("stickyContainer");
+                sticky.style.zIndex = 100;
+              }
             }}
-          />
-          <DeckToolsItems
-            tools={tools}
-            displaySettings={displaySettings}
-            toolBooleans={toolBooleans}
-            toggleDisplaySetting={toggleDisplaySetting}
-            toggleToolBooleans={toggleToolBooleans}
-            manaCurveData={manaCurveData}
-            ghostCurveData={ghostCurveData}
-            manaCurveLabels={manaCurveLabels}
-            currentCategory={displaySettings.sortCategory}
-            setCategory={setSortCategory}
-          />
+          >
+            {toolsOption !== "stats" && (
+              <div
+                className={`toolCover ${
+                  toolsOption !== false && "extraToolCover"
+                }`}
+              ></div>
+            )}
+            <img className="toolsIcon" src={barChart} />
+          </button>
+          <button
+            className="decktoolsButton"
+            onClick={() => {
+              if (toolsOption === "settings") {
+                closeTools();
+              } else {
+                setToolsOption("settings");
+                cloakSettings(true);
+                const sticky = document.getElementById("stickyContainer");
+                sticky.style.zIndex = 100;
+              }
+            }}
+          >
+            {toolsOption !== "settings" && (
+              <div
+                className={`toolCover ${
+                  toolsOption !== false && "extraToolCover"
+                }`}
+              ></div>
+            )}
+            <img className="toolsIcon" src={settings} />
+          </button>
+          <button
+            className="decktoolsButton"
+            onClick={() => {
+              if (toolsOption === "description") {
+                closeTools();
+              } else {
+                setToolsOption("description");
+                cloakSettings(true);
+                const sticky = document.getElementById("stickyContainer");
+                sticky.style.zIndex = 100;
+              }
+            }}
+          >
+            {toolsOption !== "description" && (
+              <div
+                className={`toolCover ${
+                  toolsOption !== false && "extraToolCover"
+                }`}
+              ></div>
+            )}
+            <img className="toolsIcon" src={description} />
+          </button>
         </div>
-      </StickyBox>
+        <DeckToolsItems
+          toolsOption={toolsOption}
+          displaySettings={displaySettings}
+          toggleDisplaySetting={toggleDisplaySetting}
+          manaCurveData={manaCurveData}
+          ghostCurveData={ghostCurveData}
+          manaCurveLabels={manaCurveLabels}
+          currentCategory={displaySettings.sortCategory}
+          setCategory={setSortCategory}
+        />
+      </div>
     </div>
   );
 };
@@ -177,21 +223,19 @@ DeckToolsContainer.propTypes = {
   displaySettings: PropTypes.object.isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
   deckId: PropTypes.string,
-  toolBooleans: PropTypes.object.isRequired,
   toggleDisplaySetting: PropTypes.func.isRequired,
-  toggleToolBooleans: PropTypes.func.isRequired,
   setSortCategory: PropTypes.func.isRequired,
+  cloakSettings: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   displaySettings: state.deck.displaySettings,
   isAuthenticated: state.auth.isAuthenticated,
   deckId: state.deck.deckId,
-  toolBooleans: state.deck.toolBooleans,
 });
 
 export default connect(mapStateToProps, {
   toggleDisplaySetting,
-  toggleToolBooleans,
   setSortCategory,
+  cloakSettings,
 })(DeckToolsContainer);

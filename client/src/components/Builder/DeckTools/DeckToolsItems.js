@@ -4,14 +4,10 @@ import DisplayContainer from "./DisplayContainer";
 import ManaCurveContainer from "./ManaCurveContainer";
 import CardSorting from "./CardSorting";
 
-import DownArrow from "../../../utils/icons/format-down.svg";
-
 const DeckToolsItems = ({
-  tools,
+  toolsOption,
   displaySettings,
-  toolBooleans,
   toggleDisplaySetting,
-  toggleToolBooleans,
   manaCurveData,
   ghostCurveData,
   manaCurveLabels,
@@ -53,14 +49,14 @@ const DeckToolsItems = ({
         duration: 0.35,
       },
     },
-    exit: {
-      opacity: 0,
-      x: -4,
-      transition: {
-        ease: "easeOut",
-        duration: 0.35,
-      },
-    },
+    // exit: {
+    //   opacity: 0,
+    //   x: -4,
+    //   transition: {
+    //     ease: "easeOut",
+    //     duration: 0.35,
+    //   },
+    // },
   };
 
   const handleSliderChange = (event, newValue) => {
@@ -69,7 +65,7 @@ const DeckToolsItems = ({
 
   return (
     <AnimatePresence exitBeforeEnter>
-      {tools && (
+      {toolsOption && (
         <motion.div
           className="toolsMenu"
           variants={toolsVariant}
@@ -77,68 +73,36 @@ const DeckToolsItems = ({
           animate="visible"
           exit="exit"
         >
-          <motion.p className="toolsTitle" variants={titleVariant}>
-            Deck Tools
-          </motion.p>
-          <div className="toolsCategory">
-            <p className="toolsName">
-              Mana Curve
-              <img
-                src={DownArrow}
-                className="menuDownArrow"
-                onClick={() =>
-                  toggleToolBooleans("manaCurve", !toolBooleans.manaCurve)
-                }
-              />
-            </p>
-            {toolBooleans.manaCurve && (
+          {toolsOption === "stats" ? (
+            <div className="toolsCategory">
+              <motion.p className="toolsTitle" variants={titleVariant}>
+                Statistics
+              </motion.p>
+              <p className="toolsName">Mana Curve</p>
               <ManaCurveContainer
                 manaCurveData={manaCurveData}
                 ghostCurveData={ghostCurveData}
                 manaCurveLabels={manaCurveLabels}
               />
-            )}
-          </div>
-          <div className="toolsCategory">
-            <p className="toolsName">
-              Card Display Settings
-              <img
-                src={DownArrow}
-                className="menuDownArrow"
-                onClick={() =>
-                  toggleToolBooleans(
-                    "displaySettings",
-                    !toolBooleans.displaySettings
-                  )
-                }
+            </div>
+          ) : toolsOption === "settings" ? (
+            <div className="toolsCategory">
+              <motion.p className="toolsTitle" variants={titleVariant}>
+                Visual Display
+              </motion.p>
+              <p className="toolsName">Sort Cards</p>
+              <CardSorting
+                currentCategory={currentCategory}
+                setCategory={setCategory}
               />
-            </p>
-            {toolBooleans.displaySettings && (
+              <p className="toolsName">Card Display Settings</p>
               <DisplayContainer
                 displaySettings={displaySettings}
                 toggleDisplaySetting={toggleDisplaySetting}
                 handleSliderChange={handleSliderChange}
               />
-            )}
-          </div>
-          <div className="toolsCategory">
-            <p className="toolsName">
-              Sort Cards
-              <img
-                src={DownArrow}
-                className="menuDownArrow"
-                onClick={() =>
-                  toggleToolBooleans("cardSorting", !toolBooleans.cardSorting)
-                }
-              />
-            </p>
-            {toolBooleans.cardSorting && (
-              <CardSorting
-                currentCategory={currentCategory}
-                setCategory={setCategory}
-              />
-            )}
-          </div>
+            </div>
+          ) : null}
         </motion.div>
       )}
     </AnimatePresence>

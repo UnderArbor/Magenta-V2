@@ -1,6 +1,7 @@
 const express = require("express");
 const config = require("config");
 const auth = require("../../client/src/utils/middleware/auth");
+const fs = require("fs");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 
@@ -19,6 +20,37 @@ router.get("/", async (req, res) => {
   }
 });
 
+//Download Deck
+router.get("/download", async (req, res) => {
+  try {
+    res.download(__dirname + "/../../testFile.txt", (error) => {
+      if (error !== undefined) {
+        console.log("Error : ", error);
+      }
+    });
+
+    return res;
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server error");
+  }
+});
+
+//Write deck into file
+router.post("/writeFile", async (req, res) => {
+  try {
+    const { cardArray } = req.body;
+    fs.writeFile("./testFile.txt", cardArray, (err) => {
+      if (err) {
+        console.log("Error writing file", err);
+      }
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server error");
+  }
+});
+
 //Fetch Deck
 router.get("/:deckId", async (req, res) => {
   try {
@@ -33,6 +65,7 @@ router.get("/:deckId", async (req, res) => {
   }
 });
 
+//Create New Deck
 router.post("/init", async (req, res) => {
   const { user, deckName, deckFormat } = req.body;
 
@@ -42,8 +75,7 @@ router.post("/init", async (req, res) => {
     var newDeck = new Deck({
       name: name,
       format: deckFormat,
-      picture:
-        "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      picture: false,
       boards: [
         { name: "Mainboard", boardTypes: [] },
         { name: "Sideboard", boardTypes: [] },
@@ -56,10 +88,7 @@ router.post("/init", async (req, res) => {
         displayIndicator: false,
         displayName: true,
         cardSize: 100,
-      },
-      toolBooleans: {
-        manaCurve: true,
-        displaySettings: true,
+        sortCategory: "Types",
       },
     });
 
@@ -109,9 +138,9 @@ router.post("/", async (req, res) => {
 router.put("/boardChange/:deckId", async (req, res) => {
   try {
     const deck = await Deck.findOne({ _id: req.params.deckId });
-    const { boardTypes, index } = req.body;
+    const { boards } = req.body;
 
-    deck.boards[index].boardTypes = boardTypes;
+    deck.boards = boards;
     await deck.save();
     return res.json(deck);
   } catch (error) {
@@ -123,14 +152,9 @@ router.put("/boardChange/:deckId", async (req, res) => {
 router.put("/toolChange/:deckId", async (req, res) => {
   try {
     const deck = await Deck.findOne({ _id: req.params.deckId });
-    const { displaySettings, toolBooleans } = req.body;
+    const { displaySettings } = req.body;
 
-    if (displaySettings !== undefined) {
-      deck.displaySettings = displaySettings;
-    }
-    if (toolBooleans !== undefined) {
-      deck.toolBooleans = toolBooleans;
-    }
+    deck.displaySettings = displaySettings;
     await deck.save();
     return res.json(deck);
   } catch (error) {
@@ -164,6 +188,33 @@ router.delete("/deleteAll", async (req, res) => {
           .status(200)
           .send({ message: "All user info was deleted succesfully..." });
       }
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server error");
+  }
+});
+
+//Delete One Deck
+router.delete("/:deckId", async (req, res) => {
+  try {
+    const deck = await Deck.findOne({ _id: req.params.deckId }, function (err) {
+      if (err) console.log(err);
+      else console.log("deck found");
+    });
+
+    const user = await User.findById(deck.user);
+
+    const removeIndex = await user.decks
+      .map((deck) => deck._id)
+      .indexOf(req.params.deckId);
+    await user.decks.splice(removeIndex, 1);
+
+    await user.save();
+
+    await Deck.findOneAndDelete({ _id: req.params.deckId }, function (err) {
+      if (err) console.log(err);
+      else console.log("successful deletion");
     });
   } catch (error) {
     console.error(error.message);

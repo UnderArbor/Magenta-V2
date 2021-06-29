@@ -5,10 +5,10 @@ export const LOGIN_FAIL = "LOGIN_FAIL";
 export const USER_LOADED = "USER_LOADED";
 export const LOGOUT_USER = "LOGOUT_USER";
 export const AUTH_ERROR = "AUTH_ERROR";
+export const DELETE_DECK = "DELETE_DECK";
 
 export const OPEN_DECK_LIST = "OPEN_DECK_LIST";
 export const TOGGLE_DISPLAY = "TOGGLE_DISPLAY";
-export const TOGGLE_TOOLS = "TOGGLE_TOOLS";
 export const SETTINGS_CLOAK = "SETTINGS_CLOAK";
 
 export const ADJUST_SETTING_PROPERTIES = "ADJUST_SETTING_PROPERTIES";

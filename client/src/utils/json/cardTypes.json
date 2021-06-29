@@ -1,18 +1,10 @@
-[
-	"Creature",
+
+	["Creature",
 	"Enchantment",
 	"Artifact",
 	"Planeswalker",
 	"Instant",
 	"Sorcery",
-	"Land",
-	"Legendary",
-	"Snow",
-	"Tribal",
-	"Hero",
-	"Vanguard",
-	"Conspiracy",
-	"Scheme",
-	"Plane",
-	"Phenomenon"
+	"Land"
 ]
+

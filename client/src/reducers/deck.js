@@ -16,15 +16,12 @@ const initialState = {
   displaySettings: {
     displayMana: true,
     displayQuantity: true,
-    displayIndicator: false,
+    displayLegalities: true,
     displayName: true,
+    displayGhosts: true,
     cardSize: 100,
+    asSize: 100,
     sortCategory: "Types",
-  },
-  toolBooleans: {
-    manaCurve: true,
-    displaySettings: true,
-    cardSorting: true,
   },
   settingBooleans: {
     property: "Types",
@@ -60,12 +57,12 @@ export default function (state = initialState, action) {
               displayQuantity: payload.checked,
             },
           };
-        case "displayIndicator":
+        case "displayLegalities":
           return {
             ...state,
             displaySettings: {
               ...state.displaySettings,
-              displayIndicator: payload.checked,
+              displayLegalities: payload.checked,
             },
           };
         case "displayName":
@@ -76,6 +73,14 @@ export default function (state = initialState, action) {
               displayName: payload.checked,
             },
           };
+        case "displayGhosts":
+          return {
+            ...state,
+            displaySettings: {
+              ...state.displaySettings,
+              displayGhosts: payload.checked,
+            },
+          };
         case "cardSize":
           return {
             ...state,
@@ -84,41 +89,20 @@ export default function (state = initialState, action) {
               cardSize: payload.checked,
             },
           };
+        case "asSize":
+          return {
+            ...state,
+            displaySettings: {
+              ...state.displaySettings,
+              asSize: payload.checked,
+            },
+          };
         case "sortCategory":
           return {
             ...state,
             displaySettings: {
               ...state.displaySettings,
               sortCategory: payload.checked,
-            },
-          };
-        default:
-          return state;
-      }
-    case TOGGLE_TOOLS:
-      switch (payload.name) {
-        case "manaCurve":
-          return {
-            ...state,
-            toolBooleans: {
-              ...state.toolBooleans,
-              manaCurve: payload.toggle,
-            },
-          };
-        case "displaySettings":
-          return {
-            ...state,
-            toolBooleans: {
-              ...state.toolBooleans,
-              displaySettings: payload.toggle,
-            },
-          };
-        case "cardSorting":
-          return {
-            ...state,
-            toolBooleans: {
-              ...state.toolBooleans,
-              cardSorting: payload.toggle,
             },
           };
         default:

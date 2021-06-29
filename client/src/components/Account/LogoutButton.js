@@ -10,7 +10,7 @@ const LogoutButton = ({ logoutUser }) => {
         history.push("/");
         logoutUser();
       }}
-      className="authLink logout largeDiv"
+      className="logoutLink"
     >
       Logout
     </button>
