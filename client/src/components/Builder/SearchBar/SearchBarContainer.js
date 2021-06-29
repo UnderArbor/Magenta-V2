@@ -115,6 +115,7 @@ const SearchBarContainer = ({
     }
     setQuery({ ...query, userQuery: "", loading: false });
     setResults({ ...results, cards: [], resultIndex: 0 });
+    setSearchFocused(false);
   };
 
   const customStyles = {

@@ -80,7 +80,7 @@ const RegisterButton = ({
         >
           <div className="authHeader">Register</div>
           <div className="form-group">
-            <div className="form-row">
+            <div className="formColumn">
               <p className="form-label">Name:</p>
               <input
                 className={`authInput ${
@@ -107,7 +107,7 @@ const RegisterButton = ({
               )}
             </div>
 
-            <div className="form-row">
+            <div className="formColumn">
               <p className="form-label">Email:</p>
               <input
                 className={`authInput ${
@@ -134,7 +134,7 @@ const RegisterButton = ({
               )}
             </div>
 
-            <div className="form-row">
+            <div className="formColumn">
               <p className="form-label">Password:</p>
               <input
                 className={`authInput ${
@@ -162,7 +162,7 @@ const RegisterButton = ({
               )}
             </div>
 
-            <div className="form-row">
+            <div className="formColumn">
               <p className="form-label">Confirm Password:</p>
               <input
                 className={`authInput ${

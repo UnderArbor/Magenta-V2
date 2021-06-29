@@ -115,16 +115,16 @@ const SearchBar = ({
             disabled
           ></motion.input>
         </div>
-        {query.loading ? (
+        {/* {query.loading ? (
           <LoadingIcon right={"9px"} top={"24px"} size={"10px"} />
-        ) : (
-          <motion.img
-            variants={searchVariants}
-            onClick={() => searchCard(results.cards[results.resultIndex])}
-            className="searchIcon"
-            src={SearchIcon}
-          />
-        )}
+        ) : ( */}
+        <motion.img
+          variants={searchVariants}
+          onClick={() => searchCard(results.cards[results.resultIndex])}
+          className="searchIcon"
+          src={SearchIcon}
+        />
+        {/* )} */}
         {results.cards.length > 0 && (
           <SearchOptions
             results={results}

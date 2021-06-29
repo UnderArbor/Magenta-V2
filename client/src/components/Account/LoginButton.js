@@ -69,7 +69,7 @@ const LoginButton = ({
         >
           <div className="authHeader">Login</div>
           <div className="form-group">
-            <div className="form-row">
+            <div className="formColumn">
               <p className="form-label">Email:</p>
               <input
                 className={`authInput ${
@@ -95,7 +95,7 @@ const LoginButton = ({
                 </motion.div>
               )}
             </div>
-            <div className="form-row">
+            <div className="formColumn">
               <p className="form-label">Password:</p>
               <input
                 className={`authInput ${
